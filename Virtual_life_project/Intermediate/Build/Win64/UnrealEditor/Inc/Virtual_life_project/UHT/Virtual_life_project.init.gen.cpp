@@ -17,7 +17,7 @@ void EmptyLinkFunctionForGeneratedCodeVirtual_life_project_init() {}
 				nullptr,
 				0,
 				PKG_CompiledIn | 0x00000000,
-				0x239AEF63,
+				0x6CD80510,
 				0x51AD710F,
 				METADATA_PARAMS(0, nullptr)
 			};
@@ -25,5 +25,5 @@ void EmptyLinkFunctionForGeneratedCodeVirtual_life_project_init() {}
 		}
 		return Z_Registration_Info_UPackage__Script_Virtual_life_project.OuterSingleton;
 	}
-	static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_Virtual_life_project(Z_Construct_UPackage__Script_Virtual_life_project, TEXT("/Script/Virtual_life_project"), Z_Registration_Info_UPackage__Script_Virtual_life_project, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0x239AEF63, 0x51AD710F));
+	static FRegisterCompiledInInfo Z_CompiledInDeferPackage_UPackage__Script_Virtual_life_project(Z_Construct_UPackage__Script_Virtual_life_project, TEXT("/Script/Virtual_life_project"), Z_Registration_Info_UPackage__Script_Virtual_life_project, CONSTRUCT_RELOAD_VERSION_INFO(FPackageReloadVersionInfo, 0x6CD80510, 0x51AD710F));
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
