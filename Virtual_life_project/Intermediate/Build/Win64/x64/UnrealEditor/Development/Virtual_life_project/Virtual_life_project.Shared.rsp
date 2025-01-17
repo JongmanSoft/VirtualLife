@@ -1,6 +1,6 @@
 /I "."
-/I "C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\UnrealEditor\Inc\Virtual_life_project\UHT"
-/I "C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Source"
+/I "C:\Users\minji\UnrealProject\VirtualLife\Virtual_life_project\Intermediate\Build\Win64\UnrealEditor\Inc\Virtual_life_project\UHT"
+/I "C:\Users\minji\UnrealProject\VirtualLife\Virtual_life_project\Source"
 /I "Runtime\Core\Public"
 /I "Runtime\Core\Internal"
 /I "Runtime\TraceLog\Public"

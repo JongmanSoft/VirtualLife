@@ -1,12 +1,12 @@
-"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\UnrealEditor\Inc\Virtual_life_project\UHT\Virtual_life_projectGameMode.gen.cpp"
-/FI"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/FI"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Definitions.Virtual_life_project.h"
-/Yu"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
-/Fp"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
-/Fo"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.obj"
-/experimental:log "P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.sarif"
-/sourceDependencies "P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.dep.json"
-@"P:\Virtual_Life\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_project.Shared.rsp"
+"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\UnrealEditor\Inc\Virtual_life_project\UHT\Virtual_life_projectGameMode.gen.cpp"
+/FI"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/FI"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Definitions.Virtual_life_project.h"
+/Yu"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h"
+/Fp"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\Virtual_life_projectEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.h.pch"
+/Fo"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.obj"
+/experimental:log "C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.sarif"
+/sourceDependencies "C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_projectGameMode.gen.cpp.dep.json"
+@"C:\Users\minji\UnrealProject\virtual_life\Virtual_life_project\Intermediate\Build\Win64\x64\UnrealEditor\Development\Virtual_life_project\Virtual_life_project.Shared.rsp"
 /d2ssa-cfg-question-
 /Zc:inline
 /nologo
