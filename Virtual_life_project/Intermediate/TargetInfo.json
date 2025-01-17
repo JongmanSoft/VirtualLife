@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "Virtual_life_project",
+			"Path": "..\\Source\\Virtual_life_project.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "Virtual_life_projectEditor",
+			"Path": "..\\Source\\Virtual_life_projectEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Virtual_life_project.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Virtual_life_project.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\Virtual_life_projectEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\Virtual_life_project">
+      <UniqueIdentifier>{875866F8-9851-343F-90AE-38B036742330}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Virtual_life_project\Virtual_life_project.Build.cs">
+      <Filter>Source\Virtual_life_project</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_project.cpp">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_project.h">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_projectCharacter.cpp">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_projectCharacter.h">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_projectGameMode.cpp">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Virtual_life_project\Virtual_life_projectGameMode.h">
+      <Filter>Source\Virtual_life_project</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

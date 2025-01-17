@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\minji\\unrealproject\\virtual_life\\virtual_life_project\\source\\virtual_life_project\\virtual_life_project.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\minji\\unrealproject\\virtual_life\\virtual_life_project\\intermediate\\build\\win64\\x64\\virtual_life_projecteditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "c:\\users\\minji\\unrealproject\\virtual_life\\virtual_life_project\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\virtual_life_project\\definitions.virtual_life_project.h",
+            "c:\\users\\minji\\unrealproject\\virtual_life\\virtual_life_project\\source\\virtual_life_project\\virtual_life_project.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
