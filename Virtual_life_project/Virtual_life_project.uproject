@@ -7,7 +7,10 @@
 		{
 			"Name": "Virtual_life_project",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [

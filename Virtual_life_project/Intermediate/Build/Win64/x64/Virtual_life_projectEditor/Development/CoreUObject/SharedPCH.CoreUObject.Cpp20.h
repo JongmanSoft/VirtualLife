@@ -1,3 +1,0 @@
-// PCH for Runtime/CoreUObject/Public/CoreUObjectSharedPCH.h
-#include "C:/Users/minji/UnrealProject/VirtualLife/Virtual_life_project/Intermediate/Build/Win64/x64/Virtual_life_projectEditor/Development/CoreUObject/SharedDefinitions.CoreUObject.Cpp20.h"
-#include "Runtime/CoreUObject/Public/CoreUObjectSharedPCH.h"
