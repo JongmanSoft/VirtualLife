@@ -5,10 +5,19 @@
     <ClCompile Include="Utility.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Games</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
       <UniqueIdentifier>{96fc9ea7-78b0-4994-b67b-eef7cde89eb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Games">
+      <UniqueIdentifier>{6e755562-f95f-46eb-bbfb-4fae8c57a807}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -18,6 +27,9 @@
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Utility.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Games</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
