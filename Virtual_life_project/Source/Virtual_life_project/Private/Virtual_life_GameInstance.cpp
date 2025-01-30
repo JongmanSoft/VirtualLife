@@ -5,6 +5,7 @@
 #include "Sockets.h"
 #include <Common/TcpSocketBuilder.h>
 #include <Serialization/ArrayWriter.h>
+#include "Networking.h"
 #include "SocketSubsystem.h"
 
 void UVirtual_life_GameInstance::ConnectServer()
@@ -30,8 +31,8 @@ void UVirtual_life_GameInstance::ConnectServer()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Success")));
 
 		// Session 생성
-		GameServerSession = MakeShared<PacketSession>(Socket);
-		GameServerSession->Run(); // Worker Thread 동작 시작
+		//GameServerSession = MakeShared<PacketSession>(Socket);
+		//GameServerSession->Run(); // Worker Thread 동작 시작
 
 		// 1. Login Packet Send
 
@@ -46,4 +47,8 @@ void UVirtual_life_GameInstance::ConnectServer()
 	else {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Failed")));
 	}
+}
+
+void UVirtual_life_GameInstance::DisconnectServer()
+{
 }

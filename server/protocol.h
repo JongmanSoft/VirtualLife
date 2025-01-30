@@ -1,11 +1,9 @@
 // 최대 길이 설정
 constexpr int PORT_NUM = 7777;
-constexpr int NAME_SIZE = 20;
+constexpr int M_NAME_SIZE = 20;
 constexpr int CHAT_SIZE = 100; 
 
 constexpr short MAX_PLAYER = 1000;
-
-constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
 
 struct PlayerInfo
 {
@@ -33,12 +31,13 @@ enum PACKETID : char
 	SC_CHAT
 };
 
+constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
 // client to server
 #pragma pack (push, 1)
 struct CS_LOGIN_PACKET { // 로그인 요청.
 	unsigned short size;
 	PACKETID	type;
-	char	name[NAME_SIZE];
+	char	name[M_NAME_SIZE];
 };
 
 struct CS_SPAWN_PACKET { // 얘 수정해야 함
@@ -80,7 +79,7 @@ struct SC_DESPAWN_PACKET {
 struct SC_CHAT_PACKET {
 	unsigned short size;
 	char	type;
-	char	name[NAME_SIZE]; 
+	char	name[M_NAME_SIZE];
 	wchar_t	msg[CHAT_SIZE];
 };
 #pragma pack (pop)

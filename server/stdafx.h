@@ -23,6 +23,9 @@ using namespace std;
 
 #include "protocol.h"
 
+atomic_int id = 0;
+
+int setid();
 void server_error(const char* msg);
 
 enum class TASK_TYPE

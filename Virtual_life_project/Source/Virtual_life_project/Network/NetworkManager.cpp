@@ -26,11 +26,11 @@ uint32 RecvManager::Run()
         {
             // 받은 패킷 처리 (예: 로그 출력)
             FString ReceivedData = FString(ANSI_TO_TCHAR(reinterpret_cast<const char*>(PacketBuffer.GetData())));
-            UE_LOG(LogTemp, Log, TEXT("패킷 수신: %s"), *ReceivedData);
+           // UE_LOG(LogTemp, Log, TEXT("패킷 수신: %s"), *ReceivedData);
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("패킷 수신 실패 또는 연결 종료"));
+           // UE_LOG(LogTemp, Error, TEXT("패킷 수신 실패 또는 연결 종료"));
             running = false;
         }
     }
