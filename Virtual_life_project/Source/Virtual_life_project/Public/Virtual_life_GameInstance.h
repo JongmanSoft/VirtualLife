@@ -26,5 +26,5 @@ public:
 	// 기본 세팅
 	class FSocket* Socket;
 	FString IpAddress = TEXT("127.0.0.1"); // ip주소
-	int16 Port = 7777; // 포트 번호: 임의로 지정.
+	int16 Port = PORT_NUM; // 포트 번호: 임의로 지정.
 };

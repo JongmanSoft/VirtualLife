@@ -23,10 +23,12 @@ using namespace std;
 
 #include "protocol.h"
 
-atomic_int id = 0;
+
 
 int setid();
 void server_error(const char* msg);
+
+constexpr int BUFSIZE = 256;
 
 enum class TASK_TYPE
 {
