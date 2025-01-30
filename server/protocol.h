@@ -5,6 +5,8 @@ constexpr int CHAT_SIZE = 100;
 
 constexpr short MAX_PLAYER = 1000;
 
+constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
+
 struct PlayerInfo
 {
 	unsigned int id;
