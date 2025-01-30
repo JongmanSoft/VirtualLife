@@ -22,3 +22,41 @@
 using namespace std;
 
 #include "protocol.h"
+
+void server_error(const char* msg);
+
+enum class TASK_TYPE
+{
+    // OV_TYPE
+    ACCEPT,
+    RECV,
+    SEND,
+};
+
+class EXT_OVER // overlapped, packet size, type
+{
+public:
+    WSAOVERLAPPED over;
+    WSABUF wsabuf;
+    char wb_buf[BUFSIZE];
+    TASK_TYPE ov;
+    int from;
+    int to;
+
+    EXT_OVER() // recv
+    {
+        wsabuf.len = BUFSIZE;
+        wsabuf.buf = wb_buf;
+        ov = TASK_TYPE::RECV;
+        ZeroMemory(&over, sizeof(over));
+    }
+
+    void setup_send(char* pk, int len) // send
+    {
+        wsabuf.len = len;
+        wsabuf.buf = wb_buf;
+        ZeroMemory(&over, sizeof(over));
+        ov = TASK_TYPE::SEND;
+        memcpy(wb_buf, pk, len);
+    }
+};
