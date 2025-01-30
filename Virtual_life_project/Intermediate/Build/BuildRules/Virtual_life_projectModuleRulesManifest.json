@@ -1,8 +1,0 @@
-{
-	"SourceFiles": [
-		"C:\\minji\\UnrealEngine\\VirtualLife\\Virtual_life_project\\Source\\Virtual_life_project\\Virtual_life_project.Build.cs",
-		"C:\\minji\\UnrealEngine\\VirtualLife\\Virtual_life_project\\Source\\Virtual_life_project.Target.cs",
-		"C:\\minji\\UnrealEngine\\VirtualLife\\Virtual_life_project\\Source\\Virtual_life_projectEditor.Target.cs"
-	],
-	"EngineVersion": "5.5.1"
-}
