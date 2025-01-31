@@ -9,6 +9,9 @@ class Player
 	SOCKET socket;
 	vector<char> packet_data; // deque를 사용할까?
 	int id = 0;
+
+	string name;
+
 public:
 	STATES state;
 

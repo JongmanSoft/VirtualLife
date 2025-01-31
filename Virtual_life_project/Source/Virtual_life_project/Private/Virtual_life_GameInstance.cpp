@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+// todo: 여기 해야 함
 
 #include "Virtual_life_GameInstance.h"
 #include "Sockets.h"
@@ -30,9 +31,9 @@ void UVirtual_life_GameInstance::ConnectServer()
 	if (Connected) { // 연결 성공
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Success")));
 
-		// Session 생성
-		//GameServerSession = MakeShared<PacketSession>(Socket);
-		//GameServerSession->Run(); // Worker Thread 동작 시작
+		// 스레드 동작 시작하기
+		RecvThread = new RecvManager(Socket, this);
+		SendThread = new SendWorker(Socket, this);
 
 		// 1. Login Packet Send
 

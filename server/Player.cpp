@@ -54,7 +54,7 @@ void Player::recv()
 	}
 }
 
-void Player::handle_packet(char* packet, unsigned short length)
+void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는 함수
 {
     char type = packet[2];
 
@@ -63,7 +63,16 @@ void Player::handle_packet(char* packet, unsigned short length)
     case CS_LOGIN:// ok
     {
         CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
-        break;
+		// todo: db 연동해야 함
+		name = p->name;
+		// 만약 접속중인 플레이어라면
+		// todo: 여기 어떻게 처리할지 고민하기
+
+		bool success = true;
+		
+		
+
+		break;
     }
     case CS_CHAT:
     {
@@ -74,6 +83,10 @@ void Player::handle_packet(char* packet, unsigned short length)
     {
         break;
     }
+	case CS_SPAWN:
+	{
+		break;
+	}
     default:
 
         break;

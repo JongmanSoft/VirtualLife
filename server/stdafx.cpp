@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 atomic_int id = 0;
+std::array<Player, MAX_PLAYER> players{};
 
 int setid()
 {

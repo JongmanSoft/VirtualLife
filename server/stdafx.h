@@ -24,7 +24,6 @@ using namespace std;
 #include "protocol.h"
 
 
-
 int setid();
 void server_error(const char* msg);
 
@@ -65,3 +64,6 @@ public:
         memcpy(wb_buf, pk, len);
     }
 };
+
+#include "Player.h"
+extern std::array<Player, MAX_PLAYER> players;
