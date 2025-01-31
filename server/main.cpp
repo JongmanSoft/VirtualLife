@@ -7,7 +7,7 @@ SOCKET g_server;
 SOCKET g_client;
 
 // 그 외 //
-std::array<Player, MAX_PLAYER> players;
+
 
 // 함수 전방선언 //
 void initialize_server();

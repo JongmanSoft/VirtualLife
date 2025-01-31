@@ -7,6 +7,7 @@
 #include "Sockets.h"           
 #include "Networking.h"      
 #include "Virtual_life_project/Virtual_life_project.h"
+#include "../Network/NetworkManager.h"
 #include "Virtual_life_GameInstance.generated.h"
 
 UCLASS()
@@ -27,4 +28,12 @@ public:
 	class FSocket* Socket;
 	FString IpAddress = TEXT("127.0.0.1"); // ip주소
 	int16 Port = PORT_NUM; // 포트 번호: 임의로 지정.
+
+	// 패킷 관련
+	TQueue<TArray<uint8>> RecvPacketQueue;
+	TQueue<TArray<uint8>> SendPacketQueue;
+
+private:
+	class RecvManager* RecvThread = nullptr;
+	class SendWorker* SendThread = nullptr;
 };
