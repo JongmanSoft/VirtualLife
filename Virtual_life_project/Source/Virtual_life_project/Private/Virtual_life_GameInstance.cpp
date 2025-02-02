@@ -7,6 +7,7 @@
 #include <Common/TcpSocketBuilder.h>
 #include <Serialization/ArrayWriter.h>
 #include "Networking.h"
+#include "../Virtual_life_projectCharacter.h"
 #include "SocketSubsystem.h"
 
 void UVirtual_life_GameInstance::ConnectServer()
@@ -96,9 +97,9 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			// 로그인 성공: 메인 맵으로 이동
 			if (true == p.success) {
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 				MyPlayerInfo = p.player;
 				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("NewMap")));
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
@@ -129,15 +130,27 @@ void UVirtual_life_GameInstance::OnLevelLoaded(UWorld* LoadedWorld)
 {
 	if (LoadedWorld->GetMapName().Contains("NewMap"))  // MainMap인지 확인
 	{
-		FVector SpawnLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
-		FRotator SpawnRotation(0, MyPlayerInfo.yaw, 0);
-
-		// 블루프린트 클래스 로드
-		static ConstructorHelpers::FClassFinder<AActor> PlayerBPClass(TEXT("ThirdPerson/Blueprints/BP_ThirdPersonCharacter.uasset"));
-		if (PlayerBPClass.Succeeded())
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(LoadedWorld, 0);
+		if (PlayerController)
 		{
-			GetWorld()->SpawnActor<AActor>(PlayerBPClass.Class, SpawnLocati
-on, SpawnRotation);
+			APawn* PlayerPawn = PlayerController->GetPawn();
+			if (PlayerPawn)
+			{
+				// 서버로부터 받은 위치 정보 적용
+				FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
+				FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
+
+				PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
+				UE_LOG(LogTemp, Log, TEXT("플레이어 위치 조정 완료 : (% f, % f, % f)"), NewLocation.X, NewLocation.Y, NewLocation.Z);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("PlayerPawn이 존재하지 않습니다."));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("PlayerController를 찾을 수 없습니다."));
 		}
 	}
 }
