@@ -48,37 +48,38 @@ struct CS_SPAWN_PACKET { // 얘 수정해야 함
 
 struct CS_LEAVE_PACKET {
 	unsigned short size;
-	char	type;
+	PACKETID	type;
 };
 
 struct CS_CHAT_PACKET {
 	unsigned short size;	
-	char	type;			
+	PACKETID	type;
 	wchar_t	msg[CHAT_SIZE];
 };
 
 // server to client
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
+	PACKETID type;
 	bool success;
 	PlayerInfo player;
 };
 
 struct SC_SPAWN_PACKET {
 	unsigned short size;
-	char	type;
+	PACKETID	type;
 	PlayerInfo objects[MAX_PLAYER];
 };
 
 struct SC_DESPAWN_PACKET {
 	unsigned short size;
-	char	type;
+	PACKETID	type;
 	unsigned int id;
 };
 
 struct SC_CHAT_PACKET {
 	unsigned short size;
-	char	type;
+	PACKETID	type;
 	char	name[M_NAME_SIZE];
 	wchar_t	msg[CHAT_SIZE];
 };

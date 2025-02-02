@@ -22,7 +22,7 @@
 using namespace std;
 
 #include "protocol.h"
-
+#include "Utility.h"
 
 int setid();
 void server_error(const char* msg);

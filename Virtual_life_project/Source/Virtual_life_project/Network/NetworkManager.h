@@ -33,11 +33,11 @@ protected:
 	UVirtual_life_GameInstance* Instance;
 };
 
-class SendWorker : public FRunnable // 언리얼 엔진에서 스레드를 사용하는 법
+class SendManager : public FRunnable // 언리얼 엔진에서 스레드를 사용하는 법
 {
 public:
-	SendWorker(FSocket* socket, UVirtual_life_GameInstance* ins);
-	~SendWorker();
+	SendManager(FSocket* socket, UVirtual_life_GameInstance* ins);
+	~SendManager();
 
 	virtual bool Init() override;
 	virtual uint32 Run() override;

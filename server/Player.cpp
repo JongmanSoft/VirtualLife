@@ -1,6 +1,27 @@
 #include "stdafx.h"
 #include "Player.h"
 
+bool Player::send_login_info_packet(bool b)
+{
+	SC_LOGIN_INFO_PACKET p;
+	p.size = sizeof(SC_LOGIN_INFO_PACKET);
+	p.success = true;
+	p.type = SC_LOGININFO;
+	if (true == b) { // 성공했다면
+		PlayerInfo pi;
+		pi.id = id;
+		pi.x = Utility::GetRandom(0.f, 100.f);
+		pi.y = Utility::GetRandom(0.f, 100.f);
+		pi.z = Utility::GetRandom(100.f, 200.f);
+		pi.yaw = 0.f;
+		
+		p.player = pi;
+	}
+	send(&p);
+
+	return true;
+}
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -60,17 +81,22 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
     switch (type)
     {
-    case CS_LOGIN:// ok
-    {
-        CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
+	case CS_LOGIN:// ok
+	{
+		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
+		cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
 		// todo: db 연동해야 함
 		name = p->name;
-		// 만약 접속중인 플레이어라면
-		// todo: 여기 어떻게 처리할지 고민하기
 
+		// 접속중인 플레이어인지 확인
+		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		bool success = true;
-		
-		
+		for (int i = 0; i < players.size(); ++i)
+			if (players[i].get_state() != NONE) {
+				success = false;
+				break;
+			}
+		send_login_info_packet(success);
 
 		break;
     }

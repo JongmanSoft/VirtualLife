@@ -113,24 +113,24 @@ bool RecvManager::ProcessPacket()
     return true;
 }
 
-SendWorker::SendWorker(FSocket* socket, UVirtual_life_GameInstance* ins)
+SendManager::SendManager(FSocket* socket, UVirtual_life_GameInstance* ins)
     : Socket(socket), Instance(ins), Running(true)
 {
     Thread = FRunnableThread::Create(this, TEXT("SendThread"));
 }
 
-SendWorker::~SendWorker()
+SendManager::~SendManager()
 {
     Destroy();
 }
 
-bool SendWorker::Init()
+bool SendManager::Init()
 {
-    UE_LOG(LogTemp, Log, TEXT("SendWorker Initialized"));
+    UE_LOG(LogTemp, Log, TEXT("SendManager Initialized"));
     return true;
 }
 
-uint32 SendWorker::Run()
+uint32 SendManager::Run()
 {
     while (Running)
     {
@@ -153,12 +153,12 @@ uint32 SendWorker::Run()
     return 0;
 }
 
-void SendWorker::Exit()
+void SendManager::Exit()
 {
     Running = false;
 }
 
-void SendWorker::Destroy()
+void SendManager::Destroy()
 {
     Running = false;
     if (Thread)
@@ -170,7 +170,7 @@ void SendWorker::Destroy()
 }
 
 // 패킷을 송신 큐에 추가하는 함수
-bool SendWorker::SendPacket(void* packet, int32 PacketSize)
+bool SendManager::SendPacket(void* packet, int32 PacketSize)
 {
     TArray<uint8> PacketData;
     PacketData.Append(reinterpret_cast<uint8*>(packet), PacketSize);
@@ -180,7 +180,7 @@ bool SendWorker::SendPacket(void* packet, int32 PacketSize)
 }
 
 // 특정 크기의 데이터를 정확히 송신
-bool SendWorker::SendDesiredBytes(const uint8* Buffer, int32 Size)
+bool SendManager::SendDesiredBytes(const uint8* Buffer, int32 Size)
 {
     int32 BytesSent = 0;
     int32 TotalBytesSent = 0;

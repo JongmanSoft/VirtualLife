@@ -12,6 +12,8 @@ class Player
 
 	string name;
 
+	bool send_login_info_packet(bool b);
+
 public:
 	STATES state;
 
