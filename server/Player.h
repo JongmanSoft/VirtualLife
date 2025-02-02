@@ -11,8 +11,12 @@ class Player
 	int id = 0;
 
 	string name;
+	PlayerInfo pinfo;
 
-	bool send_login_info_packet(bool b);
+	bool send_login_info_packet(bool b, PlayerInfo pi);
+	bool send_spawn_packet(PlayerInfo pi);
+	bool send_despawn_packet(int id);
+	bool send_move_packet(PlayerInfo pi);
 
 public:
 	STATES state;

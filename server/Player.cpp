@@ -1,24 +1,42 @@
 #include "stdafx.h"
 #include "Player.h"
 
-bool Player::send_login_info_packet(bool b)
+bool Player::send_login_info_packet(bool b, PlayerInfo pi)
 {
 	SC_LOGIN_INFO_PACKET p;
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.success = true;
 	p.type = SC_LOGININFO;
 	if (true == b) { // 성공했다면
-		PlayerInfo pi;
-		pi.id = id;
-		pi.x = Utility::GetRandom(0.f, 100.f);
-		pi.y = Utility::GetRandom(0.f, 100.f);
-		pi.z = Utility::GetRandom(100.f, 200.f);
-		pi.yaw = 0.f;
-		
 		p.player = pi;
+		
 	}
+	else
+		state = NONE;
 	send(&p);
 
+	return true;
+}
+
+bool Player::send_spawn_packet(PlayerInfo pi)
+{
+	SC_SPAWN_PACKET p;
+	p.size = sizeof(SC_SPAWN_PACKET);
+	p.type = SC_SPAWN;
+	p.pl = pi;
+	cout << id << "에게 " << pi.id << "의 정보를 보낸다: " << pi.x << ", " << pi.y << ", " << pi.z << endl;
+	send(&p);
+	return true;
+}
+
+bool Player::send_move_packet(PlayerInfo pi)
+{
+	SC_MOVE_PACKET p;
+	p.size = sizeof(SC_MOVE_PACKET);
+	p.type = SC_MOVEP;
+	p.pl = pi;
+	//cout << id << "에게 " << pi.id << "를 움직인다: " << pi.x << ", " << pi.y << ", " << pi.z << endl;
+	send(&p);
 	return true;
 }
 
@@ -41,6 +59,7 @@ void Player::send(void* packet)
 			closesocket(socket);
 		}
 	}
+	cout << "SEND: " << id << "에게 패킷 전송!" << endl;
 }
 
 void Player::recv()
@@ -92,11 +111,38 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		bool success = true;
 		for (int i = 0; i < players.size(); ++i)
-			if (players[i].get_state() != NONE) {
+			if (players[i].get_state() != NONE && players[i].name == p->name) {
 				success = false;
 				break;
 			}
-		send_login_info_packet(success);
+		
+		PlayerInfo pi;
+		if (true == success) {
+			pi.id = id;
+			pi.x = Utility::GetRandom(0.f, 200.0f);
+			pi.y = Utility::GetRandom(0.f, 200.0f);
+			pi.z = 200.0f;
+			pi.yaw = 0.f;
+			pinfo = pi;
+
+			send_login_info_packet(success, pi);
+
+			// 지금 있는 애들한테 브로드캐스팅
+			// 지금 있는 애들 정보 받아오기
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING) {
+					players[i].send_spawn_packet(pi);
+				}
+			}
+
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING) {
+					send_spawn_packet(players[i].pinfo);
+				}
+			}
+
+			state = PLAYING;
+		}
 
 		break;
     }
@@ -109,8 +155,20 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     {
         break;
     }
-	case CS_SPAWN:
+	case CS_MOVEP:
 	{
+		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
+		pinfo = p->pl;
+		//cout << "RECV-CS_MOVE_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
+		//cout << "위치: " << p->pl.x << ", " << p->pl.y << ", " << p->pl.z << endl;
+
+		// 위치정보 브로드캐스팅
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING and i != id) {
+				players[i].send_move_packet(p->pl);
+			}
+		}
+
 		break;
 	}
     default:

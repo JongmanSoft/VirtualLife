@@ -47,7 +47,6 @@ class AVirtual_life_projectCharacter : public ACharacter
 public:
 	AVirtual_life_projectCharacter();
 	
-
 protected:
 
 	/** Called for movement input */

@@ -22,13 +22,15 @@ enum PACKETID : char
 	CS_SPAWN = 1,
 	CS_LEAVE = 2,
 	CS_CHAT,
+	CS_MOVEP,
 
 	// server to client
 	SC_LOGININFO,
 	SC_SPAWN,
 	SC_DESPAWN,
 	SC_LEAVE,
-	SC_CHAT
+	SC_CHAT,
+	SC_MOVEP
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -38,12 +40,6 @@ struct CS_LOGIN_PACKET { // 로그인 요청.
 	unsigned short size;
 	PACKETID	type;
 	char	name[M_NAME_SIZE];
-};
-
-struct CS_SPAWN_PACKET { // 얘 수정해야 함
-	unsigned short size;
-	PACKETID type;
-	PlayerInfo objects[MAX_PLAYER];
 };
 
 struct CS_LEAVE_PACKET {
@@ -57,6 +53,12 @@ struct CS_CHAT_PACKET {
 	wchar_t	msg[CHAT_SIZE];
 };
 
+struct CS_MOVE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	PlayerInfo pl;
+};
+
 // server to client
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
@@ -68,7 +70,7 @@ struct SC_LOGIN_INFO_PACKET {
 struct SC_SPAWN_PACKET {
 	unsigned short size;
 	PACKETID	type;
-	PlayerInfo objects[MAX_PLAYER];
+	PlayerInfo pl;
 };
 
 struct SC_DESPAWN_PACKET {
@@ -82,5 +84,11 @@ struct SC_CHAT_PACKET {
 	PACKETID	type;
 	char	name[M_NAME_SIZE];
 	wchar_t	msg[CHAT_SIZE];
+};
+
+struct SC_MOVE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	PlayerInfo pl;
 };
 #pragma pack (pop)

@@ -9,6 +9,8 @@
 #include "Virtual_life_project/Virtual_life_project.h"
 #include "../Network/NetworkManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Virtual_life_project/Virtual_life_projectCharacter.h"
+#include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
 UCLASS()
@@ -17,6 +19,9 @@ class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AVirtual_life_projectCharacter> PlayerClass;
+
 	void OnStart();
 	void OnLevelLoaded(UWorld* LoadedWorld);
 
@@ -38,6 +43,7 @@ public:
 	virtual bool IsTickable() const override { return true; }
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UVirtual_life_GameInstance, STATGROUP_Tickables); }
 
+	void SendPlayerLocationToServer();
 
 	// 기본 세팅
 	class FSocket* Socket;
@@ -48,10 +54,19 @@ public:
 	TQueue<TArray<uint8>> RecvPacketQueue;
 	TQueue<TArray<uint8>> SendPacketQueue;
 
+	std::mutex lock;
+	UPROPERTY()
+	TMap<int, AVirtual_life_projectCharacter*> SpawnedPlayers;
+
+	TArray<PlayerInfo> arr;
+
 private:
+	std::atomic_bool loaded = false;
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
+	int id;
 
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
+	float TimeAccumulator = 0.0f;  // 위치 전송 간격 관리
 };
