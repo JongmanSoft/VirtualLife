@@ -11,6 +11,7 @@
 #include "SocketSubsystem.h"
 #include "EngineUtils.h"
 
+
 void UVirtual_life_GameInstance::ConnectServer()
 {
 	// 소켓 생성
@@ -58,6 +59,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 	p.size = sizeof(CS_LOGIN_PACKET);
 	strcpy_s(p.name, M_NAME_SIZE, TCHAR_TO_ANSI(*s));
 	p.type = CS_LOGIN;
+	name = s;
 
 	SendEnqueue(&p, p.size);
 }
@@ -147,7 +149,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 로그인 성공: 메인 맵으로 이동
 			if (true == p.success) {
 				MyPlayerInfo = p.player;
-				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("NewMap")));
+				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("testMap")));
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			}
 			else {
@@ -263,4 +265,21 @@ void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 		SendEnqueue(&p, p.size);
 	}
 
+}
+
+void UVirtual_life_GameInstance::SendChatPacket(FString s)
+{
+	CS_CHAT_PACKET p;
+	p.size = sizeof(CS_CHAT_PACKET);
+	p.type = CS_CHAT;
+
+	FTCHARToUTF8 NameConverter(*name);
+	strncpy(p.name, NameConverter.Get(), M_NAME_SIZE - 1);
+	p.name[M_NAME_SIZE - 1] = '\0'; // Null-termination 보장
+
+	// 메시지 설정
+	wcsncpy(p.msg, *s, CHAT_SIZE - 1);
+	p.msg[CHAT_SIZE - 1] = L'\0'; // Null-termination 보장
+
+	SendEnqueue(&p, p.size);
 }

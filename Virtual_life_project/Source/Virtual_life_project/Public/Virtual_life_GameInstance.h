@@ -40,6 +40,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnPlayer();
 
+	UFUNCTION(BlueprintCallable)
+	void SendChatPacket(FString s);
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;
@@ -68,6 +71,7 @@ private:
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
 	int id;
+	FString name;
 
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
