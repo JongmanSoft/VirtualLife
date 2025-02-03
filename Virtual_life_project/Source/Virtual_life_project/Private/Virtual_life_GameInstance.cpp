@@ -43,7 +43,6 @@ void UVirtual_life_GameInstance::ConnectServer()
 	}
 }
 
-// 패킷을 송신 큐에 추가하는 함수
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -63,15 +62,55 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SpawnPlayer()
+{
+	UWorld* World = GetWorld();
+
+	// todo: world를 제한할지 고밍
+
+	// 1. 서버에서 받은 내 좌표로 나 이동.
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+	if (PlayerController)
+	{
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		if (PlayerPawn)
+		{
+			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
+			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
+
+			PlayerPawn->SetActorHiddenInGame(false);
+			PlayerPawn->SetActorEnableCollision(true);
+			PlayerPawn->SetActorTickEnabled(true);
+
+			PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
+		}
+	}
+
+	// 2. 서버에서 받은 애들 스폰
+	for (auto& i : NeedSpawnPoints) {
+		FVector SpawnLocation(i.x, i.y, i.z);
+		FRotator SpawnRotation(0.f, i.yaw, 0.f);
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AVirtual_life_projectCharacter* Actor = World->SpawnActor<AVirtual_life_projectCharacter>(
+			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+		SpawnedPlayers.Add(i.id, Actor);
+	}
+
+	loaded = true;
+}
+
 void UVirtual_life_GameInstance::DisconnectServer()
 {
 }
 
 void UVirtual_life_GameInstance::Tick(float DeltaTime)
 {
-	if (!GetWorld()) return;
-
 	ProcessRecvPackets();
+
 	if (true == loaded) {
 		TimeAccumulator += DeltaTime;
 		if (TimeAccumulator >= 0.1f)  
@@ -124,15 +163,15 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			if (!loaded) {
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
-				arr.Add(p.pl);
+				NeedSpawnPoints.Add(p.pl);
 			}
 			else {
 				std::lock_guard<std::mutex> ll{ lock };
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
 
-				FVector SpawnLocation(1000.f, 1000.f, 1000.f);
-				FRotator SpawnRotation(0.f, p.pl.yaw, 0.f);
+				FVector L(p.pl.x, p.pl.y, 200.f);
+				FRotator R(0.f, p.pl.yaw, 0.f);
 
 				UWorld* World = GetWorld();
 
@@ -140,16 +179,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 				AVirtual_life_projectCharacter* Actor = World->SpawnActor<AVirtual_life_projectCharacter>(
-					PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
-				UE_LOG(LogTemp, Log, TEXT("Actor Spawned at: (%.2f, %.2f, %.2f)"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
+					PlayerClass, L, R, SpawnParams);
 
 				// 스폰된 액터 저장
 				SpawnedPlayers.Add(p.pl.id, Actor);
-
-				FVector L(p.pl.x, p.pl.y, 200.f);
-				FRotator R(0.f, p.pl.yaw, 0.f);
-
-				Actor->SetActorLocationAndRotation(L, R);
 			}
 			break;
 		}
@@ -203,54 +236,6 @@ void UVirtual_life_GameInstance::OnStart()
 
 void UVirtual_life_GameInstance::OnLevelLoaded(UWorld* LoadedWorld)
 {
-	if (GEngine && GEngine->IsEditor() && LoadedWorld->GetName().Contains("PIE"))
-	{
-		return;
-	}
-
-	if (LoadedWorld->GetMapName().Contains("NewMap"))
-	{
-		FTimerHandle TimerHandle;
-		LoadedWorld->GetTimerManager().SetTimer(TimerHandle, [this, LoadedWorld]()
-			{
-				APlayerController* PlayerController = UGameplayStatics::GetPlayerController(LoadedWorld, 0);
-				if (PlayerController)
-				{
-					APawn* PlayerPawn = PlayerController->GetPawn();
-					if (PlayerPawn)
-					{
-						FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
-						FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
-
-						PlayerPawn->SetActorHiddenInGame(false);
-						PlayerPawn->SetActorEnableCollision(true);
-						PlayerPawn->SetActorTickEnabled(true);
-
-						PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
-						UE_LOG(LogTemp, Log, TEXT("set location: (%f, %f, %f)"),
-							NewLocation.X, NewLocation.Y, NewLocation.Z);
-					}
-				}
-			}, 1.0f, false);  // 1초 후 위치 설정
-
-		loaded = true;
-		for (auto& i : arr) {
-			FVector SpawnLocation(i.x, i.y, i.z);
-			FRotator SpawnRotation(0.f, i.yaw, 0.f);
-
-			UWorld* World = GetWorld();
-
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-			AVirtual_life_projectCharacter* Actor = World->SpawnActor<AVirtual_life_projectCharacter>(
-				PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
-			UE_LOG(LogTemp, Log, TEXT("Actor Spawned at: (%.2f, %.2f, %.2f)"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
-
-			// 스폰된 액터 저장
-			SpawnedPlayers.Add(i.id, Actor);
-		}
-	}
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()
@@ -278,5 +263,4 @@ void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 		SendEnqueue(&p, p.size);
 	}
 
-	//UE_LOG(LogTemp, Log, TEXT("Position sent: X=%.2f, Y=%.2f, Z=%.2f"), Location.X, Location.Y, Location.Z);
 }

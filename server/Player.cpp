@@ -24,7 +24,6 @@ bool Player::send_spawn_packet(PlayerInfo pi)
 	p.size = sizeof(SC_SPAWN_PACKET);
 	p.type = SC_SPAWN;
 	p.pl = pi;
-	cout << id << "에게 " << pi.id << "의 정보를 보낸다: " << pi.x << ", " << pi.y << ", " << pi.z << endl;
 	send(&p);
 	return true;
 }
@@ -35,7 +34,6 @@ bool Player::send_move_packet(PlayerInfo pi)
 	p.size = sizeof(SC_MOVE_PACKET);
 	p.type = SC_MOVEP;
 	p.pl = pi;
-	//cout << id << "에게 " << pi.id << "를 움직인다: " << pi.x << ", " << pi.y << ", " << pi.z << endl;
 	send(&p);
 	return true;
 }
@@ -149,18 +147,22 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     case CS_CHAT:
     {
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		std::string utf8_msg = converter.to_bytes(p->msg);
+
+		std::cout << p->name << ": " << utf8_msg << std::endl;
+
         break;
     }
     case CS_LEAVE:
     {
+		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
         break;
     }
 	case CS_MOVEP:
 	{
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		pinfo = p->pl;
-		//cout << "RECV-CS_MOVE_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
-		//cout << "위치: " << p->pl.x << ", " << p->pl.y << ", " << p->pl.z << endl;
 
 		// 위치정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {

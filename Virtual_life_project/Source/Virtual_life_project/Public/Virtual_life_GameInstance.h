@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendLoginInfoPacket(FString s);
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnPlayer();
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;
@@ -58,7 +61,7 @@ public:
 	UPROPERTY()
 	TMap<int, AVirtual_life_projectCharacter*> SpawnedPlayers;
 
-	TArray<PlayerInfo> arr;
+	TArray<PlayerInfo> NeedSpawnPoints;
 
 private:
 	std::atomic_bool loaded = false;

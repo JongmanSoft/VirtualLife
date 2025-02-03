@@ -50,6 +50,7 @@ struct CS_LEAVE_PACKET {
 struct CS_CHAT_PACKET {
 	unsigned short size;	
 	PACKETID	type;
+	char	name[M_NAME_SIZE];
 	wchar_t	msg[CHAT_SIZE];
 };
 
