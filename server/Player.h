@@ -17,6 +17,7 @@ class Player
 	bool send_spawn_packet(PlayerInfo pi);
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
+	bool send_chat_packet(string name, wstring chat);
 
 public:
 	STATES state;
