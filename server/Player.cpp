@@ -38,6 +38,20 @@ bool Player::send_move_packet(PlayerInfo pi)
 	return true;
 }
 
+bool Player::send_chat_packet(string name, wstring chat)
+{
+	SC_CHAT_PACKET p;
+	p.size = sizeof(SC_CHAT_PACKET);
+	p.type = SC_CHAT;
+
+	// 안전하게 문자열 복사
+	strncpy_s(p.name, sizeof(p.name), name.c_str(), _TRUNCATE);      // name 복사
+	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE);  // chat 복사
+
+	send(&p);
+	return true;  // send 함수는 패킷을 실제로 전송하는 함수여야 함
+}
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -147,11 +161,15 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     case CS_CHAT:
     {
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-		std::string utf8_msg = converter.to_bytes(p->msg);
 
-		std::cout << p->name << ": " << utf8_msg << std::endl;
+		// 보낸 채팅 확인용
+		std::wcout << p->name << ": " << p->msg << std::endl;
 
+		// 채팅 브로드캐스트
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].state == PLAYING and i != id)
+				players[i].send_chat_packet(p->name, p->msg);
+		}
         break;
     }
     case CS_LEAVE:

@@ -189,7 +189,24 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			break;
 		}
 		case SC_CHAT:
+		{
+			SC_CHAT_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_CHAT_PACKET));
+
+			// char* -> FString로 변환
+			FString Name = FString(ANSI_TO_TCHAR(p.name));
+
+			// wchar_t* -> FString로 변환
+			FString Message = FString(p.msg);
+
+			// 최종 메시지 형식 구성
+			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
+
+			// 채팅 리스트에 추가
+			chats.Add(str);
+
 			break;
+		}
 		case SC_MOVEP:
 		{
 			if (!loaded) break;

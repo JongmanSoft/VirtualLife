@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Utility.h"
 
-
-
 std::wstring Utility::strtowstr(const std::string& str)
 {
 	if (str.empty()) return std::wstring();

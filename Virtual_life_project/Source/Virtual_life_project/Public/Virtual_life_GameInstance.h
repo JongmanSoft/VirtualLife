@@ -66,6 +66,8 @@ public:
 
 	TArray<PlayerInfo> NeedSpawnPoints;
 
+	TArray<FString> chats;
+
 private:
 	std::atomic_bool loaded = false;
 	class RecvManager* RecvThread = nullptr;
