@@ -23,7 +23,6 @@ public:
 	TSubclassOf<AVirtual_life_projectCharacter> PlayerClass;
 
 	void OnStart();
-	void OnLevelLoaded(UWorld* LoadedWorld);
 
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
 
@@ -42,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendChatPacket(FString s);
+
+	UFUNCTION(BlueprintCallable)
+	void SendLeavePacket();
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
