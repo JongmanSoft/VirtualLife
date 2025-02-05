@@ -154,6 +154,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
+				
 				// todo: leave 패킷 송신 필요
 			}
 
@@ -188,21 +189,30 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			}
 			break;
 		}
+		case SC_DESPAWN:
+		{
+			SC_DESPAWN_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_DESPAWN_PACKET));
+			if (auto FoundPlayer = SpawnedPlayers.Find(p.id))
+			{
+				auto PlayerActor = *FoundPlayer;
+				if (IsValid(PlayerActor))
+				{
+					PlayerActor->Destroy();
+					SpawnedPlayers.Remove(p.id);
+				}
+			}
+			break;
+		}
+
 		case SC_CHAT:
 		{
 			SC_CHAT_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_CHAT_PACKET));
 
-			// char* -> FString로 변환
 			FString Name = FString(ANSI_TO_TCHAR(p.name));
-
-			// wchar_t* -> FString로 변환
 			FString Message = FString(p.msg);
-
-			// 최종 메시지 형식 구성
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
-
-			// 채팅 리스트에 추가
 			chats.Add(str);
 
 			break;
@@ -249,12 +259,6 @@ void UVirtual_life_GameInstance::OnStart()
 
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = LoadClass<AVirtual_life_projectCharacter>(nullptr, TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"));
-
-	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UVirtual_life_GameInstance::OnLevelLoaded);
-}
-
-void UVirtual_life_GameInstance::OnLevelLoaded(UWorld* LoadedWorld)
-{
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()
@@ -297,6 +301,15 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	// 메시지 설정
 	wcsncpy(p.msg, *s, CHAT_SIZE - 1);
 	p.msg[CHAT_SIZE - 1] = L'\0'; // Null-termination 보장
+
+	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::SendLeavePacket()
+{
+	CS_LEAVE_PACKET	p;
+	p.size = sizeof(CS_LEAVE_PACKET);
+	p.type = CS_LEAVE;
 
 	SendEnqueue(&p, p.size);
 }

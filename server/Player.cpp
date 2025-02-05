@@ -28,6 +28,16 @@ bool Player::send_spawn_packet(PlayerInfo pi)
 	return true;
 }
 
+bool Player::send_despawn_packet(int id)
+{
+	SC_DESPAWN_PACKET p;
+	p.size = sizeof(SC_DESPAWN_PACKET);
+	p.type = SC_DESPAWN;
+	p.id = id;
+	send(&p);
+	return true;
+}
+
 bool Player::send_move_packet(PlayerInfo pi)
 {
 	SC_MOVE_PACKET p;
@@ -117,7 +127,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
 		// todo: db 연동해야 함
-		name = p->name;
 
 		// 접속중인 플레이어인지 확인
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
@@ -128,6 +137,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				break;
 			}
 		
+		name = p->name;
 		PlayerInfo pi;
 		if (true == success) {
 			pi.id = id;
@@ -175,6 +185,21 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     case CS_LEAVE:
     {
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
+
+		if (state != PLAYING) {
+			state = NONE;
+			break; // 로그인 밴 막기
+		}
+
+		// 나간 플레이어 정보 브로드캐스팅
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].state == PLAYING and i != id)
+				players[i].send_despawn_packet(id);
+		}
+		
+		cout << id << "가 종료!" << endl;
+
+		state = NONE;
         break;
     }
 	case CS_MOVEP:

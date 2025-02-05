@@ -5,6 +5,7 @@ constexpr int CHAT_SIZE = 100;
 
 constexpr short MAX_PLAYER = 1000;
 
+enum STATE : char { IDLE, WALK, RUN, JUMP };
 struct PlayerInfo
 {
 	unsigned int id;
@@ -12,6 +13,7 @@ struct PlayerInfo
 	float y;
 	float z;
 	float yaw; // 회전값
+	STATE st; // 애니메이션 동기화용
 };
 
 // Packet ID
