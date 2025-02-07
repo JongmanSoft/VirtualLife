@@ -3,10 +3,7 @@
 #include "Components/InputComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
-
-
 #include "Components/CapsuleComponent.h"
-#include "Components/BoxComponent.h"
 
 #include "seed_spot.h"
 #include "fishing_spot.h"
@@ -208,19 +205,21 @@ void UUse_equip_component::USE_pickaxe()
             }
         }
 
-        //¾Æ·¡ÀÇ Ä¸½¶ÄÄÆ÷³ÍÆ®¿Í ¿À¹ö·¦µÈ °´Ã¼¸¦ °Ë»çÇÏ´Â ºÎºÐÀ» Ä¸½¶ÄÄÆ÷³ÍÆ®°¡ ¾Æ´Ñ box collisionÀ¸·Î ¹Ù²Ù°í½ÍÀ½,
-        UBoxComponent* boxComp = ParentActor->FindComponentByClass<UBoxComponent>();
-        if (boxComp) {
+        UCapsuleComponent* capsuleComp = ParentActor->FindComponentByClass<UCapsuleComponent>();
+        if (capsuleComp) {
             TArray<AActor*> OverlappingActors;
-            boxComp->GetOverlappingActors(OverlappingActors);
+            capsuleComp->GetOverlappingActors(OverlappingActors);
 
             for (AActor* Actor : OverlappingActors)
             {
                 if (Actor->IsA(Amining_spot::StaticClass()))
                 {
+                    bool plant_result = 0;
                     Imining_cpp_interface::Execute_mining_func(Actor);
+
                 }
             }
+
         }
     }
 }
