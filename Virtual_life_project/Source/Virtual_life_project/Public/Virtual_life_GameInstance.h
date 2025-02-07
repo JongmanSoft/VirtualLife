@@ -13,6 +13,8 @@
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
+
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
 {
@@ -21,6 +23,9 @@ class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AVirtual_life_projectCharacter> PlayerClass;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnChatReceived OnChatReceived; // 블루프린트에서 이벤트 바인딩 가능!
 
 	void OnStart();
 
@@ -44,6 +49,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendLeavePacket();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetName() { return name; }
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 

@@ -215,6 +215,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
 			chats.Add(str);
 
+			
+
 			break;
 		}
 		case SC_MOVEP:
