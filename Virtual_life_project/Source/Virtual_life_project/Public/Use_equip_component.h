@@ -27,7 +27,7 @@ public:
     void USE_fishing_rod();
     void USE_tomato_seed();
     void USE_potato_seed();
-
+    void USE_pickaxe();
 
     
 };

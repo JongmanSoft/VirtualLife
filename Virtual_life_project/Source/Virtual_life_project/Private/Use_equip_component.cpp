@@ -4,12 +4,17 @@
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+
 #include "seed_spot.h"
 #include "fishing_spot.h"
+#include "mining_spot.h"
+
 #include "Kismet/GameplayStatics.h"
+
+
 #include "plant_able_cpp_interface.h"
 #include "fishing_cpp_interface.h"
-
+#include "mining_cpp_interface.h"
 
 // Sets default values for this component's properties
 UUse_equip_component::UUse_equip_component()
@@ -46,7 +51,7 @@ void UUse_equip_component::SetupInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAction("Key1", IE_Pressed, this, &UUse_equip_component::USE_fishing_rod);
     PlayerInputComponent->BindAction("Key2", IE_Pressed, this, &UUse_equip_component::USE_tomato_seed);
     PlayerInputComponent->BindAction("Key3", IE_Pressed, this, &UUse_equip_component::USE_potato_seed);
-    PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_None);
+    PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_pickaxe);
     PlayerInputComponent->BindAction("Key5", IE_Pressed, this, &UUse_equip_component::USE_None);
 }
 
@@ -72,7 +77,7 @@ void UUse_equip_component::USE_fishing_rod()
             {
                 if (Actor->IsA(Afishing_spot::StaticClass())) {
 
-           
+                    UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/water.water")));
                         UStaticMeshComponent* fishing_rod_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("FishingRod")));
                         if (fishing_rod_mesh)fishing_rod_mesh->SetVisibility(true);
                         if (SkeletalMeshComp)
@@ -174,6 +179,43 @@ void UUse_equip_component::USE_potato_seed()
                         UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
 
                     }
+
+                }
+            }
+
+        }
+    }
+}
+
+void UUse_equip_component::USE_pickaxe()
+{
+    AActor* ParentActor = GetOwner();
+    if (ParentActor)
+    {
+
+        USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
+        if (SkeletalMeshComp)
+        {
+            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+            if (AnimInstance)
+            {
+                UStaticMeshComponent* pickaxe_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("Pickaxe")));
+                if (pickaxe_mesh)pickaxe_mesh->SetVisibility(true);
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/slash_pickaxe_montage.slash_pickaxe_montage")), 1.0f);
+            }
+        }
+
+        UCapsuleComponent* capsuleComp = ParentActor->FindComponentByClass<UCapsuleComponent>();
+        if (capsuleComp) {
+            TArray<AActor*> OverlappingActors;
+            capsuleComp->GetOverlappingActors(OverlappingActors);
+
+            for (AActor* Actor : OverlappingActors)
+            {
+                if (Actor->IsA(Amining_spot::StaticClass()))
+                {
+                    bool plant_result = 0;
+                    Imining_cpp_interface::Execute_mining_func(Actor);
 
                 }
             }
