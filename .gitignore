@@ -104,3 +104,8 @@ Virtual_life_project/Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 Virtual_life_project/DerivedDataCache/*
+
+# server
+server/.vs/*
+server/x64/*
+server/server/*

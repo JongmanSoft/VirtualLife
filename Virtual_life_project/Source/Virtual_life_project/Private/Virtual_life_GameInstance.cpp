@@ -213,9 +213,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FString Name = FString(ANSI_TO_TCHAR(p.name));
 			FString Message = FString(p.msg);
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
-			chats.Add(str);
 
-			
+			OnChatReceived.Broadcast(str);
 
 			break;
 		}
