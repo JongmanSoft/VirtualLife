@@ -111,46 +111,8 @@ void UUse_equip_component::USE_tomato_seed()
 
         }
     }
-
 }
 
 void UUse_equip_component::USE_potato_seed()
 {
-    AActor* ParentActor = GetOwner();
-    if (ParentActor)
-    {
-
-        USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
-        if (SkeletalMeshComp)
-        {
-            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
-            if (AnimInstance)
-            {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/fast_plant.fast_plant")), 1.0f);
-            }
-        }
-
-        UCapsuleComponent* capsuleComp = ParentActor->FindComponentByClass<UCapsuleComponent>();
-        if (capsuleComp) {
-            TArray<AActor*> OverlappingActors;
-            capsuleComp->GetOverlappingActors(OverlappingActors);
-
-            for (AActor* Actor : OverlappingActors)
-            {
-                if (Actor->IsA(Aseed_spot::StaticClass()))
-                {
-
-                    bool plant_result = 0;
-                    Iplant_able_cpp_interface::Execute_plant_what_func(Actor, 1, plant_result);
-
-                    if (plant_result) {
-                        UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
-
-                    }
-
-                }
-            }
-
-        }
-    }
 }
