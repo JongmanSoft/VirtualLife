@@ -5,8 +5,11 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "seed_spot.h"
+#include "fishing_spot.h"
 #include "Kismet/GameplayStatics.h"
 #include "plant_able_cpp_interface.h"
+#include "fishing_cpp_interface.h"
+
 
 // Sets default values for this component's properties
 UUse_equip_component::UUse_equip_component()
@@ -57,17 +60,41 @@ void UUse_equip_component::USE_fishing_rod()
     AActor* ParentActor = GetOwner();
     if (ParentActor)
     {
-        UStaticMeshComponent* fishing_rod_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("FishingRod")));
-        if(fishing_rod_mesh)fishing_rod_mesh->SetVisibility(true);
+        //플레이어 메쉬찾기
         USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
-        if (SkeletalMeshComp)
-        {
-            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
-            if (AnimInstance )
+        //우선 피싱스폿 안에 들어왔는지 확인 
+        UCapsuleComponent* capsuleComp = ParentActor->FindComponentByClass<UCapsuleComponent>();
+        if (capsuleComp) {
+            TArray<AActor*> OverlappingActors;
+            capsuleComp->GetOverlappingActors(OverlappingActors);
+
+            for (AActor* Actor : OverlappingActors)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/metahuman_fishing_Montage.metahuman_fishing_Montage")), 1.0f);
+                if (Actor->IsA(Afishing_spot::StaticClass())) {
+
+           
+                        UStaticMeshComponent* fishing_rod_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("FishingRod")));
+                        if (fishing_rod_mesh)fishing_rod_mesh->SetVisibility(true);
+                        if (SkeletalMeshComp)
+                        {
+                            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+                            if (AnimInstance)
+                            {
+                                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/metahuman_fishing_Montage.metahuman_fishing_Montage")), 1.0f);
+                            }
+
+                            bool fishing_result = 0;
+                            Ifishing_cpp_interface::Execute_fishing_func(Actor,fishing_result);
+
+                        }
+                    
+
+
+                }
             }
         }
+
+        
     }
   
 }
