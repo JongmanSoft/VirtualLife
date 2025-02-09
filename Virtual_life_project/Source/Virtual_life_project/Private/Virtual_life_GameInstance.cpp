@@ -254,10 +254,23 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 	}
 }
 
+UVirtual_life_GameInstance::UVirtual_life_GameInstance()
+{
+	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
+
+	if (m_inventory)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UPlayerInventory has been created successfully."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create UPlayerInventory."));
+	}
+}
+
 void UVirtual_life_GameInstance::OnStart()
 {
 	Super::OnStart();
-
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = LoadClass<AVirtual_life_projectCharacter>(nullptr, TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"));
 }
