@@ -10,6 +10,7 @@
 #include "../Network/NetworkManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Virtual_life_project/Virtual_life_projectCharacter.h"
+#include "PlayerInventory.h"
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
@@ -21,6 +22,8 @@ class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	UVirtual_life_GameInstance();
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AVirtual_life_projectCharacter> PlayerClass;
 
@@ -77,6 +80,10 @@ public:
 	TArray<PlayerInfo> NeedSpawnPoints;
 
 	TArray<FString> chats;
+public:
+	//장비,아이템을 관리하는 인벤토리클래스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPlayerInventory* m_inventory;
 
 private:
 	std::atomic_bool loaded = false;

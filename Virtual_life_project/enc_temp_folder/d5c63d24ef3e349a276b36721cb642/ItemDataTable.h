@@ -21,17 +21,6 @@ struct FItemData : public FTableRowBase
 {
     GENERATED_BODY()
 
-
-
-    FItemData()
-        : ItemID(0)
-        , ItemCategory(EItemCategory::Item)
-        , ItemTexture(nullptr)
-        , ItemMesh(nullptr)
-        , ItemPrice(0)
-    {
-    }
-
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     uint8 ItemID;
 
