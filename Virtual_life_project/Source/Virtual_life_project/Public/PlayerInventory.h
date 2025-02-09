@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "ItemDataTable.h"
 #include "PlayerInventory.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class VIRTUAL_LIFE_PROJECT_API UPlayerInventory : public UObject
 {
 	GENERATED_BODY()
+
+
+
 	
 };
