@@ -56,6 +56,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FString GetName() { return name; }
 
+	UFUNCTION(BlueprintCallable)
+	void SendGetItemPacket(uint8 item_id, uint8 num);
+
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;

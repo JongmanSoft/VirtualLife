@@ -44,6 +44,17 @@ void UVirtual_life_GameInstance::ConnectServer()
 	}
 }
 
+void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, uint8 num)
+{
+	CS_GET_ITEM_PACKET p;
+	p.size = sizeof(CS_GET_ITEM_PACKET);
+	p.type = CS_GET_ITEM;
+	p.id = item_id;
+	p.num = num;
+
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -151,6 +162,12 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				MyPlayerInfo = p.player;
 				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("testMap")));
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
+
+				TMap<uint8, uint8> tmpmap;
+				for (int i = 0; i < ITEM_SIZE; ++i) {
+					tmpmap[i] = p.items[i];
+				}
+				m_inventory->road_Item(tmpmap); // 인벤토리 초기화
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
@@ -248,6 +265,14 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			UE_LOG(LogTemp, Log, TEXT("Player %d moved to (%.2f, %.2f, %.2f)"), p.pl.id, NewLocation.X, NewLocation.Y, NewLocation.Z);
 
+			break;
+		}
+		case SC_UPDATE_ITEM:
+		{
+			SC_UPDATE_ITEM_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_ITEM_PACKET));
+
+			m_inventory->Add_Item(p.id, p.num);
 			break;
 		}
 		}

@@ -59,7 +59,20 @@ bool Player::send_chat_packet(string name, wstring chat)
 	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE);  // chat 복사
 
 	send(&p);
-	return true;  // send 함수는 패킷을 실제로 전송하는 함수여야 함
+	return true;
+}
+
+bool Player::send_update_item_packet(unsigned short id, unsigned short num) 
+{
+	SC_UPDATE_ITEM_PACKET p;
+	p.size = sizeof(SC_UPDATE_ITEM_PACKET);
+	p.type = SC_UPDATE_ITEM;
+	p.id = id;
+	p.num = num;
+
+	cout << this->id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << endl;
+	send(&p);
+	return true;
 }
 
 void Player::send(void* packet)
@@ -215,6 +228,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 
 		break;
+	}
+	case CS_GET_ITEM:
+	{
+		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
+		if (player_item.contains(p->id)) player_item[id] += p->num;
+		else player_item[id] = p->num;
+
+		send_update_item_packet(id, player_item[id]);
 	}
     default:
 

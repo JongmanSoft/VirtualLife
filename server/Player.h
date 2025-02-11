@@ -18,6 +18,9 @@ class Player
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
 	bool send_chat_packet(string name, wstring chat);
+	bool send_update_item_packet(unsigned short id, unsigned short num); // 해당 아이템이 num개로 업데이트
+
+	unordered_map<unsigned short, unsigned short> player_item;
 
 public:
 	STATES state;

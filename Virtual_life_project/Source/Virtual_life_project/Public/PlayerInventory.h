@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Engine/GameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerInventory.generated.h"
+
+class UVirtual_life_GameInstance;
 
 /**
  * 
@@ -26,11 +30,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	TMap <uint8, uint8> Ownerd_Equip; //단축키번호(1~5), 장착 장비 ID
 	
-	//todo: 이함수를 서버로 옮기고 클라는 소지아이템을 일괄로 받아오는 함수로 만들어야하지않나...
 	UFUNCTION(BlueprintCallable)
 	void Add_Item(uint8 Add_ID, uint8 Add_num); //아이템 아이디와 갯수를 받아 소지아이템에 추가하는 함수
 
 	UFUNCTION(BlueprintCallable)
 	void road_Item(TMap<uint8, uint8>New_Items);  //아이템을 일괄로 로드하는 함수
 	
+	UFUNCTION(BlueprintCallable)
+	void get_item(uint8 id, uint8 num); // 서버 송신
+	
+	UFUNCTION(BlueprintCallable)
+	void update_item(uint8 id, uint8 num); // 서버 수신
 };
