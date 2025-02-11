@@ -18,10 +18,18 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    UInputComponent* InputComponent; 
+    typedef void (UUse_equip_component::* ActionFunc)();
+    ActionFunc ActionFunctions[5];
+
+public:
     // Called every frame
     virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
     virtual void SetupInputComponent(class UInputComponent* PlayerInputComponent);
+
+    UFUNCTION(BlueprintCallable, Category = "Input")
+    void ChangeBindingFunc(uint8 index, uint8 tool_ID);
 
     void USE_None();
     void USE_fishing_rod();

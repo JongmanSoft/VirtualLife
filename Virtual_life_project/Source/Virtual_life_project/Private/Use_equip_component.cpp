@@ -33,14 +33,18 @@ void UUse_equip_component::BeginPlay()
     AActor* ParentActor = GetOwner();
     if (ParentActor)
     {
-        UInputComponent* InputComponent = ParentActor->FindComponentByClass<UInputComponent>();
+        InputComponent = ParentActor->FindComponentByClass<UInputComponent>();
         if (InputComponent)
         {
             SetupInputComponent(InputComponent);
         }
     }
 
-  
+    ActionFunctions[0] = &UUse_equip_component::USE_None;
+    ActionFunctions[1] = &UUse_equip_component::USE_potato_seed;
+    ActionFunctions[2] = &UUse_equip_component::USE_tomato_seed;
+    ActionFunctions[3] = &UUse_equip_component::USE_fishing_rod;
+    ActionFunctions[4] = &UUse_equip_component::USE_pickaxe;
 }
 
 // Called every frame
@@ -56,6 +60,15 @@ void UUse_equip_component::SetupInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAction("Key3", IE_Pressed, this, &UUse_equip_component::USE_potato_seed);
     PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_pickaxe);
     PlayerInputComponent->BindAction("Key5", IE_Pressed, this, &UUse_equip_component::USE_None);
+}
+
+void UUse_equip_component::ChangeBindingFunc(uint8 index, uint8 tool_ID)
+{
+    static const char key_string[5][5] = {"Key1","key2","key3" ,"key4" ,"key5" };
+ 
+    if(tool_ID == 0)  InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID]);
+    else InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID-7]);
+
 }
 
 void UUse_equip_component::USE_None()

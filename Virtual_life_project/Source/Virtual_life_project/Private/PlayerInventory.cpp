@@ -4,7 +4,7 @@
 
 UPlayerInventory::UPlayerInventory()
 {
-    UE_LOG(LogTemp, Log, TEXT("UPlayerInventory constructor called."));
+    Ownerd_Equip.SetNum(5);
 }
 
 void UPlayerInventory::Add_Item(uint8 Add_ID, uint8 Add_num)
