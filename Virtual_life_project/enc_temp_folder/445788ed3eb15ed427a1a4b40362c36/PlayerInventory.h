@@ -35,9 +35,6 @@ public:
 	void Add_Item(uint8 Add_ID, uint8 Add_num); //아이템 아이디와 갯수를 받아 소지아이템에 추가하는 함수
 
 	UFUNCTION(BlueprintCallable)
-	bool Delete_Item(uint8 Add_ID, uint8 Add_num); //아이템 아이디와 갯수를 받아 소지아이템에서 제거, 실패시 false반환
-
-	UFUNCTION(BlueprintCallable)
 	void road_Item(TMap<uint8, uint8>New_Items);  //아이템을 일괄로 로드하는 함수
 	
 	UFUNCTION(BlueprintCallable)
