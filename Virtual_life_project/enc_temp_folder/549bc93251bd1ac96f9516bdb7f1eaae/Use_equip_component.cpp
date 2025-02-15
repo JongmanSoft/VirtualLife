@@ -64,11 +64,10 @@ void UUse_equip_component::SetupInputComponent(UInputComponent* PlayerInputCompo
 
 void UUse_equip_component::ChangeBindingFunc(uint8 index, uint8 tool_ID)
 {
-    static const char key_string[5][5] = {"Key1","key2","key3" ,"key4" ,"Key5" };
+    static const char key_string[5][5] = {"Key1","key2","key3" ,"key4" ,"key5" };
  
     if(tool_ID == 0)  InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID]);
-    else { InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID - 7]); 
-    }
+    else InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID-7]);
 
 }
 
