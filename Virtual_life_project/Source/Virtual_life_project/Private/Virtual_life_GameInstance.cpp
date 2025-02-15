@@ -160,14 +160,23 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 로그인 성공: 메인 맵으로 이동
 			if (true == p.success) {
 				MyPlayerInfo = p.player;
-				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("testMap")));
+				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("sample_map")));
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 
-				TMap<uint8, uint8> tmpmap;
-				for (int i = 0; i < ITEM_SIZE; ++i) {
-					tmpmap[i] = p.items[i];
+				if (true == p.isNew) {
+					TMap<uint8, uint8> tmpmap;
+					for (int i = 0; i < ITEM_SIZE; ++i) {
+						tmpmap.Add(i, 0);
+					}
+					m_inventory->road_Item(tmpmap); // 인벤토리 초기화
 				}
-				m_inventory->road_Item(tmpmap); // 인벤토리 초기화
+				else {
+					TMap<uint8, uint8> tmpmap;
+					for (int i = 0; i < ITEM_SIZE; ++i) {
+						tmpmap.Add(i, p.items[i]);
+					}
+					m_inventory->road_Item(tmpmap); // 인벤토리 초기화
+				}
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
@@ -297,7 +306,7 @@ void UVirtual_life_GameInstance::OnStart()
 {
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
-	PlayerClass = LoadClass<AVirtual_life_projectCharacter>(nullptr, TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"));
+	PlayerClass = LoadClass<AVirtual_life_projectCharacter>(nullptr, TEXT("/Game/seyoung/BP_metahuman.BP_metahuman"));
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()

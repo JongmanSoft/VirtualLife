@@ -79,6 +79,7 @@ struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
 	PACKETID type;
 	bool success;
+	bool isNew;
 	PlayerInfo player;
 	unsigned short items[ITEM_SIZE];
 };

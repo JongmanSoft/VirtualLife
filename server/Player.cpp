@@ -13,6 +13,9 @@ bool Player::send_login_info_packet(bool b, PlayerInfo pi)
 	}
 	else
 		state = NONE;
+
+	p.isNew = true;
+
 	send(&p);
 
 	return true;
