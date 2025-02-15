@@ -55,19 +55,31 @@ void UUse_equip_component::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UUse_equip_component::SetupInputComponent(UInputComponent* PlayerInputComponent)
 {
-    PlayerInputComponent->BindAction("Key1", IE_Pressed, this, &UUse_equip_component::USE_fishing_rod);
-    PlayerInputComponent->BindAction("Key2", IE_Pressed, this, &UUse_equip_component::USE_tomato_seed);
-    PlayerInputComponent->BindAction("Key3", IE_Pressed, this, &UUse_equip_component::USE_potato_seed);
-    PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_pickaxe);
+    PlayerInputComponent->BindAction("Key1", IE_Pressed, this, &UUse_equip_component::USE_None);
+    PlayerInputComponent->BindAction("Key2", IE_Pressed, this, &UUse_equip_component::USE_None);
+    PlayerInputComponent->BindAction("Key3", IE_Pressed, this, &UUse_equip_component::USE_None);
+    PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_None);
     PlayerInputComponent->BindAction("Key5", IE_Pressed, this, &UUse_equip_component::USE_None);
 }
 
 void UUse_equip_component::ChangeBindingFunc(uint8 index, uint8 tool_ID)
 {
-    static const char key_string[5][5] = {"Key1","key2","key3" ,"key4" ,"Key5" };
+
  
-    if(tool_ID == 0)  InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID]);
-    else { InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID - 7]); 
+
+    static const TCHAR* key_string[5] = { TEXT("Key1"), TEXT("Key2"), TEXT("Key3"), TEXT("Key4"), TEXT("Key5") };
+
+    // 기존 바인딩 제거
+    InputComponent->RemoveActionBinding(key_string[index], IE_Pressed);
+
+    // 새로운 바인딩 추가
+    if (tool_ID == 0)
+    {
+        InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID]);
+    }
+    else
+    {
+        InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID - 7]);
     }
 
 }
@@ -78,7 +90,7 @@ void UUse_equip_component::USE_None()
 
 void UUse_equip_component::USE_fishing_rod()
 {
-   
+    
     AActor* ParentActor = GetOwner();
     if (ParentActor)
     {
