@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Player.h"
 
-bool Player::send_login_info_packet(bool b, PlayerInfo pi)
+// todo: 시간!
+
+bool Player::send_login_info_packet(bool b, PlayerInfo pi, bool isnew)
 {
 	SC_LOGIN_INFO_PACKET p;
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.success = true;
 	p.type = SC_LOGININFO;
+
 	if (true == b) { // 성공했다면
 		p.player = pi;
 		
@@ -14,7 +17,19 @@ bool Player::send_login_info_packet(bool b, PlayerInfo pi)
 	else
 		state = NONE;
 
-	p.isNew = true;
+	p.isNew = isnew;
+	if (true == p.isNew) { // 새 플레이어라면: 모든 아이템 추가
+		for (int i = 0; i < ITEM_SIZE; ++i)
+			p.items[i] = 0;
+	}
+	else { // 기존 플레이어라면 : 있는 아이템만 추가
+		for (int i = 0; i < ITEM_SIZE; ++i) {
+			if (player_item.contains(i))
+				p.items[i] = player_item[i];
+			else
+				p.items[i] = 0;
+		}
+	}
 
 	send(&p);
 
@@ -144,15 +159,21 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
 		// todo: db 연동해야 함
 
-		// 접속중인 플레이어인지 확인
+		// 1. 접속중인 플레이어인지 확인
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		bool success = true;
-		for (int i = 0; i < players.size(); ++i)
+		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() != NONE && players[i].name == p->name) {
 				success = false;
 				break;
 			}
+		}
 		
+		// 신규유저 확인 -> DB연동해야함
+		bool is_new = true;
+
+		
+
 		name = p->name;
 		PlayerInfo pi;
 		if (true == success) {
@@ -163,7 +184,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			pi.yaw = 0.f;
 			pinfo = pi;
 
-			send_login_info_packet(success, pi);
+			send_login_info_packet(success, pi, is_new);
 
 			// 지금 있는 애들한테 브로드캐스팅
 			// 지금 있는 애들 정보 받아오기

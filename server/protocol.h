@@ -18,6 +18,14 @@ struct PlayerInfo
 	STATE st; // 애니메이션 동기화용?
 };
 
+struct Customizing
+{
+	float skin; // 피부색
+	unsigned short shirt;
+	unsigned short pants;
+	unsigned short shoes;
+};
+
 // Packet ID
 enum PACKETID : char
 {
@@ -28,6 +36,7 @@ enum PACKETID : char
 	CS_CHAT,
 	CS_MOVEP,
 	CS_GET_ITEM,
+	CS_UPDATE_CUSTOM,
 
 	// server to client
 	SC_LOGININFO,
@@ -37,7 +46,8 @@ enum PACKETID : char
 	SC_CHAT,
 	SC_MOVEP,
 	SC_UPDATE_ITEM,
-	SC_DROP_ITEM
+	SC_DROP_ITEM,
+	SC_UPDATE_CUSTOM
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -74,6 +84,12 @@ struct CS_GET_ITEM_PACKET { // 아이템 획득 -> 무조건 한개. 로 해도 될까?
 	unsigned short num;
 };
 
+struct CS_UPDATE_CUSTOM_PACKET {
+	unsigned short size;
+	PACKETID type;
+	Customizing c;
+};
+
 // server to client
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
@@ -88,6 +104,7 @@ struct SC_SPAWN_PACKET {
 	unsigned short size;
 	PACKETID	type;
 	PlayerInfo pl;
+	Customizing c;
 };
 
 struct SC_DESPAWN_PACKET {
@@ -114,5 +131,12 @@ struct SC_UPDATE_ITEM_PACKET {
 	PACKETID type;
 	unsigned short id;
 	unsigned short num;
+};
+
+struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
+	unsigned short size;
+	PACKETID type;
+	unsigned short id;
+	Customizing c;
 };
 #pragma pack (pop)
