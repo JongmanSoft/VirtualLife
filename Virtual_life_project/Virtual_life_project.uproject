@@ -64,6 +64,10 @@
 		{
 			"Name": "ActorPalette",
 			"Enabled": true
+		},
+		{
+			"Name": "RigLogicMutable",
+			"Enabled": true
 		}
 	]
 }
