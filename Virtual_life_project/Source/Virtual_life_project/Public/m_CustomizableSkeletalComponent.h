@@ -14,7 +14,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VIRTUAL_LIFE_PROJECT_API Um_CustomizableSkeletalComponent : public UCustomizableSkeletalComponent
 {
 	GENERATED_BODY()
@@ -22,6 +22,7 @@ class VIRTUAL_LIFE_PROJECT_API Um_CustomizableSkeletalComponent : public UCustom
 public:
 	Um_CustomizableSkeletalComponent();
 	virtual void InitializeComponent() override;
+	virtual void BeginPlay() override;
 
 public:
 	//커스텀 데이터들

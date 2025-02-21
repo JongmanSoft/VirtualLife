@@ -21,24 +21,39 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 	hair_color_R = 1;
 	hair_color_G = 0.2;
 	hair_color_B = 1;
+
 }
 
 void Um_CustomizableSkeletalComponent::InitializeComponent()
 {
 
-	//액터가 월드에 배치될때 호출!
+	//Super::InitializeComponent();
 
-	Super::InitializeComponent();
+	
 
-	//동적인스턴스로 할당 
+}
+
+void Um_CustomizableSkeletalComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	UE_LOG(LogTemp, Log, TEXT("걍여기로 옮김 ㅅㅂ"));
 	UCustomizableObject* parentCO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
 	if (parentCO)
 	{
-		// 새 인스턴스 생성
-		UCustomizableObjectInstance* instance = NewObject<UCustomizableObjectInstance>(GetTransientPackage(), UCustomizableObjectInstance::StaticClass());
+		UCustomizableObjectInstance* instance = NewObject<UCustomizableObjectInstance>(this, UCustomizableObjectInstance::StaticClass());
 		instance->SetObject(parentCO);
 		this->SetCustomizableObjectInstance(instance);
+
+		// 디버깅 로그 추가
+		UE_LOG(LogTemp, Log, TEXT("CustomizableObjectInstance set: %s"), *instance->GetName());
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to load CO_metahuman"));
+	}
+
+	this->SetComponentName(FName("Character"));
+	UE_LOG(LogTemp, Log, TEXT("ComponentName set to: %s"), *this->GetComponentName().ToString());
 
 }
 
