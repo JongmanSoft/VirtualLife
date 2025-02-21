@@ -5,6 +5,8 @@
 
 Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent() 
 {
+
+	//기본 디폴트 값 
 	skin = 0.5;
 	shirt = 0;
 	pants = 0;
@@ -23,6 +25,9 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 
 void Um_CustomizableSkeletalComponent::InitializeComponent()
 {
+
+	//액터가 월드에 배치될때 호출!
+
 	Super::InitializeComponent();
 
 	//동적인스턴스로 할당 
@@ -40,8 +45,6 @@ void Um_CustomizableSkeletalComponent::InitializeComponent()
 
 void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
 {
-
-
 	skin =        cus.skin  ;
 	shirt =       cus.shirt ;
 	pants =       cus.pants ;
@@ -62,5 +65,22 @@ void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
 
 void Um_CustomizableSkeletalComponent::apply_actor_custom()
 {
+	// IntParameters
+	//추후 매핑 필요... 아직 미완
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Pants_enum"), FString("long_pants"), -1);
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("shoes_enum"), FString("boots"), -1);
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Torso_enum"), FString("Tshirt"), -1);
 
+	// FloatParameters
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_L_color_hue"), L_eye_color_hue, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_L_color_sat"), L_eye_color_sat, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_R_color_hue"), R_eye_color_hue, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_R_color_sat"), R_eye_color_sat, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_scale"), eye_scale, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("pupil_scale"), pupil_scale, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("skin_brighness"), skin, -1);
+
+
+	//메시에 반영
+	this->GetCustomizableObjectInstance()->UpdateSkeletalMeshAsync(false,false);
 }
