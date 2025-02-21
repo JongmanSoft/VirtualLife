@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MuCO/CustomizableObject.h"
+#include "MuCO/CustomizableObjectInstance.h"
 #include "MuCO/CustomizableSkeletalComponent.h"
 #include "MuCO/CustomizableObjectSystem.h" 
+
 #include "../Network/NetworkManager.h"
 #include "m_CustomizableSkeletalComponent.generated.h"
 
@@ -18,6 +21,7 @@ class VIRTUAL_LIFE_PROJECT_API Um_CustomizableSkeletalComponent : public UCustom
 
 public:
 	Um_CustomizableSkeletalComponent();
+	virtual void InitializeComponent() override;
 
 public:
 	//커스텀 데이터들

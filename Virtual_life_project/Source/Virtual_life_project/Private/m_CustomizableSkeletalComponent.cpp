@@ -5,9 +5,6 @@
 
 Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent() 
 {
-	// C++ 방식
-	//UCustomizableObject* CO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
-	//UCustomizableObjectInstance* COInstance = UCustomizableObjectSystem::GetInstance()->CreateInstance(CO);
 	skin = 0.5;
 	shirt = 0;
 	pants = 0;
@@ -22,6 +19,23 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 	hair_color_R = 1;
 	hair_color_G = 0.2;
 	hair_color_B = 1;
+}
+
+void Um_CustomizableSkeletalComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	//동적인스턴스로 할당 
+	UCustomizableObject* parentCO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
+	if (parentCO)
+	{
+		// 새 인스턴스 생성
+		UCustomizableObjectInstance* instance = NewObject<UCustomizableObjectInstance>(GetTransientPackage(), UCustomizableObjectInstance::StaticClass());
+		instance->SetObject(parentCO);
+		this->SetCustomizableObjectInstance(instance);
+	}
+
+
 }
 
 void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
