@@ -40,7 +40,6 @@ void Um_CustomizableSkeletalComponent::InitializeComponent()
 		this->SetCustomizableObjectInstance(instance);
 	}
 
-
 }
 
 void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
@@ -83,4 +82,5 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 
 	//메시에 반영
 	this->GetCustomizableObjectInstance()->UpdateSkeletalMeshAsync(false,false);
+	this->UpdateSkeletalMeshAsync();
 }
