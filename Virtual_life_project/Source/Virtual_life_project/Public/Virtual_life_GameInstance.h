@@ -10,6 +10,7 @@
 #include "../Network/NetworkManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Virtual_life_project/Virtual_life_projectCharacter.h"
+#include "Player_data.h"
 #include "PlayerInventory.h"
 #include "Custom_data.h"
 #include <mutex>
@@ -85,6 +86,11 @@ public:
 	TArray<PlayerInfo> NeedSpawnPoints;
 
 	TArray<FString> chats;
+
+public:
+	// 이름,직업,나이, 체력,피로도를 관리하는 플레이어 데이터 클래스
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "player_info")
+	UPlayer_data* m_data;
 public:
 	//장비,아이템을 관리하는 인벤토리클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")

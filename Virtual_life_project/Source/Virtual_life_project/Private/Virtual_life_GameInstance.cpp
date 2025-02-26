@@ -290,6 +290,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 {
+	m_data = CreateDefaultSubobject<UPlayer_data>(TEXT("PlayerData"));
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 }
