@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Custom_data.h"
 #include "MuCO/CustomizableObject.h"
 #include "MuCO/CustomizableObjectInstance.h"
 #include "MuCO/CustomizableSkeletalComponent.h"
@@ -26,7 +27,6 @@ public:
 
 public:
 	//커스텀 데이터들
-	// 커스텀 데이터들
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkinData")
 	float skin; // 피부색
 	// 옷 정보
@@ -62,10 +62,13 @@ public:
 
 
 public:
+	//커스텀데이터 초기화용
+	void generated_custom(UCustom_data cus);
 	//액터에 변경 적용함수(서버용)
 	void custom_data_update(Customizing cus);
 	UFUNCTION(BlueprintCallable, Category = "update")
 	void apply_actor_custom();
+	
 
 	
 };

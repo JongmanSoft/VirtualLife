@@ -57,6 +57,26 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 
 }
 
+void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data cus)
+{
+	skin = cus.skin;
+	shirt = cus.shirt;
+	pants = cus.pants;
+	shoes = cus.shoes;
+	R_eye_color_hue = cus.R_eye_color_hue;
+	R_eye_color_sat = cus.R_eye_color_sat;
+	L_eye_color_hue = cus.L_eye_color_hue;
+	L_eye_color_sat = cus.L_eye_color_sat;
+	eye_scale = cus.eye_scale;
+	pupil_scale = cus.pupil_scale;
+	hair = cus.hair;
+	hair_color_R = cus.hair_color_R;
+	hair_color_G = cus.hair_color_G;
+	hair_color_B = cus.hair_color_B;
+
+	apply_actor_custom(); //변경 내용을 액터에 반영
+}
+
 void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
 {
 	skin =        cus.skin  ;
