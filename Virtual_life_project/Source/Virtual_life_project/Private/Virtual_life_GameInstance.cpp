@@ -291,15 +291,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 {
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
-
-	if (m_inventory)
-	{
-		UE_LOG(LogTemp, Log, TEXT("UPlayerInventory has been created successfully."));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to create UPlayerInventory."));
-	}
+	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 }
 
 void UVirtual_life_GameInstance::OnStart()

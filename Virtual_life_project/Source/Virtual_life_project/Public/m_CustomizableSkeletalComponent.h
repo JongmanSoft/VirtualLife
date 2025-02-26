@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Custom_data.h"
+#include "Virtual_life_GameInstance.h"
 #include "MuCO/CustomizableObject.h"
 #include "MuCO/CustomizableObjectInstance.h"
 #include "MuCO/CustomizableSkeletalComponent.h"
@@ -62,8 +62,10 @@ public:
 
 
 public:
-	//커스텀데이터 초기화용
-	void generated_custom(UCustom_data cus);
+	//인스턴스 불러오기 
+	void instance_import();
+	//커스텀데이터 초기화용(게임플레이어용)
+	void generated_custom(UCustom_data* cus);
 	//액터에 변경 적용함수(서버용)
 	void custom_data_update(Customizing cus);
 	UFUNCTION(BlueprintCallable, Category = "update")

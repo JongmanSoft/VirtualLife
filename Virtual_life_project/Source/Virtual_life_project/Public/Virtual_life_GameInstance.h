@@ -11,6 +11,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Virtual_life_project/Virtual_life_projectCharacter.h"
 #include "PlayerInventory.h"
+#include "Custom_data.h"
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
@@ -88,6 +89,13 @@ public:
 	//장비,아이템을 관리하는 인벤토리클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	UPlayerInventory* m_inventory;
+
+public: 
+	//커스텀데이터를 저장하는 커스텀클래스 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+	UCustom_data* m_custom;
+
+	
 
 private:
 	std::atomic_bool loaded = false;

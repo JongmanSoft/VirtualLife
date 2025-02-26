@@ -36,7 +36,7 @@ void Um_CustomizableSkeletalComponent::InitializeComponent()
 void Um_CustomizableSkeletalComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp, Log, TEXT("걍여기로 옮김 ㅅㅂ"));
+
 	UCustomizableObject* parentCO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
 	if (parentCO)
 	{
@@ -57,22 +57,30 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 
 }
 
-void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data cus)
+void Um_CustomizableSkeletalComponent::instance_import()
 {
-	skin = cus.skin;
-	shirt = cus.shirt;
-	pants = cus.pants;
-	shoes = cus.shoes;
-	R_eye_color_hue = cus.R_eye_color_hue;
-	R_eye_color_sat = cus.R_eye_color_sat;
-	L_eye_color_hue = cus.L_eye_color_hue;
-	L_eye_color_sat = cus.L_eye_color_sat;
-	eye_scale = cus.eye_scale;
-	pupil_scale = cus.pupil_scale;
-	hair = cus.hair;
-	hair_color_R = cus.hair_color_R;
-	hair_color_G = cus.hair_color_G;
-	hair_color_B = cus.hair_color_B;
+	UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+	if (game_inst && game_inst->m_custom) { // nullptr 체크
+		generated_custom(game_inst->m_custom); // 포인터 역참조
+	}
+}
+
+void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data* cus)
+{
+	skin = cus->skin;
+	shirt = cus->shirt;
+	pants = cus->pants;
+	shoes = cus->shoes;
+	R_eye_color_hue = cus->R_eye_color_hue;
+	R_eye_color_sat = cus->R_eye_color_sat;
+	L_eye_color_hue = cus->L_eye_color_hue;
+	L_eye_color_sat = cus->L_eye_color_sat;
+	eye_scale = cus->eye_scale;
+	pupil_scale = cus->pupil_scale;
+	hair = cus->hair;
+	hair_color_R = cus->hair_color_R;
+	hair_color_G = cus->hair_color_G;
+	hair_color_B = cus->hair_color_B;
 
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
