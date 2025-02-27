@@ -3,45 +3,45 @@
 
 // todo: 시간!
 
-bool Player::send_login_info_packet(bool b, PlayerInfo pi, bool isnew)
+bool Player::send_login_info_packet(bool res, bool isnew)
 {
 	SC_LOGIN_INFO_PACKET p;
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
-	p.success = true;
+	p.success = res;
 	p.type = SC_LOGININFO;
-
-	if (true == b) { // 성공했다면
-		p.player = pi;
-		
-	}
-	else
-		state = NONE;
-
 	p.isNew = isnew;
-	if (true == p.isNew) { // 새 플레이어라면: 모든 아이템 추가
-		for (int i = 0; i < ITEM_SIZE; ++i)
-			p.items[i] = 0;
-	}
-	else { // 기존 플레이어라면 : 있는 아이템만 추가
-		for (int i = 0; i < ITEM_SIZE; ++i) {
-			if (player_item.contains(i))
-				p.items[i] = player_item[i];
-			else
-				p.items[i] = 0;
-		}
-	}
 
 	send(&p);
 
 	return true;
 }
 
-bool Player::send_spawn_packet(PlayerInfo pi)
+bool Player::send_enter_game_packet()
+{
+	SC_ENTER_GAME_PACKET p;
+	p.size = sizeof(SC_ENTER_GAME_PACKET);
+	p.custom = custom;
+	p.player = pinfo;
+	p.type = SC_ENTER_GAME;
+
+	// 인벤토리 초기화
+	for (int i = 0; i < ITEM_SIZE; ++i) {
+		if (true == player_item.contains(i)) p.items[i] = player_item[i];
+		else p.items[i] = 0;
+	}
+	
+	send(&p);
+
+	return true;
+}
+
+bool Player::send_spawn_packet(PlayerInfo pi, Customizing cus)
 {
 	SC_SPAWN_PACKET p;
 	p.size = sizeof(SC_SPAWN_PACKET);
 	p.type = SC_SPAWN;
 	p.pl = pi;
+	p.c = cus;
 	send(&p);
 	return true;
 }
@@ -88,7 +88,7 @@ bool Player::send_update_item_packet(unsigned short id, unsigned short num)
 	p.id = id;
 	p.num = num;
 
-	cout << this->id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << endl;
+	cout << pinfo.id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << endl;
 	send(&p);
 	return true;
 }
@@ -112,7 +112,6 @@ void Player::send(void* packet)
 			closesocket(socket);
 		}
 	}
-	cout << "SEND: " << id << "에게 패킷 전송!" << endl;
 }
 
 void Player::recv()
@@ -155,6 +154,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     {
 	case CS_LOGIN:// ok
 	{
+		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
 		// todo: db 연동해야 함
@@ -168,45 +168,51 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				break;
 			}
 		}
-		
-		// 신규유저 확인 -> DB연동해야함
-		bool is_new = true;
 
-		
-
-		name = p->name;
-		PlayerInfo pi;
-		if (true == success) {
-			pi.id = id;
-			pi.x = Utility::GetRandom(0.f, 200.0f);
-			pi.y = Utility::GetRandom(0.f, 200.0f);
-			pi.z = 200.0f;
-			pi.yaw = 0.f;
-			pinfo = pi;
-
-			send_login_info_packet(success, pi, is_new);
-
-			// 지금 있는 애들한테 브로드캐스팅
-			// 지금 있는 애들 정보 받아오기
-			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING) {
-					players[i].send_spawn_packet(pi);
-				}
+		// 텟트용으로 바까둠
+		bool is_new = false;
+		if (true == success) { // 접속성공
+			// todo: 신규유저 확인 -> DB연동해야함
+			if (false == is_new)  // 신규유저라면
+			{
+				player_setup();
+				name = p->name;
 			}
-
-			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING) {
-					send_spawn_packet(players[i].pinfo);
-				}
-			}
-
 			state = PLAYING;
 		}
+		else
+			state = NONE;
+		
+		send_login_info_packet(success, is_new);
 
 		break;
     }
+	case CS_ENTER_GAME: // 게임 접속 요청
+	{
+		cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		send_enter_game_packet();
+		
+		// 기존유저들에게 스폰요청
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING) {
+				players[i].send_spawn_packet(pinfo, custom);
+			}
+		}
+
+		// 나에게 기존유저 스폰
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING) {
+				send_spawn_packet(players[i].pinfo, players[i].custom);
+			}
+		}
+
+		break;
+
+	}
     case CS_CHAT:
     {
+		cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		int id = pinfo.id;
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
 
 		// 보낸 채팅 확인용
@@ -221,6 +227,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
     case CS_LEAVE:
     {
+		cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		int id = pinfo.id;
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
 
 		if (state != PLAYING) {
@@ -241,6 +249,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
 	case CS_MOVEP:
 	{
+		cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		pinfo = p->pl;
 
@@ -255,14 +265,25 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_GET_ITEM:
 	{
+		cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		int id = pinfo.id;
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		if (player_item.contains(p->id)) player_item[id] += p->num;
 		else player_item[id] = p->num;
 
 		send_update_item_packet(id, player_item[id]);
+		break;
 	}
     default:
 
         break;
     }
+}
+
+void Player::player_setup() // 신규 플레이어 위치 등 셋업
+{
+	pinfo.x = Utility::GetRandom(0.f, 200.0f);
+	pinfo.y = Utility::GetRandom(0.f, 200.0f);
+	pinfo.z = 200.0f;
+	pinfo.yaw = 0.f;
 }

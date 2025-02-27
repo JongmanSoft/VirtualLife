@@ -55,6 +55,15 @@ void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, uint8 num)
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendEnterGamePacket()
+{
+	CS_ENTER_GAME_PACKET p;
+	p.size = sizeof(CS_ENTER_GAME_PACKET);
+	p.type = CS_ENTER_GAME;
+
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -77,6 +86,14 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 
 void UVirtual_life_GameInstance::SpawnPlayer()
 {
+	// 서버 연결 확인
+	if (!Socket || !Socket->GetConnectionState() == SCS_Connected)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR: Server connection is not established! Aborting SpawnPlayer."));
+		return;
+	}
+
+
 	UWorld* World = GetWorld();
 
 	// todo: world를 제한할지 고밍
@@ -152,31 +169,20 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		// 패킷 종류에 따라 처리
 		switch (PacketType)
 		{
-		case SC_LOGININFO:
+		case SC_LOGININFO: // 로그인 성공/실패
 		{
 			SC_LOGIN_INFO_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_LOGIN_INFO_PACKET));
 
-			// 로그인 성공: 메인 맵으로 이동
+			// 로그인 성공
 			if (true == p.success) {
-				MyPlayerInfo = p.player;
-				UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("sample_map")));
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
+				if (true == p.isNew) { // 커스터마이징 맵으로 이동
 
-				if (true == p.isNew) {
-					TMap<uint8, uint8> tmpmap;
-					for (int i = 0; i < ITEM_SIZE; ++i) {
-						tmpmap.Add(i, 0);
-					}
-					m_inventory->road_Item(tmpmap); // 인벤토리 초기화
 				}
-				else {
-					TMap<uint8, uint8> tmpmap;
-					for (int i = 0; i < ITEM_SIZE; ++i) {
-						tmpmap.Add(i, p.items[i]);
-					}
-					m_inventory->road_Item(tmpmap); // 인벤토리 초기화
+				else { // enter game packet 송신
+					SendEnterGamePacket();
 				}
+				
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
@@ -186,7 +192,32 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			break;
 		}
+		case SC_ENTER_GAME:
+		{
+			SC_ENTER_GAME_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ENTER_GAME_PACKET));
 
+			// 위치 등 정보 추가
+			MyPlayerInfo = p.player;
+
+			// 직업 등 추가 정보
+			AddInfo = p.addinfo;
+
+			// todo: 커스텀 데이터 넘겨주는 방법 모르겠듬
+			// 이 자리에 커마 데이터 넘겨줘야 함
+
+			// 인벤토리 초기화
+			TMap<uint8, uint8> tmpmap;
+			for (int i = 0; i < ITEM_SIZE; ++i) {
+				tmpmap.Add(i, 0);
+			}
+			m_inventory->road_Item(tmpmap);
+
+
+			// 메인 맵으로 이동
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("sample_map")));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
+		}
 		case SC_SPAWN:
 		{
 			if (!loaded) {
@@ -207,7 +238,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-				AVirtual_life_projectCharacter* Actor = World->SpawnActor<AVirtual_life_projectCharacter>(
+				ACharacter* Actor = World->SpawnActor<ACharacter>(
 					PlayerClass, L, R, SpawnParams);
 
 				// 스폰된 액터 저장
@@ -251,14 +282,14 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_MOVE_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
-			AVirtual_life_projectCharacter** FoundPlayer = SpawnedPlayers.Find(p.pl.id);
+			ACharacter** FoundPlayer = SpawnedPlayers.Find(p.pl.id);
 			if (!FoundPlayer)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Player ID %d not found in SpawnedPlayers."), p.pl.id);
 				break;
 			}
 
-			AVirtual_life_projectCharacter* PlayerActor = *FoundPlayer;
+			ACharacter* PlayerActor = *FoundPlayer;
 
 			if (!IsValid(PlayerActor))
 			{
@@ -297,9 +328,14 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 
 void UVirtual_life_GameInstance::OnStart()
 {
+
+
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
-	PlayerClass = LoadClass<AVirtual_life_projectCharacter>(nullptr, TEXT("/Game/seyoung/BP_metahuman.BP_metahuman"));
+	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
+	//PlayerClass = LoadClass<ACharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman'"));
+
+
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()

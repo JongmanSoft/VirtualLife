@@ -18,6 +18,14 @@ struct PlayerInfo
 	STATE st; // 애니메이션 동기화용?
 };
 
+struct AdditionalInfo
+{
+	unsigned short job;
+	unsigned short age;
+	short hp;
+	short mp;
+};
+
 struct Customizing
 {
 	float skin; // 피부색
@@ -49,9 +57,11 @@ enum PACKETID : char
 	CS_MOVEP,
 	CS_GET_ITEM,
 	CS_UPDATE_CUSTOM,
+	CS_ENTER_GAME, // 클라의 게임접속.
 
 	// server to client
 	SC_LOGININFO,
+	SC_ENTER_GAME,
 	SC_SPAWN,
 	SC_DESPAWN,
 	SC_LEAVE,
@@ -69,6 +79,11 @@ struct CS_LOGIN_PACKET { // 로그인 요청.
 	unsigned short size;
 	PACKETID	type;
 	char	name[M_NAME_SIZE];
+};
+
+struct CS_ENTER_GAME_PACKET { // 게임 접속
+	unsigned short size;
+	PACKETID	type;
 };
 
 struct CS_LEAVE_PACKET {
@@ -108,8 +123,15 @@ struct SC_LOGIN_INFO_PACKET {
 	PACKETID type;
 	bool success;
 	bool isNew;
+};
+
+struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
+	unsigned short size;
+	PACKETID type;
 	PlayerInfo player;
 	unsigned short items[ITEM_SIZE];
+	Customizing custom; // 내 캐릭터의 커스터마이징 정보
+	AdditionalInfo addinfo;
 };
 
 struct SC_SPAWN_PACKET {

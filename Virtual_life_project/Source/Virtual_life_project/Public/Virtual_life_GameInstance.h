@@ -27,14 +27,13 @@ public:
 	UVirtual_life_GameInstance();
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<AVirtual_life_projectCharacter> PlayerClass;
+	TSubclassOf<ACharacter> PlayerClass;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnChatReceived OnChatReceived; // 블루프린트에서 이벤트 바인딩 가능!
 
 	void OnStart();
 
-	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
 
 	// network
 	UFUNCTION(BlueprintCallable)
@@ -61,6 +60,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendGetItemPacket(uint8 item_id, uint8 num);
 
+	UFUNCTION(BlueprintCallable)
+	void SendEnterGamePacket();
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
@@ -81,7 +82,7 @@ public:
 
 	std::mutex lock;
 	UPROPERTY()
-	TMap<int, AVirtual_life_projectCharacter*> SpawnedPlayers;
+	TMap<int, ACharacter*> SpawnedPlayers;
 
 	TArray<PlayerInfo> NeedSpawnPoints;
 
@@ -109,6 +110,8 @@ private:
 	class SendManager* SendThread = nullptr;
 	int id;
 	FString name;
+	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
+	AdditionalInfo AddInfo;
 
 	// 패킷 처리 함수
 	void ProcessRecvPackets();

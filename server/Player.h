@@ -5,33 +5,39 @@ enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
 
 class Player
 {
+	// 네트워크 통신 관련
 	EXT_OVER over;
 	SOCKET socket;
 	vector<char> packet_data; // deque를 사용할까?
-	int id = 0;
+	
+	// 플레이어 정보
+	string name; // 아이디
+	PlayerInfo pinfo; // obj id, 위치/회전정보
+	AdditionalInfo addinfo; // 직업 등 정보
+	STATES state; // 상태
+	Customizing custom; // 커스텀
+	unordered_map<unsigned short, unsigned short> player_item;
 
-	string name;
-	PlayerInfo pinfo;
-
-	bool send_login_info_packet(bool b, PlayerInfo pi, bool isnew);
-	bool send_spawn_packet(PlayerInfo pi);
+	// 패킷 send 함수
+	bool send_login_info_packet(bool res, bool isnew);
+	bool send_enter_game_packet();
+	bool send_spawn_packet(PlayerInfo pi, Customizing cus);
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
 	bool send_chat_packet(string name, wstring chat);
 	bool send_update_item_packet(unsigned short id, unsigned short num); // 해당 아이템이 num개로 업데이트
 
-	unordered_map<unsigned short, unsigned short> player_item;
 
 public:
-	STATES state;
 
 	Player() : socket(0), state(NONE) {}
-	Player(SOCKET s, int id) : socket(s), id(id) {}
+	Player(SOCKET s, int id) : socket(s) { pinfo.id = id; }
 	~Player() {}
 
 	void send(void* packet);
 	void recv();
 	void handle_packet(char* packet, unsigned short length);
+	void player_setup();
 
 	void update_packet(EXT_OVER*& ov, DWORD num_bytes)
 	{
