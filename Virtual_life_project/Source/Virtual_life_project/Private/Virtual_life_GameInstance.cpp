@@ -124,7 +124,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		AVirtual_life_projectCharacter* Actor = World->SpawnActor<AVirtual_life_projectCharacter>(
+		ACharacter* Actor = World->SpawnActor<ACharacter>(
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 		SpawnedPlayers.Add(i.id, Actor);
@@ -217,6 +217,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 메인 맵으로 이동
 			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("sample_map")));
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
+			break;
 		}
 		case SC_SPAWN:
 		{
