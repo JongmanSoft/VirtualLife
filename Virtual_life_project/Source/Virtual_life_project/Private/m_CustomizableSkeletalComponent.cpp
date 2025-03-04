@@ -108,10 +108,9 @@ void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
 void Um_CustomizableSkeletalComponent::apply_actor_custom()
 {
 	// IntParameters
-	//추후 매핑 필요... 아직 미완
-	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Pants_enum"), FString("long_pants"), -1);
-	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("shoes_enum"), FString("boots"), -1);
-	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Torso_enum"), FString("Tshirt"), -1);
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Pants_enum"), pants_str[pants], -1);
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("shoes_enum"), shoes_str[shoes], -1);
+	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Torso_enum"), torso_str[shirt], -1);
 
 	// FloatParameters
 	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_L_color_hue"), L_eye_color_hue, -1);

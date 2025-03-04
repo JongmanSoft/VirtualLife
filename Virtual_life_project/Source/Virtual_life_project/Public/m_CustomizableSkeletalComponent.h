@@ -24,6 +24,14 @@ public:
 	Um_CustomizableSkeletalComponent();
 	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
+public:
+	//매핑정보
+	//상의
+	FString torso_str[2] = {"Shirt","Tshirt"};
+	//하의
+	FString pants_str[2] = { "short_pants","long_pants" };
+	//신발
+	FString shoes_str[2] = { "ropper","boots" };
 
 public:
 	//커스텀 데이터들
