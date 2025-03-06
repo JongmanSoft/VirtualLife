@@ -5,6 +5,7 @@
 #include "Virtual_life_GameInstance.h"
 #include "Sockets.h"
 #include <Common/TcpSocketBuilder.h>
+#include "m_CustomizableSkeletalComponent.h"
 #include <Serialization/ArrayWriter.h>
 #include "Networking.h"
 #include "../Virtual_life_projectCharacter.h"
@@ -151,6 +152,24 @@ void UVirtual_life_GameInstance::Tick(float DeltaTime)
 	}
 }
 
+void UVirtual_life_GameInstance::custom_data_update(UCustom_data* targer_data, Customizing recv_cus)
+{
+	targer_data->skin = recv_cus.skin;
+	targer_data->eye_scale = recv_cus.eye_scale;
+	targer_data->hair = recv_cus.hair;
+	targer_data->hair_color_B = recv_cus.hair_color_B;
+	targer_data->hair_color_G = recv_cus.hair_color_G;
+	targer_data->hair_color_R = recv_cus.hair_color_R;
+	targer_data->L_eye_color_hue = recv_cus.L_eye_color_hue;
+	targer_data->L_eye_color_sat = recv_cus.L_eye_color_sat;
+	targer_data->R_eye_color_hue = recv_cus.R_eye_color_hue;
+	targer_data->R_eye_color_sat = recv_cus.R_eye_color_sat;
+	targer_data->pants = recv_cus.pants;
+	targer_data->pupil_scale = recv_cus.pupil_scale;
+	targer_data->shirt = recv_cus.shirt;
+	targer_data->shoes = recv_cus.shoes;
+}
+
 void UVirtual_life_GameInstance::ProcessRecvPackets()
 {
 	TArray<uint8> PacketData;
@@ -205,6 +224,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			// todo: 커스텀 데이터 넘겨주는 방법 모르겠듬
 			// 이 자리에 커마 데이터 넘겨줘야 함
+			custom_data_update(m_custom, p.custom);
 
 			// 인벤토리 초기화
 			TMap<uint8, uint8> tmpmap;

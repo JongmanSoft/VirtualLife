@@ -101,7 +101,7 @@ public:
 	//커스텀데이터를 저장하는 커스텀클래스 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 	UCustom_data* m_custom;
-
+	void custom_data_update(UCustom_data* targer_data, Customizing recv_cus);
 	
 
 private:
