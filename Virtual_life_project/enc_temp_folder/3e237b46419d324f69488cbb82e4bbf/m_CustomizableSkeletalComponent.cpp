@@ -122,19 +122,8 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	AActor * OwnerActor = GetOwner();
 	UGroomComponent* owner_hair = Cast<UGroomComponent>(OwnerActor->FindComponentByTag(UGroomComponent::StaticClass(), FName("HAIR")));
 	if (owner_hair) {
-		TCHAR groom_asset_file[3][100]
-			= { TEXT("/Game/MetaHumans/woman/FemaleHair/Hair/Hair_M_BobMessy.Hair_M_BobMessy")
-			,TEXT("/Game/MetaHumans/man/FemaleHair/Hair/Hair_S_Pixie.Hair_S_Pixie"),
-			TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual")
-		};
-		TCHAR groom_binding_asset_file[3][100]
-			= { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
-			,TEXT("/Game/MetaHumans/man/FemaleHair/GroomBinding/Hair_S_Pixie_Binding.Hair_S_Pixie_Binding")
-			,TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
-		};
-		
-		owner_hair->SetGroomAsset(LoadObject<UGroomAsset>(nullptr, groom_asset_file[hair]));
-		owner_hair->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[hair]));
+		//owner_hair->SetGroomAsset(LoadObject());
+		//owner_hair->SetBindingAsset();
 	}
 
 	// hair color change
