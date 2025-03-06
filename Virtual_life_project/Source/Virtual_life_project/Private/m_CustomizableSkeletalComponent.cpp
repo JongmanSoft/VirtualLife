@@ -3,6 +3,7 @@
 
 #include "m_CustomizableSkeletalComponent.h"
 
+
 Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent() 
 {
 
@@ -44,16 +45,11 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 		instance->SetObject(parentCO);
 		this->SetCustomizableObjectInstance(instance);
 
-		// 디버깅 로그 추가
-		UE_LOG(LogTemp, Log, TEXT("CustomizableObjectInstance set: %s"), *instance->GetName());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to load CO_metahuman"));
 	}
 
+
 	this->SetComponentName(FName("Character"));
-	UE_LOG(LogTemp, Log, TEXT("ComponentName set to: %s"), *this->GetComponentName().ToString());
+
 
 }
 
@@ -120,6 +116,19 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("eye_scale"), eye_scale, -1);
 	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("pupil_scale"), pupil_scale, -1);
 	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("skin_brighness"), skin, -1);
+
+	// hair change
+	// 오너 액터 가져오기
+	AActor * OwnerActor = GetOwner();
+	//UStaticMeshComponent* pickaxe_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("Pickaxe")));
+
+	// hair color change
+	if (MI_hair)
+	{
+		MI_hair->SetScalarParameterValue(FName("hair_R"), hair_color_R);
+		MI_hair->SetScalarParameterValue(FName("hair_G"), hair_color_G);
+		MI_hair->SetScalarParameterValue(FName("hair_B"), hair_color_B);
+	}
 
 
 	//메시에 반영

@@ -68,6 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HairData")
 	float hair_color_B;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
+	UMaterialInstanceDynamic* MI_hair;
+
 
 public:
 	//인스턴스 불러오기 
