@@ -2,7 +2,7 @@
 
 
 #include "m_CustomizableSkeletalComponent.h"
-
+#include "GroomComponent.h"
 
 Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent() 
 {
@@ -120,7 +120,11 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	// hair change
 	// 오너 액터 가져오기
 	AActor * OwnerActor = GetOwner();
-	//UStaticMeshComponent* pickaxe_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("Pickaxe")));
+	UGroomComponent* owner_hair = Cast<UGroomComponent>(OwnerActor->FindComponentByTag(UGroomComponent::StaticClass(), FName("HAIR")));
+	if (owner_hair) {
+		//owner_hair->SetGroomAsset(LoadObject());
+		//owner_hair->SetBindingAsset();
+	}
 
 	// hair color change
 	if (MI_hair)
