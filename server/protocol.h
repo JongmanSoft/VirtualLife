@@ -58,6 +58,7 @@ enum PACKETID : char
 	CS_GET_ITEM,
 	CS_UPDATE_CUSTOM,
 	CS_ENTER_GAME, // 클라의 게임접속.
+	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
 
 	// server to client
 	SC_LOGININFO,
