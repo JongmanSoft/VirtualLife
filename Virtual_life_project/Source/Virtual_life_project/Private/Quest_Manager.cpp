@@ -13,3 +13,13 @@ void UQuest_Manager::Add_Quest_Single(FString Quest_name, FString Quest_desc, in
     temp->RewardValues.Add(FReward_value(&RewardValue, RewardCount));
     Quests.Add(temp);
 }
+
+void UQuest_Manager::Add_Quest_Multi(FString Quest_name, FString Quest_desc, int32& requir_value, TArray<FWriteRequirValue> new_requir, TArray<FReward_value> new_reward)
+{
+    UQuest* temp = NewObject<UQuest>();
+    temp->QuestName = Quest_name;
+    temp->QuestDesc = Quest_desc;
+    temp->RequirValues =new_requir;
+    temp->RewardValues=new_reward;
+    Quests.Add(temp);
+}

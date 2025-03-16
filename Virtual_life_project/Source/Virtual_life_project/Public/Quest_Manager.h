@@ -22,5 +22,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Add_Quest_Single(FString Quest_name,FString Quest_desc,int32& requir_value, int32 requir_count,int32& RewardValue,int32 RewardCount);
 
+	void Add_Quest_Multi(FString Quest_name, FString Quest_desc, int32& requir_value, TArray<FWriteRequirValue>new_requir, TArray<FReward_value>new_reward);
 
 };
