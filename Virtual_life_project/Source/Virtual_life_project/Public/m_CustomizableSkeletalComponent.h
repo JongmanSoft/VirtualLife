@@ -72,6 +72,37 @@ public:
 	UMaterialInstanceDynamic* MI_hair;
 
 
+	//¾ó±¼ Ä¿½ºÅÒ
+//´«
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EyeData")
+	float eye_width;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EyeData")
+	float eye_thick;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EyeData")
+	float eye_slope;
+	//ÄÚ
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoseData")
+	float nose_width;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NoseData")
+	float nose_height;
+	//ÀÔ
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MouseData")
+	float mouse_width;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MouseData")
+	float mouse_thick;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MouseData")
+	float mouse_slope;
+	//¾ó±¼Çü
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FaceData")
+	float chin;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FaceData")
+	float jaw;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FaceData")
+	float heavy;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FaceData")
+	float face_width;
+
+
 public:
 	//ÀÎ½ºÅÏ½º ºÒ·¯¿À±â 
 	void instance_import();

@@ -22,6 +22,18 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 	hair_color_R = 1;
 	hair_color_G = 0.2;
 	hair_color_B = 1;
+	eye_width =0;
+	eye_thick =0;
+	eye_slope=0;
+	nose_width=0;
+	nose_height=0;
+	mouse_width=0;
+	mouse_thick=0;
+	mouse_slope=0;
+	chin=0;
+	jaw=0;
+	heavy=0;
+	face_width=0;
 
 }
 
@@ -77,7 +89,18 @@ void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data* cus)
 	hair_color_R = cus->hair_color_R;
 	hair_color_G = cus->hair_color_G;
 	hair_color_B = cus->hair_color_B;
-
+	eye_width = cus->eye_width;
+	eye_thick = cus->eye_thick;
+	eye_slope = cus->eye_slope;
+	nose_width =  cus->nose_width;
+	nose_height = cus->nose_height;
+	mouse_width = cus->mouse_width;
+	mouse_thick = cus->mouse_thick;
+	mouse_slope = cus->mouse_slope;
+	chin = cus->chin;
+	jaw = cus->jaw;
+	heavy = cus->heavy;
+	face_width = cus->face_width;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
@@ -97,7 +120,18 @@ void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
 	hair_color_R =  cus.hair_color_R;
 	hair_color_G =  cus.hair_color_G;
 	hair_color_B =  cus.hair_color_B;
-
+	eye_width = cus.eye_width;
+	eye_thick = cus.eye_thick;
+	eye_slope = cus.eye_slope;
+	nose_width =  cus.nose_width;
+	nose_height = cus.nose_height;
+	mouse_width = cus.mouse_width;
+	mouse_thick = cus.mouse_thick;
+	mouse_slope = cus.mouse_slope;
+	chin = cus.chin;
+	jaw = cus.jaw;
+	heavy = cus.heavy;
+	face_width = cus.face_width;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 

@@ -37,7 +37,23 @@ public:
 	float hair_color_G;
 	float hair_color_B;
 
-
+	//¾ó±¼ Ä¿½ºÅÒ
+	//´«
+	float eye_width;
+	float eye_thick;
+	float eye_slope;
+	//ÄÚ
+	float nose_width;
+	float nose_height;
+	//ÀÔ
+	float mouse_width;
+	float mouse_thick;
+	float mouse_slope;
+	//¾ó±¼Çü
+	float chin;
+	float jaw;
+	float heavy;
+	float face_width;
 
 
 };
