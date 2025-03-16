@@ -1,5 +1,7 @@
 #pragma once
 
+class Quest;
+
 // none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
 
@@ -17,6 +19,8 @@ class Player
 	STATES state; // 상태
 	Customizing custom; // 커스텀
 	unordered_map<unsigned short, unsigned short> player_item;
+	vector<Quest> quests;
+
 
 	// 패킷 send 함수
 	bool send_login_info_packet(bool res, bool isnew);
