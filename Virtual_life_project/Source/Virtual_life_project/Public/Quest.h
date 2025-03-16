@@ -13,6 +13,12 @@ struct FWriteRequirValue //실제 퀘스트 클래스 내에서 사용하는 구조체
     uint8 RequirCount;
 };
 
+struct FReward_value //리워드 구조체
+{
+    int32* RewardValue;
+    uint8 RewardCount;
+};
+
 USTRUCT(BlueprintType)
 struct FReadRequirValue //블루프린트에서도 쓸수있는 출력을 위한 구조체, 흠 최적화가 안될거같은데......
 {
@@ -25,7 +31,7 @@ public:
     uint8 RequirCount; 
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class VIRTUAL_LIFE_PROJECT_API UQuest : public UObject
 {
     GENERATED_BODY()
@@ -39,7 +45,12 @@ public:
 
     TArray<FWriteRequirValue> RequirValues;
 
+    TArray<FReward_value> RewardValues;
+
+
     bool QuestComplete();
+
+
 
     UFUNCTION(BlueprintCallable)
     TArray<FReadRequirValue> GetRequirValues() const;
