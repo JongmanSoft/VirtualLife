@@ -1,6 +1,6 @@
 #pragma once
 
-class Quest;
+#include "Quest.h"
 
 // none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };

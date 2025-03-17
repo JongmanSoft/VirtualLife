@@ -196,7 +196,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 로그인 성공
 			if (true == p.success) {
 				if (true == p.isNew) { // 커스터마이징 맵으로 이동
-
+					UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("custommap"))); // todo: 여기 수정
 				}
 				else { // enter game packet 송신
 					SendEnterGamePacket();
@@ -222,9 +222,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 직업 등 추가 정보
 			AddInfo = p.addinfo;
 
-			// todo: 커스텀 데이터 넘겨주는 방법 모르겠듬
-			// 이 자리에 커마 데이터 넘겨줘야 함
+			// 커마 데이터 넘겨주기
 			custom_data_update(m_custom, p.custom);
+
+			// todo: 퀘스트 데이터 넘겨주기
 
 			// 인벤토리 초기화
 			TMap<uint8, uint8> tmpmap;
@@ -235,7 +236,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 
 			// 메인 맵으로 이동
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("sample_map")));
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("testmap"))); // todo: 여기 수정
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			break;
 		}
@@ -256,14 +257,16 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 				UWorld* World = GetWorld();
 
+				// SpawnParams에 올바른 레벨 설정
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+				SpawnParams.OverrideLevel = World->PersistentLevel;
 
-				ACharacter* Actor = World->SpawnActor<ACharacter>(
-					PlayerClass, L, R, SpawnParams);
-
+				ACharacter* Actor = World->SpawnActor<ACharacter>(PlayerClass, L, R, SpawnParams);
+				
 				// 스폰된 액터 저장
 				SpawnedPlayers.Add(p.pl.id, Actor);
+
 			}
 			break;
 		}
@@ -354,9 +357,6 @@ void UVirtual_life_GameInstance::OnStart()
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
-	//PlayerClass = LoadClass<ACharacter>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman'"));
-
-
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()
