@@ -11,6 +11,7 @@
 #include "../Virtual_life_projectCharacter.h"
 #include "SocketSubsystem.h"
 #include "EngineUtils.h"
+#include "VL_Player.h"
 
 
 void UVirtual_life_GameInstance::ConnectServer()
@@ -94,10 +95,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		return;
 	}
 
-
 	UWorld* World = GetWorld();
-
-	// todo: world를 제한할지 고밍
 
 	// 1. 서버에서 받은 내 좌표로 나 이동.
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
@@ -106,6 +104,8 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		APawn* PlayerPawn = PlayerController->GetPawn();
 		if (PlayerPawn)
 		{
+			auto p = Cast<AVL_Player>(PlayerPawn);
+			p->canControl = true;
 			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
 			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
 
@@ -236,7 +236,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 
 			// 메인 맵으로 이동
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("testmap"))); // todo: 여기 수정
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("TestMap"))); // todo: 여기 수정
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			break;
 		}
@@ -307,27 +307,14 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
 			ACharacter** FoundPlayer = SpawnedPlayers.Find(p.pl.id);
-			if (!FoundPlayer)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Player ID %d not found in SpawnedPlayers."), p.pl.id);
-				break;
-			}
-
 			ACharacter* PlayerActor = *FoundPlayer;
 
-			if (!IsValid(PlayerActor))
-			{
-				UE_LOG(LogTemp, Error, TEXT("Invalid PlayerActor for ID %d. Removing from map."), p.pl.id);
-				SpawnedPlayers.Remove(p.pl.id);  // 잘못된 참조 삭제
-				break;
-			}
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
 			FRotator NewRotation(0.f, p.pl.yaw, 0.f);
 
-			PlayerActor->SetActorLocationAndRotation(NewLocation, NewRotation);
-
-			UE_LOG(LogTemp, Log, TEXT("Player %d moved to (%.2f, %.2f, %.2f)"), p.pl.id, NewLocation.X, NewLocation.Y, NewLocation.Z);
+			auto pl = Cast<AVL_Player>(PlayerActor);
+			pl->setDestInfo(p.pl);
 
 			break;
 		}
@@ -352,8 +339,6 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 
 void UVirtual_life_GameInstance::OnStart()
 {
-
-
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
@@ -383,7 +368,6 @@ void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 	{
 		SendEnqueue(&p, p.size);
 	}
-
 }
 
 void UVirtual_life_GameInstance::SendChatPacket(FString s)

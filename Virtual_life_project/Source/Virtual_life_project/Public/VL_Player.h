@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Virtual_life_GameInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "VL_Player.generated.h"
 
 UCLASS()
@@ -27,4 +29,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	void setCurInfo(PlayerInfo& v); // 현재위치 강제 이동하는 함수
+	void setDestInfo(PlayerInfo& v);
+
+	bool canControl = false;
+
+	bool myPlayer();
+
+protected:
+	PlayerInfo curInfo; // 현재 위치
+	PlayerInfo destInfo; // 목적지
 };
