@@ -11,6 +11,7 @@
 #include "../Virtual_life_projectCharacter.h"
 #include "SocketSubsystem.h"
 #include "EngineUtils.h"
+#include "VL_AnimInstance.h"
 #include "VL_Player.h"
 
 
@@ -309,12 +310,18 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			ACharacter** FoundPlayer = SpawnedPlayers.Find(p.pl.id);
 			ACharacter* PlayerActor = *FoundPlayer;
 
-
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
 			FRotator NewRotation(0.f, p.pl.yaw, 0.f);
 
 			auto pl = Cast<AVL_Player>(PlayerActor);
 			pl->setDestInfo(p.pl);
+
+			UAnimInstance* AnimInstance = pl->GetMesh()->GetAnimInstance();
+			if (UVL_AnimInstance* VLAnimInstance = Cast<UVL_AnimInstance>(AnimInstance))
+			{
+				// AnimInstance에 있는 변수를 사용하거나 메서드를 호출
+				VLAnimInstance->setState(RUN);
+			}
 
 			break;
 		}

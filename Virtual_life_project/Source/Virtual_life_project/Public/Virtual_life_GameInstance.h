@@ -63,6 +63,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendEnterGamePacket();
 
+
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;
