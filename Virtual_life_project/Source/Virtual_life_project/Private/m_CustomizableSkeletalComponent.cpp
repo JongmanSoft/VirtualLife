@@ -180,6 +180,20 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	}
 
 
+	// morph parameter apply
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Eye_slope"), eye_slope, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Eye_width"), eye_width, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Eye_thick"), eye_thick, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Nose_width"), nose_width, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Nose_height"), nose_height, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Mouse_width"), mouse_width, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Mouse_thick"), mouse_thick, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Mouse_slope"), mouse_slope, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Face_width"), face_width, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Heavy"), heavy, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Chin"), chin, -1);
+	this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Jaw"), jaw, -1);
+
 	//메시에 반영
 	this->GetCustomizableObjectInstance()->UpdateSkeletalMeshAsync(false,false);
 	this->UpdateSkeletalMeshAsync();
