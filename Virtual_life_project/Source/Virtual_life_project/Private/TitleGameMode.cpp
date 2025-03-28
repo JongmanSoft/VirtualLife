@@ -7,5 +7,5 @@
 
 ATitleGameMode::ATitleGameMode()
 {
-	PlayerControllerClass = ATitlePlayerController::StaticClass();
+	//PlayerControllerClass = ATitlePlayerController::StaticClass();
 }
