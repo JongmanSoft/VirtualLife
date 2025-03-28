@@ -12,7 +12,8 @@
 				"Engine",
 				"CoreUObject",
 				"CustomizableObject",
-				"HairStrandsCore"
+				"HairStrandsCore",
+				"UMG"
 			]
 		}
 	],
