@@ -4,6 +4,8 @@
 #include "Title_Widget.h"
 #include "Components/Button.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "TitlePlayerController.h"
 
 void UTitle_Widget::NativeConstruct()
 {
@@ -31,6 +33,17 @@ void UTitle_Widget::NativeConstruct()
 
 void UTitle_Widget::OnNewStartClicked()
 {
+    UE_LOG(LogTemp, Warning, TEXT("[OnNewStartClicked]"));
+
+    if (ATitlePlayerController* PC = Cast<ATitlePlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PlayerController Casting Sucess"));
+        PC->SwitchToNameWidget();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("PlayerController Casting Failed"));
+    }
 }
 
 void UTitle_Widget::OnStartClicked()
