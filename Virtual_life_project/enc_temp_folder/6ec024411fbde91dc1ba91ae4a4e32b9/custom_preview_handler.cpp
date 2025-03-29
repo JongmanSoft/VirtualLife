@@ -55,8 +55,27 @@ void Ucustom_preview_handler::OnLeftMouseClick()
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (!PC) return;
 
+    FVector WorldLocation, WorldDirection;
+    PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+    FVector TraceStart = WorldLocation;
+    FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
+
     FHitResult HitResult;
-    if (PC->GetHitResultUnderCursor(ECC_GameTraceChannel1, true, HitResult))
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(m_owner);
+
+    bool bHit = GetWorld()->LineTraceSingleByChannel(
+        HitResult,
+        TraceStart,
+        TraceEnd,
+        ECC_GameTraceChannel1,
+        QueryParams
+    );
+
+    DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 2.f);
+
+    if (bHit)
     {
         UPrimitiveComponent* HitComponent = HitResult.GetComponent();
         if (HitComponent)
@@ -66,13 +85,4 @@ void Ucustom_preview_handler::OnLeftMouseClick()
             DrawDebugPoint(GetWorld(), HitResult.Location, 10.f, FColor::Green, false, 2.f);
         }
     }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("No hit under cursor on ECC_GameTraceChannel1"));
-    }
-
-    FVector WorldLocation, WorldDirection;
-    PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    FVector TraceEnd = WorldLocation + (WorldDirection * 10000.f);
-    DrawDebugLine(GetWorld(), WorldLocation, TraceEnd, FColor::Red, false, 2.f);
 }
