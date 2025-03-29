@@ -8,7 +8,8 @@
 // Sets default values for this component's properties
 Ucustom_preview_handler::Ucustom_preview_handler()
 {
-    PrimaryComponentTick.bCanEverTick = false;
+    PrimaryComponentTick.bCanEverTick = true;
+   
 }
 
 // Called when the game starts
@@ -21,7 +22,7 @@ void Ucustom_preview_handler::BeginPlay()
     {
         return;
     }
-
+    PlayerController = GetWorld()->GetFirstPlayerController();
     // 입력 바인딩 설정 호출
     SetupInputComponent();
 }
@@ -35,19 +36,21 @@ void Ucustom_preview_handler::SetupInputComponent()
         if (InputComp)
         {
             InputComp->BindAction("LeftMouseButton", IE_Pressed, this, &Ucustom_preview_handler::OnLeftMouseClick);
+            InputComp->BindAction("LeftMouseButton", IE_Released, this, &Ucustom_preview_handler::OffLeftMouseClick);
+            InputComp->BindAxis("Mouse_X", this, &Ucustom_preview_handler::move_mouse_x);
+            InputComp->BindAxis("Mouse_Y", this, &Ucustom_preview_handler::move_mouse_y);
+        }
+           
             InputComp->Priority = 10;
           
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Ucustom_preview_handler: PlayerController has no InputComponent!"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Ucustom_preview_handler: No PlayerController found!"));
-    }
-}
+     }
+       
+  }
+    
+
+
+
+
 
 // 마우스 클릭 처리
 void Ucustom_preview_handler::OnLeftMouseClick()
@@ -55,24 +58,163 @@ void Ucustom_preview_handler::OnLeftMouseClick()
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     if (!PC) return;
 
+
+
     FHitResult HitResult;
     if (PC->GetHitResultUnderCursor(ECC_GameTraceChannel1, true, HitResult))
     {
+        PC->bShowMouseCursor = true;
         UPrimitiveComponent* HitComponent = HitResult.GetComponent();
-        if (HitComponent)
+        if (HitComponent && !click)
         {
-            UE_LOG(LogTemp, Log, TEXT("Clicked a collision on ECC_GameTraceChannel1! Actor: %s, Component: %s"),
-                *HitResult.GetActor()->GetName(), *HitComponent->GetName());
-            DrawDebugPoint(GetWorld(), HitResult.Location, 10.f, FColor::Green, false, 2.f);
+           // DrawDebugPoint(GetWorld(), HitResult.Location, 10.f, FColor::Green, false, 2.f);
+            
+            PlayerController->GetMousePosition(start_mouse_x,start_mouse_y);
+            current_mouse_x = start_mouse_x;
+            current_mouse_y = start_mouse_y;
+// 태그 확인 및 로그 출력
+            click = true;
+            eye_click = HitComponent->ComponentHasTag(FName("eye"));
+            if (eye_click) {
+                start_value_1 = m_custom->eye_width;
+                start_value_2 = m_custom->eye_thick;
+                return;
+            }
+
+            eye_slope_click = HitComponent->ComponentHasTag(FName("eye_slope"));
+            if (eye_slope_click) {
+                start_value_1 = m_custom->eye_slope;
+                return;
+            } 
+
+            mouth_click = HitComponent->ComponentHasTag(FName("mouse"));
+            if (mouth_click) {
+                start_value_1 = m_custom->mouse_width;
+                start_value_2 = m_custom->mouse_thick;
+                return;
+            }
+
+
+            mouth_slope_click = HitComponent->ComponentHasTag(FName("mouse_slope"));
+            if (mouth_slope_click) {
+                start_value_1 = m_custom->mouse_slope;
+                return;
+            }
+
+            nose_click = HitComponent->ComponentHasTag(FName("nose"));
+            if (nose_click) {
+                start_value_1 = m_custom->nose_width;
+                start_value_2 = m_custom->nose_height;
+                return;
+            }
+
+            chin_click = HitComponent->ComponentHasTag(FName("chin"));  
+            if (chin_click) {
+                start_value_1 = m_custom->chin;
+                return;
+            }
+
+            jaw_click = HitComponent->ComponentHasTag(FName("jaw"));
+            if (jaw_click) {
+                start_value_1 = m_custom->jaw;
+                return;
+            } 
+
+            forehead_click = HitComponent->ComponentHasTag(FName("forehead"));
+            if (forehead_click) {
+                start_value_1 = m_custom->face_width;
+                start_value_2 = m_custom->heavy;
+                return;
+            }
+            
         }
     }
-    else
-    {
-        UE_LOG(LogTemp, Log, TEXT("No hit under cursor on ECC_GameTraceChannel1"));
+   
+
+}
+
+void Ucustom_preview_handler::OffLeftMouseClick()
+{
+    click = false;
+    eye_click = false;
+    eye_slope_click = false;
+    mouth_click = false;
+    mouth_slope_click = false;
+    nose_click = false;
+    chin_click = false;
+    jaw_click = false;
+    forehead_click = false;
+
+    PrimaryComponentTick.bCanEverTick = true;
+}
+
+void Ucustom_preview_handler::move_mouse_x(float delta)
+{
+    current_mouse_x += delta * click;
+}
+
+void Ucustom_preview_handler::move_mouse_y(float delta)
+{
+   
+    current_mouse_y += delta * click;
+}
+
+void Ucustom_preview_handler::m_tick()
+{
+    if (!click)return;
+
+    float x_distance = FMath::Clamp(start_mouse_x - current_mouse_x,-30,30)/30.0;
+    float y_distance = FMath::Clamp(start_mouse_y - current_mouse_y, -30, 30)/30.0;
+
+    UE_LOG(LogTemp, Log, TEXT("distance_x: %f"), x_distance);
+
+    if (eye_click) { 
+        m_custom->eye_width = start_value_1 + x_distance;
+        m_custom->eye_thick = start_value_2 + y_distance;
+
+       
+        m_custom->apply_actor_custom();
+        return;
     }
 
-    FVector WorldLocation, WorldDirection;
-    PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    FVector TraceEnd = WorldLocation + (WorldDirection * 10000.f);
-    DrawDebugLine(GetWorld(), WorldLocation, TraceEnd, FColor::Red, false, 2.f);
+    if (eye_slope_click) {
+        m_custom->eye_slope = start_value_1 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (mouth_click) {
+        m_custom->mouse_width = start_value_1 + x_distance;
+        m_custom->mouse_thick = start_value_2 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (mouth_slope_click) {
+        m_custom->mouse_slope = start_value_1 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (nose_click) {
+        m_custom->nose_width = start_value_1 + x_distance;
+        m_custom->nose_height = start_value_2 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (chin_click) {
+        m_custom->chin = start_value_1 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (jaw_click) {
+        m_custom->jaw = start_value_1 + x_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+    if (forehead_click) {
+        m_custom->face_width = start_value_1 + x_distance;
+        m_custom->heavy = start_value_2 + y_distance;
+        m_custom->apply_actor_custom();
+        return;
+    }
+
 }
+
