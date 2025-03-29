@@ -28,7 +28,7 @@ public:
     int32 RequirBindValue; 
 
     UPROPERTY(BlueprintReadWrite)
-    uint8 RequirCount; 
+    uint8 RequirCount =0; 
 };
 
 UCLASS(Blueprintable)

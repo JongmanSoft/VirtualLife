@@ -119,4 +119,6 @@ private:
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
 	float TimeAccumulator = 0.0f;  // 위치 전송 간격 관리
+public :
+	void set_name(FString _name) { name = _name; };
 };

@@ -234,7 +234,7 @@ void UUse_equip_component::USE_pickaxe()
             }
         }
 
-        //¾Æ·¡ÀÇ Ä¸½¶ÄÄÆ÷³ÍÆ®¿Í ¿À¹ö·¦µÈ °´Ã¼¸¦ °Ë»çÇÏ´Â ºÎºÐÀ» Ä¸½¶ÄÄÆ÷³ÍÆ®°¡ ¾Æ´Ñ box collisionÀ¸·Î ¹Ù²Ù°í½ÍÀ½,
+     
         UBoxComponent* boxComp = ParentActor->FindComponentByClass<UBoxComponent>();
         if (boxComp) {
             TArray<AActor*> OverlappingActors;

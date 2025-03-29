@@ -4,6 +4,7 @@
 #include "Name_Widget.h"
 #include "Components/Button.h"
 #include "Components/EditableText.h"
+#include "Virtual_life_GameInstance.h"
 
 
 void UName_Widget::NativeConstruct()
@@ -25,4 +26,7 @@ void UName_Widget::OnOKClicked()
 
     // 여기에서 서버에 이름을 전달하거나 
     // 다음 UI/씬으로 이동하는 코드 작성
+    UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+    my_instance->set_name(FirstName+LastName);
+    my_instance->SendLoginInfoPacket(FirstName + LastName);
 }
