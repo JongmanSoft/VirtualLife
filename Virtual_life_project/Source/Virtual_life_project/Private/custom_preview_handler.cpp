@@ -170,7 +170,7 @@ void Ucustom_preview_handler::m_tick()
 
     if (eye_click) { 
         m_custom->eye_width = start_value_1 + x_distance;
-        m_custom->eye_thick = start_value_2 + y_distance;
+        m_custom->eye_thick = start_value_2 - y_distance;
 
        
         m_custom->apply_actor_custom();
@@ -178,7 +178,7 @@ void Ucustom_preview_handler::m_tick()
     }
 
     if (eye_slope_click) {
-        m_custom->eye_slope = start_value_1 + y_distance;
+        m_custom->eye_slope = start_value_1 - y_distance;
         m_custom->apply_actor_custom();
         return;
     }
@@ -189,13 +189,13 @@ void Ucustom_preview_handler::m_tick()
         return;
     }
     if (mouth_slope_click) {
-        m_custom->mouse_slope = start_value_1 + y_distance;
+        m_custom->mouse_slope = start_value_1 - y_distance;
         m_custom->apply_actor_custom();
         return;
     }
     if (nose_click) {
         m_custom->nose_width = start_value_1 + x_distance;
-        m_custom->nose_height = start_value_2 + y_distance;
+        m_custom->nose_height = start_value_2 - y_distance;
         m_custom->apply_actor_custom();
         return;
     }
