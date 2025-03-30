@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Virtual_life_GameInstance.h"
 #include "MuCO/CustomizableObject.h"
 #include "MuCO/CustomizableObjectInstance.h"
 #include "MuCO/CustomizableSkeletalComponent.h"
@@ -69,7 +68,7 @@ public:
 	float hair_color_B;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
-	UMaterialInstanceDynamic* MI_hair;
+	UMaterialInstanceDynamic* MI_hair = nullptr;
 
 
 	//¾ó±¼ Ä¿½ºÅÒ

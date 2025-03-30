@@ -2,6 +2,7 @@
 
 
 #include "m_CustomizableSkeletalComponent.h"
+#include "Virtual_life_GameInstance.h"
 #include "GroomComponent.h"
 
 Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent() 

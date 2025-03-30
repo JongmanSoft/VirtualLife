@@ -319,7 +319,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				SpawnParams.OverrideLevel = World->PersistentLevel;
 
 				ACharacter* Actor = World->SpawnActor<ACharacter>(PlayerClass, L, R, SpawnParams);
-				
+
+				//스폰된 액터의 커스텀정보 반영
+				Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+				Other_actor_m_custom->custom_data_update(p.c);
 				// 스폰된 액터 저장
 				SpawnedPlayers.Add(p.pl.id, Actor);
 
