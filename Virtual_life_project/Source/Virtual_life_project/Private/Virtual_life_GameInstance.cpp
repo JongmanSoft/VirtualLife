@@ -67,6 +67,11 @@ void UVirtual_life_GameInstance::SendEnterGamePacket()
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendUpadteCustomPacket()
+{
+	// todo: 커마 데이터 어떻게 가져옴?
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -351,6 +356,27 @@ void UVirtual_life_GameInstance::OnStart()
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
 
 	ConnectServer();
+}
+
+void UVirtual_life_GameInstance::Shutdown()
+{
+	Super::Shutdown();
+
+	SendLeavePacket();
+
+	if (RecvThread)
+	{
+		RecvThread->Destroy();  // 스레드 종료
+		delete RecvThread;
+		RecvThread = nullptr;
+	}
+
+	if (SendThread)
+	{
+		SendThread->Destroy();  // 스레드 종료
+		delete SendThread;
+		SendThread = nullptr;
+	}
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()
