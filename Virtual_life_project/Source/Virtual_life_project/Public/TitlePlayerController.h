@@ -29,4 +29,5 @@ private:
 
 public:
     void SwitchToNameWidget();
+    void SwitchToTitleWidget();
 };

@@ -29,6 +29,13 @@ protected:
     UPROPERTY(meta = (BindWidget))
     class UButton* OK_BTN;
 
+    // 돌아가기 버튼
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Back_BTN;
+
     UFUNCTION()
     void OnOKClicked();
+
+    UFUNCTION()
+    void OnBackClicked();
 };

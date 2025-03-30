@@ -59,3 +59,31 @@ void ATitlePlayerController::SwitchToNameWidget()
         UE_LOG(LogTemp, Error, TEXT("NameWidgetClass Fail"));
     }
 }
+
+void ATitlePlayerController::SwitchToTitleWidget()
+{
+    if (CurrentWidget)
+    {
+        CurrentWidget->RemoveFromViewport();
+        CurrentWidget = nullptr;
+        UE_LOG(LogTemp, Warning, TEXT("CurrentWidget Remove"));
+    }
+
+    if (TitleWidgetClass)
+    {
+        CurrentWidget = CreateWidget<UTitle_Widget>(this, TitleWidgetClass);
+        if (CurrentWidget)
+        {
+            CurrentWidget->AddToViewport();
+            UE_LOG(LogTemp, Warning, TEXT("SwitchToTitleWidget Success"));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("SwitchToTitleWidget Fail"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("TitleWidgetClass Missing"));
+    }
+}
