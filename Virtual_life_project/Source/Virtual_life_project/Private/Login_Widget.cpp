@@ -4,6 +4,7 @@
 #include "Login_Widget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/Button.h"
+#include "Virtual_life_GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void ULogin_Widget::NativeConstruct()
@@ -30,9 +31,11 @@ void ULogin_Widget::OnLoginClicked()
 
         UE_LOG(LogTemp, Log, TEXT("Login - ID: %s, PW: %s"), *ID, *Password);
 
-        // 여기에 로그인 요청 패킷 전송 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-        UGameplayStatics::OpenLevel(this, FName("TitleMap"));
+        // 로그인 요청
+        auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
+        if (GameInstance) { // todo: pw전송 추가해야 함
+            GameInstance->SendLoginInfoPacket(ID);
+        }
     }
 }
 

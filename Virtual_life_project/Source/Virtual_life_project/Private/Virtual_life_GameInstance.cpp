@@ -194,15 +194,15 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_LOGIN_INFO_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_LOGIN_INFO_PACKET));
 
-			// 로그인 성공
+			// 로그인 성공 -> 타이틀 맵으로 이동
 			if (true == p.success) {
-				if (true == p.isNew) { // 커스터마이징 맵으로 이동
-					UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("custommap"))); // todo: 여기 수정
-				}
-				else { // enter game packet 송신
-					SendEnterGamePacket();
-				}
-				
+				UGameplayStatics::OpenLevel(this, FName("TitleMap"));
+				//if (true == p.isNew) { // 커스터마이징 맵으로 이동
+				//	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("custommap"))); // todo: 여기 수정
+				//}
+				//else { // enter game packet 송신
+				//	SendEnterGamePacket();
+				//}
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
@@ -349,6 +349,8 @@ void UVirtual_life_GameInstance::OnStart()
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
+
+	ConnectServer();
 }
 
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()

@@ -10,7 +10,7 @@ bool Player::send_login_info_packet(bool res, bool isnew)
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.success = res;
 	p.type = SC_LOGININFO;
-	p.isNew = isnew;
+	//p.isNew = isnew;
 
 	send(&p);
 
