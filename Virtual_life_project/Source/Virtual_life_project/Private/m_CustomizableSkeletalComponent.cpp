@@ -73,7 +73,46 @@ void Um_CustomizableSkeletalComponent::instance_import()
 	}
 }
 
-void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data* cus)
+void Um_CustomizableSkeletalComponent::instance_export()
+{
+	UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+	if (game_inst && game_inst->m_custom) { // nullptr 체크
+		custom_export(game_inst->m_custom); // 포인터 역참조
+	}
+}
+
+void Um_CustomizableSkeletalComponent::custom_export(UCustom_data* cus)
+{
+	cus->skin = skin;
+	cus->shirt =shirt;
+	cus->pants =pants;
+	cus->shoes =shoes;
+	cus->R_eye_color_hue = R_eye_color_hue;
+	cus->R_eye_color_sat = R_eye_color_sat;
+	cus->L_eye_color_hue = L_eye_color_hue;
+	cus->L_eye_color_sat = L_eye_color_sat;
+	cus->eye_scale =   eye_scale;
+	cus->pupil_scale = pupil_scale;
+	cus->hair = hair;
+	cus->hair_color_R = hair_color_R;
+	cus->hair_color_G = hair_color_G;
+	cus->hair_color_B = hair_color_B;
+	cus->eye_width = eye_width;
+	cus->eye_thick = eye_thick;
+	cus->eye_slope = eye_slope;
+	cus->nose_width =  nose_width;
+	cus->nose_height = nose_height;
+	cus->mouse_width = mouse_width;
+	cus->mouse_thick = mouse_thick;
+	cus->mouse_slope = mouse_slope;
+	cus->chin = chin;
+	cus->jaw =  jaw;
+	cus->heavy =heavy;
+	cus->face_width = face_width;
+
+}
+
+void Um_CustomizableSkeletalComponent::generated_custom(const UCustom_data* cus)
 {
 	skin = cus->skin;
 	shirt = cus->shirt;
@@ -104,7 +143,7 @@ void Um_CustomizableSkeletalComponent::generated_custom(UCustom_data* cus)
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
-void Um_CustomizableSkeletalComponent::custom_data_update(Customizing cus)
+void Um_CustomizableSkeletalComponent::custom_data_update(const Customizing cus)
 {
 	skin =        cus.skin  ;
 	shirt =       cus.shirt ;

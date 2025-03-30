@@ -106,10 +106,15 @@ public:
 public:
 	//인스턴스 불러오기 
 	void instance_import();
+	//인스턴스로 내보내기 
+	UFUNCTION(BlueprintCallable, Category = "update")
+	void instance_export();
+	//커스텀데이터 내보내기용
+	void custom_export(UCustom_data* cus);
 	//커스텀데이터 초기화용(게임플레이어용)
-	void generated_custom(UCustom_data* cus);
+	void generated_custom(const UCustom_data* cus);
 	//액터에 변경 적용함수(서버용)
-	void custom_data_update(Customizing cus);
+	void custom_data_update(const Customizing cus);
 	UFUNCTION(BlueprintCallable, Category = "update")
 	void apply_actor_custom();
 	
