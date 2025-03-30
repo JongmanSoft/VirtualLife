@@ -85,7 +85,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 {
 	CS_LOGIN_PACKET	p;
 	p.size = sizeof(CS_LOGIN_PACKET);
-	strcpy_s(p.name, M_NAME_SIZE, TCHAR_TO_ANSI(*s));
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
 	p.type = CS_LOGIN;
 	name = s;
 
@@ -297,7 +297,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_CHAT_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_CHAT_PACKET));
 
-			FString Name = FString(ANSI_TO_TCHAR(p.name));
+			FString Name = FString(p.name);
 			FString Message = FString(p.msg);
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
 
@@ -411,9 +411,8 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	p.size = sizeof(CS_CHAT_PACKET);
 	p.type = CS_CHAT;
 
-	FTCHARToUTF8 NameConverter(*name);
-	strncpy(p.name, NameConverter.Get(), M_NAME_SIZE - 1);
-	p.name[M_NAME_SIZE - 1] = '\0'; // Null-termination 보장
+	wcsncpy(p.name, *name, M_ID_SIZE - 1);
+	p.name[M_ID_SIZE - 1] = '\0'; // Null-termination 보장
 
 	// 메시지 설정
 	wcsncpy(p.msg, *s, CHAT_SIZE - 1);

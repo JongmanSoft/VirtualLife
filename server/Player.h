@@ -13,6 +13,7 @@ class Player
 	vector<char> packet_data; // deque를 사용할까?
 	
 	// 플레이어 정보
+	string id; // 접속용 id
 	string name; // 플레이어 이름
 	PlayerInfo pinfo; // obj id, 위치/회전정보
 	AdditionalInfo addinfo; // 직업 등 정보
