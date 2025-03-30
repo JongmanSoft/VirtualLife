@@ -69,18 +69,16 @@ void UName_Widget::OnBackClicked()
 
 void UName_Widget::OnLastNameBoxFocused(const FText& Text, ETextCommit::Type CommitMethod)
 {
-    if (LastNameBox && !bLastNameEdited)
+    if (LastNameBox)
     {
         LastNameBox->SetText(FText::GetEmpty());
-        bLastNameEdited = true; 
     }
 }
 
 void UName_Widget::OnFirstNameBoxFocused(const FText& Text, ETextCommit::Type CommitMethod)
 {
-    if (FirstNameBox && !bFirstNameEdited)
+    if (FirstNameBox)
     {
         FirstNameBox->SetText(FText::GetEmpty());
-        bFirstNameEdited = true; 
     }
 }

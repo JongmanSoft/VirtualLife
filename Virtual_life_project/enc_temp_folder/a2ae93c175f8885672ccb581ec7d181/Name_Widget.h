@@ -44,8 +44,4 @@ protected:
 
     UFUNCTION()
     void OnFirstNameBoxFocused(const FText& Text, ETextCommit::Type CommitMethod);
-
-private:
-    bool bLastNameEdited = false;
-    bool bFirstNameEdited = false;
 };
