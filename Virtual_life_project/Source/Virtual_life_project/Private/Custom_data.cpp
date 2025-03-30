@@ -19,4 +19,17 @@ UCustom_data::UCustom_data()
 	hair_color_R=1;
 	hair_color_G=0.2;
 	hair_color_B=1;
+
+	eye_width = 0;
+	eye_thick = 0;
+	eye_slope = 0;
+	nose_width = 0;
+	nose_height = 0;
+	mouse_width = 0;
+	mouse_thick = 0;
+	mouse_slope = 0;
+	chin = 0;
+	jaw = 0;
+	heavy = 0;
+	face_width = 0;
 }

@@ -107,6 +107,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 	UCustom_data* m_custom;
 	void custom_data_update(UCustom_data* targer_data, Customizing recv_cus);
+	void custom_packet_setup(Customizing& targer_data, const UCustom_data* recv_cus);
 	
 
 private:
