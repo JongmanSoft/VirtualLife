@@ -45,7 +45,7 @@ void UName_Widget::OnOKClicked()
     if (my_instance)
     {
         my_instance->set_name(FirstName + LastName);
-        my_instance->SendLoginInfoPacket(FirstName + LastName);
+        //my_instance->SendLoginInfoPacket(FirstName + LastName);
     }
 
     // custom 맵으로 전환

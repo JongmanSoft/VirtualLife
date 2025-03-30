@@ -67,6 +67,11 @@ void UVirtual_life_GameInstance::SendEnterGamePacket()
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendUpadteCustomPacket()
+{
+	// todo: 커마 데이터 어떻게 가져옴?
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -80,7 +85,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 {
 	CS_LOGIN_PACKET	p;
 	p.size = sizeof(CS_LOGIN_PACKET);
-	strcpy_s(p.name, M_NAME_SIZE, TCHAR_TO_ANSI(*s));
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
 	p.type = CS_LOGIN;
 	name = s;
 
@@ -292,7 +297,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_CHAT_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_CHAT_PACKET));
 
-			FString Name = FString(ANSI_TO_TCHAR(p.name));
+			FString Name = FString(p.name);
 			FString Message = FString(p.msg);
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
 
@@ -353,6 +358,27 @@ void UVirtual_life_GameInstance::OnStart()
 	ConnectServer();
 }
 
+void UVirtual_life_GameInstance::Shutdown()
+{
+	Super::Shutdown();
+
+	SendLeavePacket();
+
+	if (RecvThread)
+	{
+		RecvThread->Destroy();  // 스레드 종료
+		delete RecvThread;
+		RecvThread = nullptr;
+	}
+
+	if (SendThread)
+	{
+		SendThread->Destroy();  // 스레드 종료
+		delete SendThread;
+		SendThread = nullptr;
+	}
+}
+
 void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -385,9 +411,8 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	p.size = sizeof(CS_CHAT_PACKET);
 	p.type = CS_CHAT;
 
-	FTCHARToUTF8 NameConverter(*name);
-	strncpy(p.name, NameConverter.Get(), M_NAME_SIZE - 1);
-	p.name[M_NAME_SIZE - 1] = '\0'; // Null-termination 보장
+	wcsncpy(p.name, *name, M_ID_SIZE - 1);
+	p.name[M_ID_SIZE - 1] = '\0'; // Null-termination 보장
 
 	// 메시지 설정
 	wcsncpy(p.msg, *s, CHAT_SIZE - 1);

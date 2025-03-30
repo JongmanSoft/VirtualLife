@@ -67,15 +67,15 @@ bool Player::send_move_packet(PlayerInfo pi)
 	return true;
 }
 
-bool Player::send_chat_packet(string name, wstring chat)
+bool Player::send_chat_packet(wstring name, wstring chat)
 {
 	SC_CHAT_PACKET p;
 	p.size = sizeof(SC_CHAT_PACKET);
 	p.type = SC_CHAT;
 
 	// 안전하게 문자열 복사
-	strncpy_s(p.name, sizeof(p.name), name.c_str(), _TRUNCATE);      // name 복사
-	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE);  // chat 복사
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name 복사
+	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE); // chat 복사
 
 	send(&p);
 	return true;
@@ -164,7 +164,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		bool success = true;
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() != NONE && players[i].name == p->name) {
+			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
 				break;
 			}
@@ -177,7 +177,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			if (false == is_new)  // 신규유저라면
 			{
 				player_setup();
-				name = p->name;
+				this->id = p->id;
 			}
 			state = PLAYING;
 		}
@@ -208,7 +208,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 
 		break;
-
 	}
     case CS_CHAT:
     {
@@ -226,7 +225,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
         break;
     }
-    case CS_LEAVE:
+    case CS_LEAVE: // todo: 여기 왜 안들어오지 이상하다..
     {
 		cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
 		int id = pinfo.id;
@@ -275,8 +274,15 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		send_update_item_packet(id, player_item[id]);
 		break;
 	}
-    default:
+	case CS_UPDATE_CUSTOM:
+	{
+		cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
+		this->custom = p->c;
 
+		break;
+	}
+    default:
         break;
     }
 }
