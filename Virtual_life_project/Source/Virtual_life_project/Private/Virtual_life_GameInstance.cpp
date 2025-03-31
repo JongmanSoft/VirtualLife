@@ -131,8 +131,8 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 
 	// 2. 서버에서 받은 애들 스폰
 	for (auto& i : NeedSpawnPoints) {
-		FVector SpawnLocation(i.x, i.y, i.z);
-		FRotator SpawnRotation(0.f, i.yaw, 0.f);
+		FVector SpawnLocation(i.first.x, i.first.y, i.first.z);
+		FRotator SpawnRotation(0.f, i.first.yaw, 0.f);
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -140,7 +140,10 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		ACharacter* Actor = World->SpawnActor<ACharacter>(
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
 
-		SpawnedPlayers.Add(i.id, Actor);
+		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+		Other_actor_m_custom->custom_data_update(i.second);
+
+		SpawnedPlayers.Add(i.first.id, Actor);
 	}
 
 	loaded = true;
@@ -252,16 +255,9 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// 로그인 성공 -> 타이틀 맵으로 이동
 			if (true == p.success) {
 				UGameplayStatics::OpenLevel(this, FName("TitleMap"));
-				//if (true == p.isNew) { // 커스터마이징 맵으로 이동
-				//	UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("custommap"))); // todo: 여기 수정
-				//}
-				//else { // enter game packet 송신
-				//	SendEnterGamePacket();
-				//}
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
-				
 				// todo: leave 패킷 송신 필요
 			}
 
@@ -292,7 +288,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 
 			// 메인 맵으로 이동
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("TestMap"))); // todo: 여기 수정
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: 여기 수정
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			break;
 		}
@@ -301,7 +297,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			if (!loaded) {
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
-				NeedSpawnPoints.Add(p.pl);
+				NeedSpawnPoints.Add(std::make_pair(p.pl, p.c));
 			}
 			else {
 				std::lock_guard<std::mutex> ll{ lock };

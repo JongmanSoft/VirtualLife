@@ -289,8 +289,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 void Player::player_setup() // 신규 플레이어 위치 등 셋업
 {
-	pinfo.x = Utility::GetRandom(100.0f, 200.0f);
-	pinfo.y = Utility::GetRandom(100.0f, 200.0f);
-	pinfo.z = 200.0f;
+	//5000 6500 3400
+	pinfo.x = 960 + Utility::GetRandom(100.0f, 200.0f);
+	pinfo.y = 1650 + Utility::GetRandom(100.0f, 200.0f);
+	pinfo.z = 3200;
 	pinfo.yaw = 0.f;
 }

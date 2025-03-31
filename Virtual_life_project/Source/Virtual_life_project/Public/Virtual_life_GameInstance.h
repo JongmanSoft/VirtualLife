@@ -89,7 +89,7 @@ public:
 	UPROPERTY()
 	TMap<int, ACharacter*> SpawnedPlayers;
 
-	TArray<PlayerInfo> NeedSpawnPoints;
+	TArray<std::pair<PlayerInfo, Customizing>> NeedSpawnPoints;
 
 	TArray<FString> chats;
 
