@@ -121,9 +121,6 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
 			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
 
-			// todo: 여기때문에 커마 적용 안되는 거였음
-			/*Um_CustomizableSkeletalComponent* Other_actor_m_custom = p->FindComponentByClass<Um_CustomizableSkeletalComponent>();
-			Other_actor_m_custom->generated_custom(m_custom);*/
 
 			PlayerPawn->SetActorHiddenInGame(false);
 			PlayerPawn->SetActorEnableCollision(true);

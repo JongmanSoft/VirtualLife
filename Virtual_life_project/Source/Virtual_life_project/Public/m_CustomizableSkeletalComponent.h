@@ -104,6 +104,7 @@ public:
 
 public:
 	//인스턴스 불러오기 
+	UFUNCTION(BlueprintCallable, Category = "update")
 	void instance_import();
 	//인스턴스로 내보내기 
 	UFUNCTION(BlueprintCallable, Category = "update")
