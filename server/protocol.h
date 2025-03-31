@@ -103,6 +103,7 @@ struct CS_LOGIN_PACKET { // 로그인 요청.
 struct CS_ENTER_GAME_PACKET { // 게임 접속
 	unsigned short size;
 	PACKETID	type;
+	wchar_t name[M_ID_SIZE];
 };
 
 struct CS_LEAVE_PACKET {
@@ -146,6 +147,7 @@ struct SC_LOGIN_INFO_PACKET {
 struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	unsigned short size;
 	PACKETID type;
+	wchar_t name[M_ID_SIZE]; // 내이름
 	PlayerInfo player;
 	unsigned short items[ITEM_SIZE];
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보

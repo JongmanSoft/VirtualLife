@@ -23,6 +23,7 @@ bool Player::send_enter_game_packet()
 	p.size = sizeof(SC_ENTER_GAME_PACKET);
 	p.custom = custom;
 	p.player = pinfo;
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 	p.type = SC_ENTER_GAME;
 
 	// 인벤토리 초기화
@@ -191,6 +192,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	case CS_ENTER_GAME: // 게임 접속 요청
 	{
 		cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
+		this->name = p->name;
 		send_enter_game_packet();
 		
 		// 기존유저들에게 스폰요청

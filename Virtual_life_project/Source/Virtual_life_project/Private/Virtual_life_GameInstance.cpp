@@ -73,7 +73,7 @@ void UVirtual_life_GameInstance::SendUpadteCustomPacket()
 	CS_UPDATE_CUSTOM_PACKET	p;
 	p.size = sizeof(CS_UPDATE_CUSTOM_PACKET);
 	p.type = CS_UPDATE_CUSTOM;
-	custom_packet_setup(p.c,m_custom);
+	custom_packet_setup(p.c, m_custom);
 	SendEnqueue(&p, p.size);
 
 }
@@ -120,6 +120,10 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 			p->canControl = true;
 			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
 			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
+
+			// todo: 여기때문에 커마 적용 안되는 거였음
+			/*Um_CustomizableSkeletalComponent* Other_actor_m_custom = p->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+			Other_actor_m_custom->generated_custom(m_custom);*/
 
 			PlayerPawn->SetActorHiddenInGame(false);
 			PlayerPawn->SetActorEnableCollision(true);
