@@ -50,3 +50,8 @@ void UPlayerInventory::update_item(uint8 id, uint8 num)
 {
     Owned_Items[id] = num;
 }
+
+void UPlayerInventory::delete_zero_item()
+{
+for(auto i:Owned_Items)if (i.Value <= 0) Owned_Items.Remove(i.Key);
+}

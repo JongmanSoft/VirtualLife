@@ -281,12 +281,12 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			// todo: 퀘스트 데이터 넘겨주기
 
 			// 인벤토리 초기화
-			TMap<uint8, uint8> tmpmap;
+			/*TMap<uint8, uint8> tmpmap;
 			for (int i = 0; i < ITEM_SIZE; ++i) {
 				tmpmap.Add(i, 0);
 			}
 			m_inventory->road_Item(tmpmap);
-
+			m_inventory->delete_zero_item();*/
 
 			// 메인 맵으로 이동
 			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: 여기 수정

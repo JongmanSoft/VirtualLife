@@ -271,10 +271,10 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
 		int id = pinfo.id;
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
-		if (player_item.contains(p->id)) player_item[id] += p->num;
-		else player_item[id] = p->num;
+		if (player_item.contains(p->id)) player_item[p->id] += p->num;
+		else player_item[p->id] = p->num;
 
-		send_update_item_packet(id, player_item[id]);
+		send_update_item_packet(p->id, player_item[p->id]);
 		break;
 	}
 	case CS_UPDATE_CUSTOM:

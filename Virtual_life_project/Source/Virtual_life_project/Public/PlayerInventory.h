@@ -45,4 +45,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void update_item(uint8 id, uint8 num); // 서버 수신
+
+	UFUNCTION(BlueprintCallable)
+	void delete_zero_item(); //0개인 아이템들 맵에서 삭제
 };
