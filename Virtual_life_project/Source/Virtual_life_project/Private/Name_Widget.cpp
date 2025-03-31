@@ -84,3 +84,15 @@ void UName_Widget::OnFirstNameBoxFocused(const FText& Text, ETextCommit::Type Co
         bFirstNameEdited = true; 
     }
 }
+
+void UName_Widget::OnLastNameChanged(const FText& Text)
+{
+}
+
+void UName_Widget::OnFirstNameChanged(const FText& Text)
+{
+}
+
+void UName_Widget::UpdateFullNameText()
+{
+}
