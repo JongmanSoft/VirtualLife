@@ -50,6 +50,9 @@ public:
     float start_mouse_x = 0;
     float start_mouse_y = 0;
 
+    float _click_stack = 0.0;
+    float _drag_stack = 0.0;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "mouse")
     float current_mouse_x = 0;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "mouse")
@@ -65,6 +68,6 @@ public:
     
     //¿”Ω√∆Ω
     UFUNCTION(BlueprintCallable)
-    void m_tick();
+    void m_tick(float delta);
 
 };
