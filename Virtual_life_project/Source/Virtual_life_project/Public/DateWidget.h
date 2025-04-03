@@ -21,8 +21,12 @@ public:
     void SetDateText(int32 Year, int32 Month, int32 Day);
 
 protected:
-    virtual void NativeConstruct() override;
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* Year_TXT;
 
     UPROPERTY(meta = (BindWidget))
-    UTextBlock* Date_TXT;
+    class UTextBlock* Month_TXT;
+
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* Day_TXT;
 };

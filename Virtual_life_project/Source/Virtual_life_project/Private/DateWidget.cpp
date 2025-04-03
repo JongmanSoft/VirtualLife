@@ -7,17 +7,12 @@
 
 void UDateWidget::SetDateText(int32 Year, int32 Month, int32 Day)
 {
-    FString DateString = FString::Printf(TEXT("%d³â %02d¿ù %02dÀÏ"), Year, Month, Day);
+    if (Year_TXT)
+        Year_TXT->SetText(FText::AsNumber(Year));
 
-    if (Date_TXT)
-    {
-        Date_TXT->SetText(FText::FromString(DateString));
-    }
-}
+    if (Month_TXT)
+        Month_TXT->SetText(FText::AsNumber(Month));
 
-void UDateWidget::NativeConstruct()
-{
-    Super::NativeConstruct();
-
-    SetDateText(1801, 4, 22);
+    if (Day_TXT)
+        Day_TXT->SetText(FText::AsNumber(Day));
 }
