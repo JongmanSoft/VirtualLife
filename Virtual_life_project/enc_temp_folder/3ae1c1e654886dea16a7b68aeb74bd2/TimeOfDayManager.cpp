@@ -75,14 +75,9 @@ void ATimeOfDayManager::IncrementTime()
 
 void ATimeOfDayManager::UpdateSun()
 {
-    if (!SunLight || !MoonLight) {
-        UE_LOG(LogTemp, Log, TEXT("No Light"));
-        return;
-    }
+    if (!SunLight || !MoonLight) return;
 
-    float BaseAngle = (Time > 18.0f) ? 90.0f : -270.0f;
-    float SunPitch = (Time / 24.0f) * 360.0f + BaseAngle;
-    SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
+    float SunPitch = FMath::Fmod((Time / 24.0f) * 360.0f + 270.0f, 360.0f);
     SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
 
     MoonLight->GetLightComponent()->SetVisibility(!bIsDaytime);

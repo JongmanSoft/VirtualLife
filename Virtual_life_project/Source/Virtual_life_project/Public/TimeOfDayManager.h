@@ -7,6 +7,10 @@
 #include "Engine/DirectionalLight.h"
 #include "TimeOfDayManager.generated.h"
 
+class AVirtualLifeController;
+class UGamePlayMainWidget;
+class UClockWidget;
+
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API ATimeOfDayManager : public AActor
 {
