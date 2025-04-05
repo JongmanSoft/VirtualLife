@@ -63,7 +63,7 @@ void UVirtual_life_GameInstance::SendEnterGamePacket()
 	CS_ENTER_GAME_PACKET p;
 	p.size = sizeof(CS_ENTER_GAME_PACKET);
 	p.type = CS_ENTER_GAME;
-
+	FCString::Strcpy(p.name, name.Len()+1, *name);
 	SendEnqueue(&p, p.size);
 }
 
@@ -268,6 +268,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		{
 			SC_ENTER_GAME_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ENTER_GAME_PACKET));
+
+			name = p.name;
 
 			// 위치 등 정보 추가
 			MyPlayerInfo = p.player;
