@@ -93,7 +93,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 	p.size = sizeof(CS_LOGIN_PACKET);
 	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
 	p.type = CS_LOGIN;
-	name = s;
+	
 
 	SendEnqueue(&p, p.size);
 }

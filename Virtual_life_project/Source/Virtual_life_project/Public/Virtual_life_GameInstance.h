@@ -115,7 +115,7 @@ private:
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
 	int id;
-	FString name = TEXT("궳뚫뷁쒥");
+	FString name = TEXT("김겜공");
 	// todo: 이거 옮길지 고민
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
 	AdditionalInfo AddInfo;
