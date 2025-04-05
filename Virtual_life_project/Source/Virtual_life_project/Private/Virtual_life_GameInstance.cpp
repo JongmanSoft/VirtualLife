@@ -1,6 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
-// todo: ¿©±â ÇØ¾ß ÇÔ
+// todo: ì—¬ê¸° í•´ì•¼ í•¨
 
 #include "Virtual_life_GameInstance.h"
 #include "Sockets.h"
@@ -17,27 +17,27 @@
 
 void UVirtual_life_GameInstance::ConnectServer()
 {
-	// ¼ÒÄÏ »ı¼º
+	// ì†Œì¼“ ìƒì„±
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("Client Socket"));
 
-	// ipÁÖ¼Ò ³Ñ°ÜÁÖ±â.
+	// ipì£¼ì†Œ ë„˜ê²¨ì£¼ê¸°.
 	FIPv4Address Ip;
 	FIPv4Address::Parse(IpAddress, Ip);
 
 	TSharedRef<FInternetAddr> InternetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	InternetAddr->SetIp(Ip.Value);
-	InternetAddr->SetPort(Port); // ³»°¡ ºÙ¾î¾ß ÇÏ´Â ¼­¹ö.
+	InternetAddr->SetPort(Port); // ë‚´ê°€ ë¶™ì–´ì•¼ í•˜ëŠ” ì„œë²„.
 
-	// µğ¹ö±ë¿ë
+	// ë””ë²„ê¹…ìš©
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connecting To Server...")));
 
-	// connected°¡ trueÀÌ¸é ¿¬°á ¼º°ø.
+	// connectedê°€ trueì´ë©´ ì—°ê²° ì„±ê³µ.
 	bool Connected = Socket->Connect(*InternetAddr);
 
-	if (Connected) { // ¿¬°á ¼º°ø
+	if (Connected) { // ì—°ê²° ì„±ê³µ
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Success")));
 
-		// ½º·¹µå µ¿ÀÛ ½ÃÀÛÇÏ±â
+		// ìŠ¤ë ˆë“œ ë™ì‘ ì‹œì‘í•˜ê¸°
 		RecvThread = new RecvManager(Socket, this);
 		SendThread = new SendManager(Socket, this);
 
@@ -69,7 +69,7 @@ void UVirtual_life_GameInstance::SendEnterGamePacket()
 
 void UVirtual_life_GameInstance::SendUpadteCustomPacket()
 {
-	// todo: Ä¿¸¶ µ¥ÀÌÅÍ ¾î¶»°Ô °¡Á®¿È?
+	// todo: ì»¤ë§ˆ ë°ì´í„° ì–´ë–»ê²Œ ê°€ì ¸ì˜´?
 	CS_UPDATE_CUSTOM_PACKET	p;
 	p.size = sizeof(CS_UPDATE_CUSTOM_PACKET);
 	p.type = CS_UPDATE_CUSTOM;
@@ -100,7 +100,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
 
 void UVirtual_life_GameInstance::SpawnPlayer()
 {
-	// ¼­¹ö ¿¬°á È®ÀÎ
+	// ì„œë²„ ì—°ê²° í™•ì¸
 	if (!Socket || !Socket->GetConnectionState() == SCS_Connected)
 	{
 		UE_LOG(LogTemp, Error, TEXT("ERROR: Server connection is not established! Aborting SpawnPlayer."));
@@ -109,7 +109,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 
 	UWorld* World = GetWorld();
 
-	// 1. ¼­¹ö¿¡¼­ ¹ŞÀº ³» ÁÂÇ¥·Î ³ª ÀÌµ¿.
+	// 1. ì„œë²„ì—ì„œ ë°›ì€ ë‚´ ì¢Œí‘œë¡œ ë‚˜ ì´ë™.
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
 	if (PlayerController)
 	{
@@ -130,7 +130,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		}
 	}
 
-	// 2. ¼­¹ö¿¡¼­ ¹ŞÀº ¾Öµé ½ºÆù
+	// 2. ì„œë²„ì—ì„œ ë°›ì€ ì• ë“¤ ìŠ¤í°
 	for (auto& i : NeedSpawnPoints) {
 		FVector SpawnLocation(i.first.x, i.first.y, i.first.z);
 		FRotator SpawnRotation(0.f, i.first.yaw, 0.f);
@@ -234,7 +234,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 {
 	TArray<uint8> PacketData;
 
-	// Å¥¿¡ ÀÖ´Â ¸ğµç ÆĞÅ¶ Ã³¸®
+	// íì— ìˆëŠ” ëª¨ë“  íŒ¨í‚· ì²˜ë¦¬
 	while (RecvPacketQueue.Dequeue(PacketData))
 	{
 		uint16 PacketSize;
@@ -245,21 +245,21 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 		UE_LOG(LogTemp, Log, TEXT(" Received Packet - Type: %d, Size: %d"), PacketType, PacketSize);
 
-		// ÆĞÅ¶ Á¾·ù¿¡ µû¶ó Ã³¸®
+		// íŒ¨í‚· ì¢…ë¥˜ì— ë”°ë¼ ì²˜ë¦¬
 		switch (PacketType)
 		{
-		case SC_LOGININFO: // ·Î±×ÀÎ ¼º°ø/½ÇÆĞ
+		case SC_LOGININFO: // ë¡œê·¸ì¸ ì„±ê³µ/ì‹¤íŒ¨
 		{
 			SC_LOGIN_INFO_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_LOGIN_INFO_PACKET));
 
-			// ·Î±×ÀÎ ¼º°ø -> Å¸ÀÌÆ² ¸ÊÀ¸·Î ÀÌµ¿
+			// ë¡œê·¸ì¸ ì„±ê³µ -> íƒ€ì´í‹€ ë§µìœ¼ë¡œ ì´ë™
 			if (true == p.success) {
 				UGameplayStatics::OpenLevel(this, FName("TitleMap"));
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
-				// todo: leave ÆĞÅ¶ ¼Û½Å ÇÊ¿ä
+				// todo: leave íŒ¨í‚· ì†¡ì‹  í•„ìš”
 			}
 
 			break;
@@ -269,18 +269,18 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_ENTER_GAME_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ENTER_GAME_PACKET));
 
-			// À§Ä¡ µî Á¤º¸ Ãß°¡
+			// ìœ„ì¹˜ ë“± ì •ë³´ ì¶”ê°€
 			MyPlayerInfo = p.player;
 
-			// Á÷¾÷ µî Ãß°¡ Á¤º¸
+			// ì§ì—… ë“± ì¶”ê°€ ì •ë³´
 			AddInfo = p.addinfo;
 
-			// Ä¿¸¶ µ¥ÀÌÅÍ ³Ñ°ÜÁÖ±â
+			// ì»¤ë§ˆ ë°ì´í„° ë„˜ê²¨ì£¼ê¸°
 			custom_data_update(m_custom, p.custom);
 
-			// todo: Äù½ºÆ® µ¥ÀÌÅÍ ³Ñ°ÜÁÖ±â
+			// todo: í€˜ìŠ¤íŠ¸ ë°ì´í„° ë„˜ê²¨ì£¼ê¸°
 
-			// ÀÎº¥Åä¸® ÃÊ±âÈ­
+			// ì¸ë²¤í† ë¦¬ ì´ˆê¸°í™”
 			/*TMap<uint8, uint8> tmpmap;
 			for (int i = 0; i < ITEM_SIZE; ++i) {
 				tmpmap.Add(i, 0);
@@ -288,8 +288,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			m_inventory->road_Item(tmpmap);
 			m_inventory->delete_zero_item();*/
 
-			// ¸ŞÀÎ ¸ÊÀ¸·Î ÀÌµ¿
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: ¿©±â ¼öÁ¤
+			// ë©”ì¸ ë§µìœ¼ë¡œ ì´ë™
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: ì—¬ê¸° ìˆ˜ì •
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			break;
 		}
@@ -310,17 +310,17 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 				UWorld* World = GetWorld();
 
-				// SpawnParams¿¡ ¿Ã¹Ù¸¥ ·¹º§ ¼³Á¤
+				// SpawnParamsì— ì˜¬ë°”ë¥¸ ë ˆë²¨ ì„¤ì •
 				FActorSpawnParameters SpawnParams;
 				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 				SpawnParams.OverrideLevel = World->PersistentLevel;
 
 				ACharacter* Actor = World->SpawnActor<ACharacter>(PlayerClass, L, R, SpawnParams);
 
-				//½ºÆùµÈ ¾×ÅÍÀÇ Ä¿½ºÅÒÁ¤º¸ ¹İ¿µ
+				//ìŠ¤í°ëœ ì•¡í„°ì˜ ì»¤ìŠ¤í…€ì •ë³´ ë°˜ì˜
 				Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 				Other_actor_m_custom->custom_data_update(p.c);
-				// ½ºÆùµÈ ¾×ÅÍ ÀúÀå
+				// ìŠ¤í°ëœ ì•¡í„° ì €ì¥
 				SpawnedPlayers.Add(p.pl.id, Actor);
 
 			}
@@ -374,7 +374,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			UAnimInstance* AnimInstance = pl->GetMesh()->GetAnimInstance();
 			if (UVL_AnimInstance* VLAnimInstance = Cast<UVL_AnimInstance>(AnimInstance))
 			{
-				// AnimInstance¿¡ ÀÖ´Â º¯¼ö¸¦ »ç¿ëÇÏ°Å³ª ¸Ş¼­µå¸¦ È£Ãâ
+				// AnimInstanceì— ìˆëŠ” ë³€ìˆ˜ë¥¼ ì‚¬ìš©í•˜ê±°ë‚˜ ë©”ì„œë“œë¥¼ í˜¸ì¶œ
 				VLAnimInstance->setState(RUN);
 			}
 
@@ -397,12 +397,14 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_data = CreateDefaultSubobject<UPlayer_data>(TEXT("PlayerData"));
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
+
+	UE_LOG(LogTemp, Log, TEXT("Korean Text: %s"), *name);
 }
 
 void UVirtual_life_GameInstance::OnStart()
 {
 	Super::OnStart();
-	// ºí·çÇÁ¸°Æ® Å¬·¡½º ·Îµå (Á¤È®ÇÑ °æ·Î »ç¿ë)
+	// ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤ ë¡œë“œ (ì •í™•í•œ ê²½ë¡œ ì‚¬ìš©)
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
 
 	ConnectServer();
@@ -416,14 +418,14 @@ void UVirtual_life_GameInstance::Shutdown()
 
 	if (RecvThread)
 	{
-		RecvThread->Destroy();  // ½º·¹µå Á¾·á
+		RecvThread->Destroy();  // ìŠ¤ë ˆë“œ ì¢…ë£Œ
 		delete RecvThread;
 		RecvThread = nullptr;
 	}
 
 	if (SendThread)
 	{
-		SendThread->Destroy();  // ½º·¹µå Á¾·á
+		SendThread->Destroy();  // ìŠ¤ë ˆë“œ ì¢…ë£Œ
 		delete SendThread;
 		SendThread = nullptr;
 	}
@@ -449,7 +451,7 @@ void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 	p.pl.yaw = Rotation.Yaw;
 	p.pl.id = MyPlayerInfo.id;
 
-	if (true == loaded)  // SendThread°¡ Á¸ÀçÇÒ °æ¿ì Àü¼Û
+	if (true == loaded)  // SendThreadê°€ ì¡´ì¬í•  ê²½ìš° ì „ì†¡
 	{
 		SendEnqueue(&p, p.size);
 	}
@@ -462,11 +464,11 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	p.type = CS_CHAT;
 
 	wcsncpy(p.name, *name, M_ID_SIZE - 1);
-	p.name[M_ID_SIZE - 1] = '\0'; // Null-termination º¸Àå
+	p.name[M_ID_SIZE - 1] = '\0'; // Null-termination ë³´ì¥
 
-	// ¸Ş½ÃÁö ¼³Á¤
+	// ë©”ì‹œì§€ ì„¤ì •
 	wcsncpy(p.msg, *s, CHAT_SIZE - 1);
-	p.msg[CHAT_SIZE - 1] = L'\0'; // Null-termination º¸Àå
+	p.msg[CHAT_SIZE - 1] = L'\0'; // Null-termination ë³´ì¥
 
 	SendEnqueue(&p, p.size);
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Name_Widget.h"
@@ -38,9 +38,9 @@ void UName_Widget::OnOKClicked()
     FString LastName = LastNameBox ? LastNameBox->GetText().ToString() : "";
     FString FirstName = FirstNameBox ? FirstNameBox->GetText().ToString() : "";
 
-    UE_LOG(LogTemp, Warning, TEXT("¼º: %s, ÀÌ¸§: %s"), *LastName, *FirstName);
+    UE_LOG(LogTemp, Warning, TEXT("ì„±: %s, ì´ë¦„: %s"), *LastName, *FirstName);
 
-    // °ÔÀÓ ÀÎ½ºÅÏ½º¿¡ ÀÌ¸§ Àü´Ş
+    // ê²Œì„ ì¸ìŠ¤í„´ìŠ¤ì— ì´ë¦„ ì „ë‹¬
     UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
     if (my_instance)
     {
@@ -48,8 +48,8 @@ void UName_Widget::OnOKClicked()
         //my_instance->SendLoginInfoPacket(FirstName + LastName);
     }
 
-    // custom ¸ÊÀ¸·Î ÀüÈ¯
-    FName LevelName = FName("custom_map"); // ¸Ê ÀÌ¸§Àº Level Browser ±âÁØÀ¸·Î Á¤È®È÷ È®ÀÎ
+    // custom ë§µìœ¼ë¡œ ì „í™˜
+    FName LevelName = FName("custom_map"); // ë§µ ì´ë¦„ì€ Level Browser ê¸°ì¤€ìœ¼ë¡œ ì •í™•íˆ í™•ì¸
     UGameplayStatics::OpenLevel(this, LevelName);
 }
 

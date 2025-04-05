@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,7 +30,7 @@ public:
 	TSubclassOf<ACharacter> PlayerClass;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnChatReceived OnChatReceived; // ºí·çÇÁ¸°Æ®¿¡¼­ ÀÌº¥Æ® ¹ÙÀÎµù °¡´É!
+	FOnChatReceived OnChatReceived; // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì´ë²¤íŠ¸ ë°”ì¸ë”© ê°€ëŠ¥!
 
 	void OnStart();
 
@@ -72,16 +72,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual bool IsTickable() const override { return true; }
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UVirtual_life_GameInstance, STATGROUP_Tickables); }
-	virtual void Shutdown() override;  // °ÔÀÓ Á¾·á ½Ã ½ÇÇàµÉ ÇÔ¼ö
+	virtual void Shutdown() override;  // ê²Œì„ ì¢…ë£Œ ì‹œ ì‹¤í–‰ë  í•¨ìˆ˜
 
 	void SendPlayerLocationToServer();
 
-	// ±âº» ¼¼ÆÃ
+	// ê¸°ë³¸ ì„¸íŒ…
 	class FSocket* Socket;
-	FString IpAddress = TEXT("127.0.0.1"); // ipÁÖ¼Ò
-	int16 Port = PORT_NUM; // Æ÷Æ® ¹øÈ£: ÀÓÀÇ·Î ÁöÁ¤.
+	FString IpAddress = TEXT("127.0.0.1"); // ipì£¼ì†Œ
+	int16 Port = PORT_NUM; // í¬íŠ¸ ë²ˆí˜¸: ì„ì˜ë¡œ ì§€ì •.
 
-	// ÆĞÅ¶ °ü·Ã
+	// íŒ¨í‚· ê´€ë ¨
 	TQueue<TArray<uint8>> RecvPacketQueue;
 	TQueue<TArray<uint8>> SendPacketQueue;
 
@@ -94,16 +94,16 @@ public:
 	TArray<FString> chats;
 
 public:
-	// ÀÌ¸§,Á÷¾÷,³ªÀÌ, Ã¼·Â,ÇÇ·Îµµ¸¦ °ü¸®ÇÏ´Â ÇÃ·¹ÀÌ¾î µ¥ÀÌÅÍ Å¬·¡½º
+	// ì´ë¦„,ì§ì—…,ë‚˜ì´, ì²´ë ¥,í”¼ë¡œë„ë¥¼ ê´€ë¦¬í•˜ëŠ” í”Œë ˆì´ì–´ ë°ì´í„° í´ë˜ìŠ¤
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "player_info")
 	UPlayer_data* m_data;
 public:
-	//Àåºñ,¾ÆÀÌÅÛÀ» °ü¸®ÇÏ´Â ÀÎº¥Åä¸®Å¬·¡½º
+	//ì¥ë¹„,ì•„ì´í…œì„ ê´€ë¦¬í•˜ëŠ” ì¸ë²¤í† ë¦¬í´ë˜ìŠ¤
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	UPlayerInventory* m_inventory;
 
 public: 
-	//Ä¿½ºÅÒµ¥ÀÌÅÍ¸¦ ÀúÀåÇÏ´Â Ä¿½ºÅÒÅ¬·¡½º 
+	//ì»¤ìŠ¤í…€ë°ì´í„°ë¥¼ ì €ì¥í•˜ëŠ” ì»¤ìŠ¤í…€í´ë˜ìŠ¤ 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 	UCustom_data* m_custom;
 	void custom_data_update(UCustom_data* targer_data, Customizing recv_cus);
@@ -115,14 +115,14 @@ private:
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
 	int id;
-	FString name;
-	// todo: ÀÌ°Å ¿Å±æÁö °í¹Î
-	PlayerInfo MyPlayerInfo;  // ¼­¹ö·ÎºÎÅÍ ¹ŞÀº À§Ä¡ Á¤º¸¸¦ ÀúÀå
+	FString name = TEXT("ê¶³ëš«ë·ì’¥");
+	// todo: ì´ê±° ì˜®ê¸¸ì§€ ê³ ë¯¼
+	PlayerInfo MyPlayerInfo;  // ì„œë²„ë¡œë¶€í„° ë°›ì€ ìœ„ì¹˜ ì •ë³´ë¥¼ ì €ì¥
 	AdditionalInfo AddInfo;
 
-	// ÆĞÅ¶ Ã³¸® ÇÔ¼ö
+	// íŒ¨í‚· ì²˜ë¦¬ í•¨ìˆ˜
 	void ProcessRecvPackets();
-	float TimeAccumulator = 0.0f;  // À§Ä¡ Àü¼Û °£°İ °ü¸®
+	float TimeAccumulator = 0.0f;  // ìœ„ì¹˜ ì „ì†¡ ê°„ê²© ê´€ë¦¬
 public :
 	void set_name(FString _name) { name = _name; };
 };

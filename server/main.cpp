@@ -1,15 +1,15 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Player.h"
 
-// iocp¿¡ °ü·ÃµÈ Àü¿ª º¯¼öµé //
+// iocpì— ê´€ë ¨ëœ ì „ì—­ ë³€ìˆ˜ë“¤ //
 HANDLE g_iocp_handle;
 SOCKET g_server;
 SOCKET g_client;
 
-// ±× ¿Ü //
+// ê·¸ ì™¸ //
 
 
-// ÇÔ¼ö Àü¹æ¼±¾ð //
+// í•¨ìˆ˜ ì „ë°©ì„ ì–¸ //
 void initialize_server();
 
 void workerThread(HANDLE iocp_hd)
@@ -21,7 +21,7 @@ void workerThread(HANDLE iocp_hd)
         WSAOVERLAPPED* over;
         BOOL ret;
         ret = GetQueuedCompletionStatus(iocp_hd, &num_bytes, &key, &over, INFINITE);
-        if (ret == FALSE) { // ½ÇÆÐ!
+        if (ret == FALSE) { // ì‹¤íŒ¨!
             if (over == nullptr) {
                 printf("GetQueuedCompletionStatus failed with error: %d\n", GetLastError());
             }
@@ -34,13 +34,13 @@ void workerThread(HANDLE iocp_hd)
             player_id = (player_id) * (-1) - 1;
 
         if (ext_over->ov == TASK_TYPE::ACCEPT) {
-            // todo: id ÁöÁ¤ÇØÁÖ±â, LoginID ¹Þ¾Æ¿À±â
+            // todo: id ì§€ì •í•´ì£¼ê¸°, LoginID ë°›ì•„ì˜¤ê¸°
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
-            cout << "ACCEPT: Å¬¶óÀÌ¾ðÆ® ID " << client_id << " ¿¬°áµÊ" << endl;
+            cout << "ACCEPT: í´ë¼ì´ì–¸íŠ¸ ID " << client_id << " ì—°ê²°ë¨" << endl;
 
             players[client_id] = Player(g_client, client_id);
-            players[client_id].recv(); // Ã¹ ¹øÂ° ÆÐÅ¶ ¹Þ±â ½ÃÀÛ
+            players[client_id].recv(); // ì²« ë²ˆì§¸ íŒ¨í‚· ë°›ê¸° ì‹œìž‘
 
             g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
 
@@ -93,7 +93,7 @@ void initialize_server()
     if (g_server == INVALID_SOCKET)
         server_error("WSASocket failed");
 
-    // ¼ÒÄÏÀ» ºñµ¿±â ¸ðµå·Î ¼³Á¤
+    // ì†Œì¼“ì„ ë¹„ë™ê¸° ëª¨ë“œë¡œ ì„¤ì •
     u_long mode = 1;
     if (ioctlsocket(g_server, FIONBIO, &mode) != NO_ERROR) {
         server_error("ioctlsocket failed");

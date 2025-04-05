@@ -7,4 +7,5 @@
 void ALogoDisplayGameMode::MoveToLoginMap()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), FName("LogInMap"));
+
 }
