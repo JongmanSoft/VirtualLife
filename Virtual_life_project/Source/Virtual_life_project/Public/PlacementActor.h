@@ -36,6 +36,9 @@ public:
 
     FVector GetMouseSnappedPosition() const;
 
+    UFUNCTION()
+    void SetMesh(UStaticMesh* InMesh);
+
     UFUNCTION(BlueprintCallable, Category = "Placement")
     void PlaceBuild();
 

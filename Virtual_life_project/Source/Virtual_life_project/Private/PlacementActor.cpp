@@ -78,6 +78,16 @@ FVector APlacementActor::GetMouseSnappedPosition() const
     return GetActorLocation();
 }
 
+void APlacementActor::SetMesh(UStaticMesh* InMesh)
+{
+    BuildingMesh = InMesh;
+
+    if (MeshComponent && InMesh)
+    {
+        MeshComponent->SetStaticMesh(InMesh);
+    }
+}
+
 void APlacementActor::PlaceBuild()
 {
     FActorSpawnParameters Params;
