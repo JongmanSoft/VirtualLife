@@ -24,6 +24,7 @@ struct AdditionalInfo
 	unsigned short age;
 	short hp;
 	short mp;
+	int gold;
 };
 
 struct Customizing
@@ -77,6 +78,7 @@ enum PACKETID : char
 	CS_UPDATE_CUSTOM,
 	CS_ENTER_GAME, // 클라의 게임접속.
 	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
+	CS_UPDATE_GOLD,
 
 	// server to client
 	SC_LOGININFO,
@@ -88,7 +90,8 @@ enum PACKETID : char
 	SC_MOVEP,
 	SC_UPDATE_ITEM,
 	SC_DROP_ITEM,
-	SC_UPDATE_CUSTOM
+	SC_UPDATE_CUSTOM,
+	SC_UPDATE_GOLD
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -135,6 +138,13 @@ struct CS_UPDATE_CUSTOM_PACKET {
 	unsigned short size;
 	PACKETID type;
 	Customizing c;
+};
+
+struct CS_UPDATE_GOLD_PACKET
+{
+	unsigned short size;
+	PACKETID type;
+	int gold_offset; //증감수치, 500원 썼으면 -500. 500원받았으면 +500
 };
 
 // server to client
@@ -192,5 +202,11 @@ struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 	PACKETID type;
 	unsigned short id;
 	Customizing c;
+};
+
+struct SC_UPDATE_GOLD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	int gold; //클라가 준 증감수치를 더한 최종골드
 };
 #pragma pack (pop)

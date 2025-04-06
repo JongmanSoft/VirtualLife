@@ -1,4 +1,4 @@
-#include "Use_equip_component.h"
+ï»¿#include "Use_equip_component.h"
 #include "GameFramework/Actor.h"
 #include "Components/InputComponent.h"
 #include "Animation/AnimInstance.h"
@@ -18,6 +18,8 @@
 #include "plant_able_cpp_interface.h"
 #include "fishing_cpp_interface.h"
 #include "mining_cpp_interface.h"
+
+
 
 // Sets default values for this component's properties
 UUse_equip_component::UUse_equip_component()
@@ -69,10 +71,10 @@ void UUse_equip_component::ChangeBindingFunc(uint8 index, uint8 tool_ID)
 
     static const TCHAR* key_string[5] = { TEXT("Key1"), TEXT("Key2"), TEXT("Key3"), TEXT("Key4"), TEXT("Key5") };
 
-    // ±âÁ¸ ¹ÙÀÎµù Á¦°Å
+    // ê¸°ì¡´ ë°”ì¸ë”© ì œê±°
     InputComponent->RemoveActionBinding(key_string[index], IE_Pressed);
 
-    // »õ·Î¿î ¹ÙÀÎµù Ãß°¡
+    // ìƒˆë¡œìš´ ë°”ì¸ë”© ì¶”ê°€
     if (tool_ID == 0)
     {
         InputComponent->BindAction(key_string[index], IE_Pressed, this, ActionFunctions[tool_ID]);
@@ -94,9 +96,9 @@ void UUse_equip_component::USE_fishing_rod()
     AActor* ParentActor = GetOwner();
     if (ParentActor)
     {
-        //ÇÃ·¹ÀÌ¾î ¸Þ½¬Ã£±â
+        //í”Œë ˆì´ì–´ ë©”ì‰¬ì°¾ê¸°
         USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
-        //¿ì¼± ÇÇ½Ì½ºÆý ¾È¿¡ µé¾î¿Ô´ÂÁö È®ÀÎ 
+        //ìš°ì„  í”¼ì‹±ìŠ¤í¿ ì•ˆì— ë“¤ì–´ì™”ëŠ”ì§€ í™•ì¸ 
         UCapsuleComponent* capsuleComp = ParentActor->FindComponentByClass<UCapsuleComponent>();
         if (capsuleComp) {
             TArray<AActor*> OverlappingActors;
@@ -139,6 +141,8 @@ void UUse_equip_component::USE_tomato_seed()
     if (ParentActor)
     {
        
+       
+
         USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
         if (SkeletalMeshComp)
         {

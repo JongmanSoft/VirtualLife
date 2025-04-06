@@ -25,7 +25,7 @@ bool Player::send_enter_game_packet()
 	p.player = pinfo;
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 	p.type = SC_ENTER_GAME;
-
+	
 	// 인벤토리 초기화
 	for (int i = 0; i < ITEM_SIZE; ++i) {
 		if (true == player_item.contains(i)) p.items[i] = player_item[i];
@@ -91,6 +91,17 @@ bool Player::send_update_item_packet(unsigned short id, unsigned short num)
 	p.num = num;
 
 	cout << pinfo.id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << endl;
+	send(&p);
+	return true;
+}
+
+bool Player::send_update_gold(int sc_gold)
+{
+	SC_UPDATE_GOLD_PACKET p;
+	p.size = sizeof(SC_UPDATE_GOLD_PACKET);
+	p.type = SC_UPDATE_GOLD;
+	p.gold = sc_gold;
+	cout << pinfo.id << "에게 SC_GOLD_UPDATE 보냄: " << sc_gold<<"원이 됨!" << endl;
 	send(&p);
 	return true;
 }
@@ -283,6 +294,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
+		break;
+	}
+	case  CS_UPDATE_GOLD:
+	{
+		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
+		this->addinfo.gold += p->gold_offset;
+		send_update_gold(this->addinfo.gold);
 		break;
 	}
     default:

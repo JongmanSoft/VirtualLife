@@ -78,6 +78,15 @@ void UVirtual_life_GameInstance::SendUpadteCustomPacket()
 
 }
 
+void UVirtual_life_GameInstance::SendUpdateGoldPacket(int cs_gold_offset)
+{
+	CS_UPDATE_GOLD_PACKET p;
+	p.size = sizeof(CS_UPDATE_GOLD_PACKET);
+	p.type = CS_UPDATE_GOLD;
+	p.gold_offset = cs_gold_offset;
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -282,13 +291,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			// todo: 퀘스트 데이터 넘겨주기
 
-			// 인벤토리 초기화
-			/*TMap<uint8, uint8> tmpmap;
-			for (int i = 0; i < ITEM_SIZE; ++i) {
-				tmpmap.Add(i, 0);
-			}
-			m_inventory->road_Item(tmpmap);
-			m_inventory->delete_zero_item();*/
 
 			// 메인 맵으로 이동
 			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: 여기 수정
@@ -390,13 +392,20 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			m_inventory->Add_Item(p.id, p.num);
 			break;
 		}
+		case SC_UPDATE_GOLD:
+		{
+			SC_UPDATE_GOLD_PACKET	p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_GOLD_PACKET));
+			AddInfo.gold = p.gold;
+			break;
+		}
 		}
 	}
 }
 
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 {
-	m_data = CreateDefaultSubobject<UPlayer_data>(TEXT("PlayerData"));
+
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 

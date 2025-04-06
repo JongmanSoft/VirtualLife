@@ -66,6 +66,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendUpadteCustomPacket();
 
+	void SendUpdateGoldPacket(int cs_gold_offset);
+
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
@@ -93,10 +95,7 @@ public:
 
 	TArray<FString> chats;
 
-public:
-	// 이름,직업,나이, 체력,피로도를 관리하는 플레이어 데이터 클래스
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "player_info")
-	UPlayer_data* m_data;
+
 public:
 	//장비,아이템을 관리하는 인벤토리클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
