@@ -11,6 +11,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Games</Filter>
     </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Games</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -29,6 +32,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Games</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
       <Filter>Games</Filter>
     </ClInclude>
   </ItemGroup>
