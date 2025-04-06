@@ -11,64 +11,53 @@ void UBuildingSelectButtonWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    if (DataTable)
+    {
+        FBuildInfo* RowData = DataTable->FindRow<FBuildInfo>(RowName, "");
+        if (RowData && AssetImage)
+        {
+            FSlateBrush Brush;
+            Brush.SetResourceObject(RowData->Image);
+            AssetImage->SetBrush(Brush);
+        }
+    }
+
     if (Build_BTN)
     {
-        Build_BTN->OnClicked.AddDynamic(this, &UBuildingSelectButtonWidget::OnBuildButtonClicked);
-    }
-
-    if (DataTable && !RowName.IsNone())
-    {
-        const FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, TEXT("LoadButtonPreview"));
-
-        if (Info && Info->Image && AssetImage)
-        {
-            AssetImage->SetBrushFromTexture(Info->Image);
-            UE_LOG(LogTemp, Warning, TEXT("Image Load Sucess: %s"), *Info->Image->GetName());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Image Load Fail"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No Data"));
+        Build_BTN->OnClicked.AddDynamic(this, &UBuildingSelectButtonWidget::OnClickedBuildButton);
     }
 }
 
-void UBuildingSelectButtonWidget::OnBuildButtonClicked()
+void UBuildingSelectButtonWidget::OnClickedBuildButton()
 {
     CheckActive();
 
-    if (!DataTable || RowName.IsNone()) return;
-
-    const FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, TEXT("Click"));
-    if (!Info || !Info->Mesh) return;
+    if (!DataTable) return;
+    FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
+    if (!Info) return;
 
     UWorld* World = GetWorld();
-    if (!World) return;
-
-    // PlacementActor_BP 블루프린트를 스폰
-    APlacementActor* Placement = World->SpawnActor<APlacementActor>(
-        APlacementActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-
-    if (Placement)
+    if (World)
     {
-        Placement->BuildingMesh = Info->Mesh;
+        APlacementActor* Spawned = World->SpawnActor<APlacementActor>(APlacementActor::StaticClass());
+        if (Spawned)
+        {
+            Spawned->SetMesh(Info->Mesh);
+        }
     }
 }
 
-void UBuildingSelectButtonWidget::CheckActive()
+void UBuildingSelectButtonWidget::CheckActive_Implementation()
 {
     UWorld* World = GetWorld();
     if (!World) return;
 
-    TArray<AActor*> Found;
-    UGameplayStatics::GetAllActorsOfClass(World, APlacementActor::StaticClass(), Found);
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(World, APlacementActor::StaticClass(), FoundActors);
 
-    for (AActor* Actor : Found)
+    for (AActor* Actor : FoundActors)
     {
-        if (IsValid(Actor))
+        if (Actor && Actor->IsValidLowLevel())
         {
             Actor->Destroy();
         }

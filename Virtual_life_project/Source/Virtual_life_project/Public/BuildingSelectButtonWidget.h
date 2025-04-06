@@ -8,9 +8,6 @@
 #include "FBuildInfo.h"
 #include "BuildingSelectButtonWidget.generated.h"
 
-class UButton;
-class UImage;
-
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
 {
@@ -18,22 +15,23 @@ class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
 public:
     virtual void NativeConstruct() override;
 
-    UFUNCTION(BlueprintCallable)
-    void OnBuildButtonClicked();
-
-    UFUNCTION(BlueprintCallable)
+    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     void CheckActive();
+    virtual void CheckActive_Implementation();
 
 protected:
-    UPROPERTY(meta = (BindWidget))
-    class UButton* Build_BTN;
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+    UDataTable* DataTable;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
+    FName RowName;
 
     UPROPERTY(meta = (BindWidget))
     class UImage* AssetImage;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build Data")
-    UDataTable* DataTable;
+    UPROPERTY(meta = (BindWidget))
+    class UButton* Build_BTN;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build Data")
-    FName RowName;
+    UFUNCTION()
+    void OnClickedBuildButton();
 };

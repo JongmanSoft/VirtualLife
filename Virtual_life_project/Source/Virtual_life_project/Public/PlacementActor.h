@@ -17,16 +17,21 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
 
-    /** 위젯에서 설정되는 메쉬 */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UStaticMesh* BuildingMesh;
+    UFUNCTION()
+    void SetMesh(UStaticMesh* NewMesh);
+
+    UFUNCTION()
+    void PlaceBuild();
 
 protected:
     UPROPERTY(VisibleAnywhere)
-    class UStaticMeshComponent* Mesh;
+    UStaticMeshComponent* Mesh;
 
     UPROPERTY(EditAnywhere)
     float GridSize = 100.f;
 
-    FVector GetMouseSnappedPosition() const;
+    UPROPERTY(EditAnywhere)
+    float Rotate = 0.f;
+
+    FVector MousePosition();
 };

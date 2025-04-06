@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Engine/World.h"
+//#include "PlaceBuildActor.h"
 
 APlacementActor::APlacementActor()
 {
@@ -18,51 +18,50 @@ APlacementActor::APlacementActor()
 void APlacementActor::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (BuildingMesh)
-    {
-        Mesh->SetStaticMesh(BuildingMesh);
-        UMaterialInterface* Glow = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/BuildingSystem/Glow_M.Glow_M"));
-        if (Glow)
-        {
-            Mesh->SetOverlayMaterial(Glow);
-        }
-    }
 }
 
 void APlacementActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    SetActorLocation(GetMouseSnappedPosition());
+    FVector HitLoc = MousePosition();
+    FVector Snapped = FVector(
+        FMath::GridSnap(HitLoc.X, GridSize),
+        FMath::GridSnap(HitLoc.Y, GridSize),
+        FMath::GridSnap(HitLoc.Z, GridSize)
+    );
+
+    FRotator Rot(0.f, Rotate, 0.f);
+    SetActorTransform(FTransform(Rot, Snapped, FVector(1.f)));
 }
 
-FVector APlacementActor::GetMouseSnappedPosition() const
+FVector APlacementActor::MousePosition()
 {
-    FVector WorldLocation, WorldDirection;
+    FVector WorldLoc, WorldDir;
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PC) return GetActorLocation();
 
-    if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+    PC->DeprojectMousePositionToWorld(WorldLoc, WorldDir);
+
+    FVector End = WorldLoc + WorldDir * 20000;
+    FHitResult Hit;
+
+    GetWorld()->LineTraceSingleByChannel(Hit, WorldLoc, End, ECC_Visibility);
+    return Hit.bBlockingHit ? Hit.Location : GetActorLocation();
+}
+
+void APlacementActor::SetMesh(UStaticMesh* NewMesh)
+{
+    if (NewMesh)
     {
-        if (PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
-        {
-            FVector Start = WorldLocation;
-            FVector End = Start + WorldDirection * 10000.0f;
-
-            FHitResult Hit;
-            FCollisionQueryParams Params;
-            Params.AddIgnoredActor(this);
-
-            if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
-            {
-                FVector P = Hit.Location;
-                return FVector(
-                    FMath::GridSnap(P.X, GridSize),
-                    FMath::GridSnap(P.Y, GridSize),
-                    FMath::GridSnap(P.Z, GridSize)
-                );
-            }
-        }
+        Mesh->SetStaticMesh(NewMesh);
     }
+}
 
-    return GetActorLocation();
+void APlacementActor::PlaceBuild()
+{
+    FVector Loc = GetActorLocation();
+    FRotator Rot(0.f, Rotate, 0.f);
+    //GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
+    Destroy(); // 배치 완료 후 제거
 }
