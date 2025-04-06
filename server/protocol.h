@@ -2,9 +2,8 @@
 constexpr int PORT_NUM = 7777;
 constexpr int M_ID_SIZE = 20;
 constexpr int CHAT_SIZE = 100; 
-
 constexpr short MAX_PLAYER = 1000;
-
+constexpr unsigned short MAX_BUILD_ITEM = 100;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 
 enum STATE : char { IDLE, WALK, RUN, JUMP };
@@ -62,6 +61,15 @@ struct Customizing
 	float jaw;
 	float heavy;
 	float face_width;
+};
+
+struct Object // 건축 오브젝트
+{
+	unsigned short item_id;
+	float x;
+	float y;
+	float z;
+	float yaw; // 회전값
 };
 
 // Packet ID
@@ -192,5 +200,12 @@ struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 	PACKETID type;
 	unsigned short id;
 	Customizing c;
+};
+
+struct SC_ROOM_SETUP {
+	unsigned short size;
+	PACKETID type;
+	unsigned short id; // 현재 접속한 집 주인의 아이디
+	Object objs[MAX_BUILD_ITEM]; // 오브젝트들
 };
 #pragma pack (pop)
