@@ -427,6 +427,7 @@ void UVirtual_life_GameInstance::Shutdown()
 
 	SendLeavePacket();
 
+	while (!SendPacketQueue.IsEmpty());
 	if (RecvThread)
 	{
 		RecvThread->Destroy();  // 스레드 종료
