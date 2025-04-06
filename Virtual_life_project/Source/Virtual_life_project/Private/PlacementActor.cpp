@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-//#include "PlaceBuildActor.h"
+#include "PlaceBuildActor.h"
 
 APlacementActor::APlacementActor()
 {
@@ -62,6 +62,6 @@ void APlacementActor::PlaceBuild()
 {
     FVector Loc = GetActorLocation();
     FRotator Rot(0.f, Rotate, 0.f);
-    //GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
+    GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
     Destroy(); // 배치 완료 후 제거
 }

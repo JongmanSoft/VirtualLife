@@ -7,9 +7,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "PlacementActor.h"
 
-void UBuildingSelectButtonWidget::NativeConstruct()
+void UBuildingSelectButtonWidget::NativePreConstruct()
 {
-    Super::NativeConstruct();
+    Super::NativePreConstruct();
 
     if (DataTable)
     {

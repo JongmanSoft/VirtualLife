@@ -13,7 +13,7 @@ class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-    virtual void NativeConstruct() override;
+    virtual void NativePreConstruct() override;
 
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     void CheckActive();
