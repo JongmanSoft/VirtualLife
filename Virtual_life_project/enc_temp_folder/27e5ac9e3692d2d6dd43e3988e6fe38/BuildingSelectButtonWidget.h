@@ -31,9 +31,9 @@ protected:
     UPROPERTY(meta = (BindWidget))
     class UImage* AssetImage;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build Data")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build", meta = (ExposeOnSpawn = true))
     UDataTable* DataTable;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build Data")
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Build", meta = (ExposeOnSpawn = true))
     FName RowName;
 };

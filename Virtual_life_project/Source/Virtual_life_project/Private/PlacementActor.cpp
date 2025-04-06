@@ -5,46 +5,36 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
-#include "DrawDebugHelpers.h"
 
-// Sets default values
 APlacementActor::APlacementActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	RootComponent = MeshComponent;
+    Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+    RootComponent = Mesh;
 }
 
-// Called when the game starts or when spawned
 void APlacementActor::BeginPlay()
 {
-	Super::BeginPlay();
-	
-	if (BuildingMesh)
-	{
-		MeshComponent->SetStaticMesh(BuildingMesh);
-	}
-    UMaterialInterface* GlowMaterial = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/BuildingSystem/Glow_M.Glow_M"));
-    if (GlowMaterial)
+    Super::BeginPlay();
+
+    if (BuildingMesh)
     {
-        MeshComponent->SetOverlayMaterial(GlowMaterial);
+        Mesh->SetStaticMesh(BuildingMesh);
+        UMaterialInterface* Glow = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/BuildingSystem/Glow_M.Glow_M"));
+        if (Glow)
+        {
+            Mesh->SetOverlayMaterial(Glow);
+        }
     }
 }
 
-// Called every frame
 void APlacementActor::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
-	CachedLocation = GetMouseSnappedPosition();
-	SetActorLocation(CachedLocation);
-
-	FRotator Rot = FRotator(0.0f, RotationAngle, 0.0f);
-	SetActorRotation(Rot);
+    SetActorLocation(GetMouseSnappedPosition());
 }
 
 FVector APlacementActor::GetMouseSnappedPosition() const
@@ -55,21 +45,20 @@ FVector APlacementActor::GetMouseSnappedPosition() const
     {
         if (PC->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
         {
-            FVector TraceStart = WorldLocation;
-            FVector TraceEnd = TraceStart + (WorldDirection * 20000.0f);
+            FVector Start = WorldLocation;
+            FVector End = Start + WorldDirection * 10000.0f;
 
             FHitResult Hit;
             FCollisionQueryParams Params;
-            Params.bTraceComplex = true;
             Params.AddIgnoredActor(this);
 
-            if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, Params))
+            if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params))
             {
-                FVector HitLocation = Hit.Location;
+                FVector P = Hit.Location;
                 return FVector(
-                    FMath::GridSnap(HitLocation.X, GridSize),
-                    FMath::GridSnap(HitLocation.Y, GridSize),
-                    FMath::GridSnap(HitLocation.Z, GridSize)
+                    FMath::GridSnap(P.X, GridSize),
+                    FMath::GridSnap(P.Y, GridSize),
+                    FMath::GridSnap(P.Z, GridSize)
                 );
             }
         }
@@ -77,35 +66,3 @@ FVector APlacementActor::GetMouseSnappedPosition() const
 
     return GetActorLocation();
 }
-
-void APlacementActor::SetMesh(UStaticMesh* InMesh)
-{
-    BuildingMesh = InMesh;
-
-    if (MeshComponent && InMesh)
-    {
-        MeshComponent->SetStaticMesh(InMesh);
-    }
-}
-
-void APlacementActor::PlaceBuild()
-{
-    FActorSpawnParameters Params;
-    Params.Owner = this;
-
-    FVector SpawnLocation = CachedLocation;
-    FRotator SpawnRotation = FRotator(0.f, RotationAngle, 0.f);
-
-    APlacementActor* Placed = GetWorld()->SpawnActor<APlacementActor>(APlacementActor::StaticClass(), SpawnLocation, SpawnRotation, Params);
-    if (Placed)
-    {
-        Placed->BuildingMesh = this->BuildingMesh;
-        Placed->GridSize = this->GridSize;
-        Placed->RotationAngle = this->RotationAngle;
-        Placed->MeshComponent->SetStaticMesh(BuildingMesh);
-    }
-
-    ////////////////////////////////////////// ¼­¹ö
-    
-}
-

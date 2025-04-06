@@ -4,8 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "EBuildCategories.h"
 #include "FBuildInfo.generated.h"
+
+UENUM(BlueprintType)
+enum class EBuildCategories : uint8
+{
+    Desk,
+    Chair
+};
 
 USTRUCT(BlueprintType)
 struct FBuildInfo : public FTableRowBase

@@ -11,37 +11,22 @@ class VIRTUAL_LIFE_PROJECT_API APlacementActor : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
-	APlacementActor();
+public:
+    APlacementActor();
 
-protected:
-	virtual void BeginPlay() override;
+    virtual void Tick(float DeltaTime) override;
+    virtual void BeginPlay() override;
 
-public:	
-	virtual void Tick(float DeltaTime) override;
-
-    // 컴포넌트
-    UPROPERTY(VisibleAnywhere)
-    UStaticMeshComponent* MeshComponent;
-
-    // 배치용 속성들
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Placement")
+    /** 위젯에서 설정되는 메쉬 */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UStaticMesh* BuildingMesh;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Placement")
-    float GridSize = 100.0f;
+protected:
+    UPROPERTY(VisibleAnywhere)
+    class UStaticMeshComponent* Mesh;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Placement")
-    float RotationAngle = 0.0f;
+    UPROPERTY(EditAnywhere)
+    float GridSize = 100.f;
 
     FVector GetMouseSnappedPosition() const;
-
-    UFUNCTION()
-    void SetMesh(UStaticMesh* InMesh);
-
-    UFUNCTION(BlueprintCallable, Category = "Placement")
-    void PlaceBuild();
-
-private:
-    FVector CachedLocation;
 };

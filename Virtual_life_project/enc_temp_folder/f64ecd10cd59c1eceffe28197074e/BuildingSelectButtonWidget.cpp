@@ -16,23 +16,13 @@ void UBuildingSelectButtonWidget::NativeConstruct()
         Build_BTN->OnClicked.AddDynamic(this, &UBuildingSelectButtonWidget::OnBuildButtonClicked);
     }
 
-    if (DataTable && !RowName.IsNone())
+    if (DataTable && AssetImage && !RowName.IsNone())
     {
-        const FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, TEXT("LoadButtonPreview"));
-
-        if (Info && Info->Image && AssetImage)
+        const FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, TEXT("Preview"));
+        if (Info && Info->Image)
         {
             AssetImage->SetBrushFromTexture(Info->Image);
-            UE_LOG(LogTemp, Warning, TEXT("Image Load Sucess: %s"), *Info->Image->GetName());
         }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Image Load Fail"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No Data"));
     }
 }
 
