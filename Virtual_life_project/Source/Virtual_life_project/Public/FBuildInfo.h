@@ -9,8 +9,12 @@
 UENUM(BlueprintType)
 enum class EBuildCategories : uint8
 {
-    Desk,
-    Chair
+    Furniture,
+    Bedroom,
+    Kitchen,
+    Storage,
+    InteriorDecor,
+    Decor
 };
 
 USTRUCT(BlueprintType)
