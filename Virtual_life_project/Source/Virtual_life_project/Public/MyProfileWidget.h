@@ -43,6 +43,9 @@ protected:
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* MP_TXT;
 
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* Coin_TXT;
+
     // 프로그레스 바 바인딩
     UPROPERTY(meta = (BindWidget))
     class UProgressBar* HP_Bar;

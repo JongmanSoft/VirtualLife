@@ -3,6 +3,7 @@
 
 #include "Name_Widget.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
 #include "TitlePlayerController.h"
 #include "Virtual_life_GameInstance.h"
@@ -44,7 +45,7 @@ void UName_Widget::OnOKClicked()
     UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
     if (my_instance)
     {
-        my_instance->set_name(FirstName + LastName);
+        my_instance->set_name(LastName + FirstName);
         //my_instance->SendLoginInfoPacket(FirstName + LastName);
     }
 
@@ -69,30 +70,25 @@ void UName_Widget::OnBackClicked()
 
 void UName_Widget::OnLastNameBoxFocused(const FText& Text, ETextCommit::Type CommitMethod)
 {
-    if (LastNameBox && !bLastNameEdited)
-    {
-        LastNameBox->SetText(FText::GetEmpty());
-        bLastNameEdited = true; 
-    }
+    // LastNameBox->SetText(FText::GetEmpty());
+    UpdateFullNameText();
 }
 
 void UName_Widget::OnFirstNameBoxFocused(const FText& Text, ETextCommit::Type CommitMethod)
 {
-    if (FirstNameBox && !bFirstNameEdited)
-    {
-        FirstNameBox->SetText(FText::GetEmpty());
-        bFirstNameEdited = true; 
-    }
-}
-
-void UName_Widget::OnLastNameChanged(const FText& Text)
-{
-}
-
-void UName_Widget::OnFirstNameChanged(const FText& Text)
-{
+    // FirstNameBox->SetText(FText::GetEmpty());
+    UpdateFullNameText();
 }
 
 void UName_Widget::UpdateFullNameText()
 {
+    FString LastName = LastNameBox ? LastNameBox->GetText().ToString() : "";
+    FString FirstName = FirstNameBox ? FirstNameBox->GetText().ToString() : "";
+
+    FString FullName = LastName + FirstName;
+
+    if (FullNameTXT)
+    {
+        FullNameTXT->SetText(FText::FromString(FullName));
+    }
 }
