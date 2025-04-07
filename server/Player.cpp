@@ -191,7 +191,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				player_setup();
 				this->id = p->id;
 			}
-			state = PLAYING;
+			
 		}
 		else
 			state = NONE;
@@ -205,6 +205,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		this->name = p->name;
+		state = PLAYING;
 		send_enter_game_packet();
 		
 		// 기존유저들에게 스폰요청
