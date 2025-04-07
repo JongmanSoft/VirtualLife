@@ -83,7 +83,6 @@ void ATimeOfDayManager::UpdateSun()
     float BaseAngle = (Time > 18.0f) ? 90.0f : -270.0f;
     float SunPitch = (Time / 24.0f) * 360.0f + BaseAngle;
     SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
-    SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
 
     MoonLight->GetLightComponent()->SetVisibility(!bIsDaytime);
     SunLight->GetLightComponent()->SetVisibility(bIsDaytime);
