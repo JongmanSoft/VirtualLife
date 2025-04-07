@@ -309,7 +309,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
 
-				FVector L(p.pl.x, p.pl.y, 200.f);
+				FVector L(p.pl.x, p.pl.y, p.pl.z);
 				FRotator R(0.f, p.pl.yaw, 0.f);
 
 				UWorld* World = GetWorld();
