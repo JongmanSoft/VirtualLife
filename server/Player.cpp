@@ -209,14 +209,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
 				players[i].send_spawn_packet(pinfo, custom);
 			}
 		}
 
 		// 나에게 기존유저 스폰
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
 				send_spawn_packet(players[i].pinfo, players[i].custom);
 			}
 		}

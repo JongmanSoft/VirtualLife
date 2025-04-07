@@ -8,7 +8,8 @@ AVL_Player::AVL_Player()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
+	GetCharacterMovement()->bRunPhysicsWithNoController = true;
 }
 
 AVL_Player::~AVL_Player()
@@ -33,24 +34,27 @@ void AVL_Player::Tick(float DeltaTime)
 	{
 		if (true || curInfo.st == RUN) // 이동중이라면
 		{
-			/*SetActorRotation(FRotator(0, destInfo.yaw, 0));
-			SetActorLocation(FVector(destInfo.x, destInfo.y, destInfo.z));*/
-			// 목표 위치와 현재 위치를 보간하여 천천히 이동
-			FVector TargetLocation = FVector(destInfo.x, destInfo.y, destInfo.z);
+			FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
 			FVector CurrentLocation = GetActorLocation();
 
-			// VInterpTo 함수를 사용하여 서서히 이동
-			FVector NewLocation = FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, 5.0f); // 5.0f는 이동 속도 조절
+			// 이동 방향 계산 (정규화)
+			FVector Direction = (TargetLocation - CurrentLocation);
+			Direction.Z = 0.f; // 수직 방향 제거
+			float Distance = Direction.Size();
 
-			// 새로운 위치로 이동
-			SetActorLocation(NewLocation);
+			if (Distance > 10.f) // 너무 가까우면 이동 안 해도 됨
+			{
+				Direction.Normalize();
 
-			// 회전도 천천히 보간하여 회전
+				// 이동 입력 (이렇게 하면 애니메이션 블루프린트에도 반영됨)
+				AddMovementInput(Direction, 1.0f);
+			}
+
+			// 회전 보간 처리
 			FRotator TargetRotation(0.f, destInfo.yaw, 0.f);
 			FRotator CurrentRotation = GetActorRotation();
-			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f); // 5.0f는 회전 속도
+			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
 
-			// 새로운 회전으로 설정
 			SetActorRotation(NewRotation);
 		}
 	}

@@ -207,7 +207,9 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 			,TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
 		};
 		
-		owner_hair->SetGroomAsset(LoadObject<UGroomAsset>(nullptr, groom_asset_file[hair]));
+
+		auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[hair]);
+		owner_hair->SetGroomAsset(a);
 		owner_hair->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[hair]));
 	}
 
