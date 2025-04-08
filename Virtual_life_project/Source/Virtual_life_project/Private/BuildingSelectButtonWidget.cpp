@@ -61,6 +61,15 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     }
 }
 
+void UBuildingSelectButtonWidget::SetRowData(UDataTable* InDataTable, FName InRowName)
+{
+    DataTable = InDataTable;
+    RowName = InRowName;
+
+    // 즉시 이미지 업데이트
+    SynchronizeProperties();
+}
+
 void UBuildingSelectButtonWidget::CheckActive_Implementation()
 {
     UWorld* World = GetWorld();

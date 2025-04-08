@@ -43,4 +43,7 @@ protected:
 
         return DataTable->GetRowNames();
     }
+public:
+    UFUNCTION(BlueprintCallable)
+    void SetRowData(UDataTable* InDataTable, FName InRowName);
 };
