@@ -65,3 +65,8 @@ void APlacementActor::PlaceBuild()
     GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
     Destroy(); // 배치 완료 후 제거
 }
+
+void APlacementActor::AddRotation(float Delta)
+{
+    Rotate = FMath::Fmod(Rotate + Delta, 360.f);
+}

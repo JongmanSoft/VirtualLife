@@ -20,8 +20,11 @@ public:
     UFUNCTION()
     void SetMesh(UStaticMesh* NewMesh);
 
-    UFUNCTION()
+    UFUNCTION(BlueprintCallable)
     void PlaceBuild();
+
+    UFUNCTION(BlueprintCallable)
+    void AddRotation(float Delta);
 
 protected:
     UPROPERTY(VisibleAnywhere)
