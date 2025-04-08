@@ -8,8 +8,6 @@
 #include "FBuildInfo.h"
 #include "BuildingSelectButtonWidget.generated.h"
 
-class APlacementActor;
-
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
 {
@@ -21,9 +19,6 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
     void CheckActive();
     virtual void CheckActive_Implementation();
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-    TSubclassOf<APlacementActor> PlacementActorClass;
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")

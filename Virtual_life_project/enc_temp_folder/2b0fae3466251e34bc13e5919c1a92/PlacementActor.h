@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "PlacementActor.generated.h"
 
-class APlaceBuildActor;
-
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API APlacementActor : public AActor
 {
@@ -27,9 +25,6 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void AddRotation(float Delta);
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-    TSubclassOf<APlaceBuildActor> PlaceBuildClass;
 
 protected:
     UPROPERTY(VisibleAnywhere)

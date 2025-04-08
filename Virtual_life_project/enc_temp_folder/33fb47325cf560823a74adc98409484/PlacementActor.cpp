@@ -62,14 +62,7 @@ void APlacementActor::PlaceBuild()
 {
     FVector Loc = GetActorLocation();
     FRotator Rot(0.f, Rotate, 0.f);
-    // GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
-
-    APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
-    if (Placed && Mesh)
-    {
-        Placed->SetMesh(Mesh->GetStaticMesh());
-    }
-
+    GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
     Destroy(); // 배치 완료 후 제거
 }
 

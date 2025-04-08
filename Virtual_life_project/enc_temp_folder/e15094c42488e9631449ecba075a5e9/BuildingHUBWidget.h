@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "FBuildInfo.h"
-#include "PlacementActor.h"
 #include "BuildingHUBWidget.generated.h"
 
 class UButton;
@@ -22,9 +21,6 @@ public:
 
     UFUNCTION(BlueprintCallable)
     void OnCategorySelected(EBuildCategories Category);
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-    TSubclassOf<APlacementActor> PlacementActorClass;
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")

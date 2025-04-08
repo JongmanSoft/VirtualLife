@@ -51,22 +51,12 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     }
 
     UWorld* World = GetWorld();
-    /*if (World)
+    if (World)
     {
         APlacementActor* Spawned = World->SpawnActor<APlacementActor>(APlacementActor::StaticClass());
         if (Spawned)
         {
             Spawned->SetMesh(Info->Mesh);
-        }
-    }*/
-
-    if (World && PlacementActorClass)
-    {
-        APlacementActor* Spawned = World->SpawnActor<APlacementActor>(PlacementActorClass);
-        if (Spawned)
-        {
-            Spawned->SetMesh(Info->Mesh);
-            UE_LOG(LogTemp, Warning, TEXT("Spawned: %s"), *GetNameSafe(Spawned));
         }
     }
 }
@@ -77,7 +67,7 @@ void UBuildingSelectButtonWidget::SetRowData(UDataTable* InDataTable, FName InRo
     RowName = InRowName;
 
     // 즉시 이미지 업데이트
-    NativePreConstruct();
+    SynchronizeProperties();
 }
 
 void UBuildingSelectButtonWidget::CheckActive_Implementation()
