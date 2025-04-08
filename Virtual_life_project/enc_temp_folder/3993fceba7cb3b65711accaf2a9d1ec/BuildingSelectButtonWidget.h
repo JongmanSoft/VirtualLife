@@ -24,7 +24,7 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
     UDataTable* DataTable;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data", meta = (GetOptions = "GetRowNames"))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")
     FName RowName;
 
     UPROPERTY(meta = (BindWidget))
@@ -35,12 +35,4 @@ protected:
 
     UFUNCTION()
     void OnClickedBuildButton();
-
-    UFUNCTION()
-    TArray<FName> GetRowNames() const
-    {
-        if (!DataTable) return {};
-
-        return DataTable->GetRowNames();
-    }
 };

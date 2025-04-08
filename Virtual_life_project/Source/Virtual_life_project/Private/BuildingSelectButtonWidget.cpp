@@ -11,7 +11,7 @@ void UBuildingSelectButtonWidget::NativePreConstruct()
 {
     Super::NativePreConstruct();
 
-    if (DataTable)
+    if (DataTable && RowName != NAME_None)
     {
         FBuildInfo* RowData = DataTable->FindRow<FBuildInfo>(RowName, "");
         if (RowData && AssetImage)
@@ -21,8 +21,13 @@ void UBuildingSelectButtonWidget::NativePreConstruct()
             AssetImage->SetBrush(Brush);
         }
     }
+}
 
-    if (Build_BTN)
+void UBuildingSelectButtonWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+
+    if (Build_BTN && !Build_BTN->OnClicked.IsAlreadyBound(this, &UBuildingSelectButtonWidget::OnClickedBuildButton))
     {
         Build_BTN->OnClicked.AddDynamic(this, &UBuildingSelectButtonWidget::OnClickedBuildButton);
     }
@@ -30,11 +35,20 @@ void UBuildingSelectButtonWidget::NativePreConstruct()
 
 void UBuildingSelectButtonWidget::OnClickedBuildButton()
 {
+    if (!DataTable || RowName == NAME_None)
+    {
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] DataTable or RowName is invalid."));
+        return;
+    }
+
     CheckActive();
 
-    if (!DataTable) return;
     FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
-    if (!Info) return;
+    if (!Info || !Info->Mesh)
+    {
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Row not found or Mesh missing for: %s"), *RowName.ToString());
+        return;
+    }
 
     UWorld* World = GetWorld();
     if (World)
