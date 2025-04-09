@@ -2,28 +2,36 @@
 
 
 #include "Quest.h"
+#include "Virtual_life_GameInstance.h"
 
-bool UQuest::QuestComplete()
+
+UQuest::UQuest()
 {
 
-	for (FWriteRequirValue V : RequirValues) {
-		if (*V.RequirBindValue < (int32)V.RequirCount) return false;
-	}
-	return true;
 }
 
-TArray<FReadRequirValue> UQuest::GetRequirValues() const
+UQuest::UQuest(const uint8& Quest_ID)
 {
-    TArray<FReadRequirValue> Result; // 반환할 배열
-    Result.Reserve(RequirValues.Num()); // 메모리 할당 최적화
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Path/To/Your/QuestDataTable"));
 
-    for (const FWriteRequirValue& WriteReq : RequirValues)
+    if (DataTableFinder.Succeeded())
     {
-        FReadRequirValue ReadReq;
-        ReadReq.RequirCount = WriteReq.RequirCount; // 카운트 복사
-        ReadReq.RequirBindValue = (WriteReq.RequirBindValue != nullptr) ? *WriteReq.RequirBindValue : 0; // 포인터 값 복사, null 체크 포함
-        Result.Add(ReadReq);
-    }
+        UDataTable* QuestDataTable = DataTableFinder.Object;
+        FString RowName = FString::FromInt(Quest_ID);
+        FQuestDataRow* RowData = QuestDataTable->FindRow<FQuestDataRow>(FName(*RowName), TEXT("Quest Lookup"));
+        if (RowData)
+        {
+            Quest_info = *RowData;
 
-    return Result;
+            if (!Quest_info.IsMain) {
+                for (auto r : Quest_info.RequirValues) {
+                    
+                }
+            }
+
+        }
+
+    }
+    
+	
 }
