@@ -21,5 +21,7 @@ public:
 		}
 	}
 
+	float getTime();
+
     std::wstring strtowstr(const std::string& str);
 };

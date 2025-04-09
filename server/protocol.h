@@ -168,6 +168,7 @@ struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	wchar_t name[M_ID_SIZE]; // 내이름
 	PlayerInfo player;
 	unsigned short items[ITEM_SIZE];
+	float time; // Todo: 여기 어떻게 해야 함?
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보
 	AdditionalInfo addinfo;
 };
