@@ -390,6 +390,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_ITEM_PACKET));
 
 			m_inventory->Add_Item(p.id, p.num);
+			OnInventoryChanged.Broadcast(p.id);
 			break;
 		}
 		case SC_UPDATE_GOLD:
@@ -408,6 +409,7 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
+	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
 
 	UE_LOG(LogTemp, Log, TEXT("Korean Text: %s"), *name);
 }

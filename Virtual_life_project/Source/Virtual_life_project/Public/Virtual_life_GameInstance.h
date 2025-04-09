@@ -13,10 +13,12 @@
 #include "Player_data.h"
 #include "PlayerInventory.h"
 #include "Custom_data.h"
+#include "Quest_Manager.h"
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
@@ -31,6 +33,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnChatReceived OnChatReceived; // 블루프린트에서 이벤트 바인딩 가능!
+
+	UPROPERTY(BlueprintAssignable)
+	FOnInventoryChanged OnInventoryChanged;
 
 	void OnStart();
 
@@ -107,7 +112,10 @@ public:
 	UCustom_data* m_custom;
 	void custom_data_update(UCustom_data* targer_data, Customizing recv_cus);
 	void custom_packet_setup(Customizing& targer_data, const UCustom_data* recv_cus);
-	
+public:
+	//퀘스트들을 관리하는 퀘스트매니저클래스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
+	UQuest_Manager* m_quest;
 
 private:
 	std::atomic_bool loaded = false;
