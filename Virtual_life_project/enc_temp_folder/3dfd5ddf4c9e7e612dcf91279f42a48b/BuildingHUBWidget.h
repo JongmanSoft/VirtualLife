@@ -12,7 +12,6 @@ class UButton;
 class UWrapBox;
 class UScrollBox;
 class UBuildingSelectButtonWidget;
-class UMyProfileWidget;
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UBuildingHUBWidget : public UUserWidget
@@ -58,9 +57,6 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     UButton* DecorTab_BTN;
-
-    UPROPERTY(meta = (BindWidget))
-    UMyProfileWidget* MyProfile_UI;
 
 private:
     void BindTabButtons();

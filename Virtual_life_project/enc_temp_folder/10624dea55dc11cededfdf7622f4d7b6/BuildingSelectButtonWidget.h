@@ -36,15 +36,6 @@ protected:
     class UImage* AssetImage;
 
     UPROPERTY(meta = (BindWidget))
-    class UTextBlock* NameText;
-
-    UPROPERTY(meta = (BindWidget))
-    class UTextBlock* DescriptionText;
-
-    UPROPERTY(meta = (BindWidget))
-    class UTextBlock* PriceText;
-
-    UPROPERTY(meta = (BindWidget))
     class UButton* Build_BTN;
 
     UFUNCTION()

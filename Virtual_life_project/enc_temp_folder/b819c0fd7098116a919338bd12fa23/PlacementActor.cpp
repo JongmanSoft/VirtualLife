@@ -64,15 +64,6 @@ void APlacementActor::PlaceBuild()
     FRotator Rot(0.f, Rotate, 0.f);
     // GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
 
-    FVector AdjustedLoc = Loc;
-
-    if (Mesh && Mesh->GetStaticMesh())
-    {
-        FVector Origin, BoxExtent;
-        Mesh->GetLocalBounds(Origin, BoxExtent); // 메시 기준 로컬 바운드
-        AdjustedLoc.Z -= Origin.Z; // 중심 위치를 피벗 기준으로 내림
-    }
-
     APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
     if (Placed && Mesh)
     {
