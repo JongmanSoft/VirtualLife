@@ -424,8 +424,6 @@ void UVirtual_life_GameInstance::OnStart()
 void UVirtual_life_GameInstance::Shutdown()
 {
 	Super::Shutdown();
-
-	SendLeavePacket();
 	//받아라!!!!!!!!! 1초준다
 	float Timeout = 1.0f; // 최대 1초 대기
 	float Elapsed = 0.0f;
@@ -435,6 +433,7 @@ void UVirtual_life_GameInstance::Shutdown()
 		Elapsed += 0.01f;
 	}
 	//난 뒤졋다.
+	SendLeavePacket();
 	//그리고 이제 보낼것이없다
 	SendPacketQueue.Empty(); // 큐를 즉시 비움
 
