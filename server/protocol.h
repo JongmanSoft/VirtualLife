@@ -5,6 +5,7 @@ constexpr int CHAT_SIZE = 100;
 constexpr short MAX_PLAYER = 1000;
 constexpr unsigned short MAX_BUILD_ITEM = 100;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
+constexpr int QUEST_MAX = 10;
 
 enum STATE : char { IDLE, WALK, RUN, JUMP };
 struct PlayerInfo
@@ -72,6 +73,8 @@ struct Object // 건축 오브젝트
 	float z;
 	float yaw; // 회전값
 };
+
+
 
 // Packet ID
 enum PACKETID : char

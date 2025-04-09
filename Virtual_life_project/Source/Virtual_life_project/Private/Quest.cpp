@@ -10,7 +10,7 @@ UQuest::UQuest()
 
 }
 
-UQuest::UQuest(const uint8& Quest_ID)
+void UQuest::init_quest(const uint8& Quest_ID)
 {
     static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Path/To/Your/QuestDataTable"));
 
@@ -24,8 +24,10 @@ UQuest::UQuest(const uint8& Quest_ID)
             Quest_info = *RowData;
 
             if (!Quest_info.IsMain) {
+                //게임인스턴스에서 인벤토리를 가져옴
+                UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
                 for (auto r : Quest_info.RequirValues) {
-                    
+                    Goals.Add(requir(r.Item_ID,r.RequirNum, &game_inst->m_inventory->Owned_Items[r.Item_ID]));
                 }
             }
 
@@ -34,4 +36,11 @@ UQuest::UQuest(const uint8& Quest_ID)
     }
     
 	
+}
+
+bool UQuest::quest_success()
+{
+    bool all_complete = true;
+    for (auto a : Goals) all_complete = all_complete && (*a.have_num >= a.requir_num);
+    return all_complete;
 }

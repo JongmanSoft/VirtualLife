@@ -11,7 +11,7 @@ struct requir
 {
     uint8 requir_item_ID;
     uint8 requir_num;
-    int32* have_num;
+    uint8* have_num;
 };
 
 UCLASS(Blueprintable)
@@ -24,13 +24,9 @@ public:
     //퀘스트 정보
     FQuestDataRow Quest_info;
     //현재 진행정보
-    
+    TArray<requir> Goals;
 public:
     UQuest();
-    UQuest(const uint8& Quest_ID); //아이디를 주면 맞는퀘스트생성
- 
-    TArray<requir> Goals;
-
- 
-
+    void init_quest(const uint8& Quest_ID); //아이디를 주면 맞는퀘스트생성
+    bool quest_success();
 };
