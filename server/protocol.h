@@ -5,7 +5,7 @@ constexpr int CHAT_SIZE = 100;
 constexpr short MAX_PLAYER = 1000;
 constexpr unsigned short MAX_BUILD_ITEM = 100;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
-constexpr int QUEST_MAX = 10;
+constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 
 enum STATE : char { IDLE, WALK, RUN, JUMP };
 struct PlayerInfo
@@ -74,22 +74,20 @@ struct Object // 건축 오브젝트
 	float yaw; // 회전값
 };
 
-
-
 // Packet ID
 enum PACKETID : char
 {
 	// client to server
 	CS_LOGIN = 0,
-	CS_SPAWN = 1,
-	CS_LEAVE = 2,
+	CS_SPAWN,
+	CS_LEAVE,
 	CS_CHAT,
 	CS_MOVEP,
 	CS_GET_ITEM,
 	CS_UPDATE_CUSTOM,
 	CS_ENTER_GAME, // 클라의 게임접속.
-	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
 	CS_UPDATE_GOLD,
+	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
 
 	// server to client
 	SC_LOGININFO,
@@ -100,9 +98,9 @@ enum PACKETID : char
 	SC_CHAT,
 	SC_MOVEP,
 	SC_UPDATE_ITEM,
-	SC_DROP_ITEM,
 	SC_UPDATE_CUSTOM,
-	SC_UPDATE_GOLD
+	SC_UPDATE_GOLD,
+	SC_UPDATE_QUEST
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -158,7 +156,14 @@ struct CS_UPDATE_GOLD_PACKET
 	int gold_offset; //증감수치, 500원 썼으면 -500. 500원받았으면 +500
 };
 
-// server to client
+struct CS_GET_QUEST_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short giver_id;
+	unsigned short num; // 퀘스트 번호
+};
+
+// server to client //
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
 	PACKETID type;
@@ -174,6 +179,8 @@ struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	float time; // Todo: 여기 어떻게 해야 함?
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보
 	AdditionalInfo addinfo;
+	unsigned short giver_id[QUEST_MAX];
+	unsigned short num[QUEST_MAX]; // 퀘스트 번호
 };
 
 struct SC_SPAWN_PACKET {
@@ -228,4 +235,12 @@ struct SC_UPDATE_GOLD_PACKET {
 	PACKETID type;
 	int gold; //클라가 준 증감수치를 더한 최종골드
 };
+
+struct SC_UPDATE_QUEST_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short giver_id;
+	unsigned short num; // 퀘스트 번호
+};
+
 #pragma pack (pop)

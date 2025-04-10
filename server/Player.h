@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Quest.h"
+#include "Room.h"
 
+// todo: 락 혹은 concurrency로 모두모두 변경해야 함
 // none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
 
@@ -18,6 +20,7 @@ class Player
 	PlayerInfo pinfo; // obj id, 위치/회전정보
 	AdditionalInfo addinfo; // 직업 등 정보
 	STATES state; // 상태
+
 	Customizing custom; // 커스텀
 	unordered_map<unsigned short, unsigned short> player_item;
 	vector<Quest> quests;
@@ -32,6 +35,7 @@ class Player
 	bool send_chat_packet(wstring name, wstring chat);
 	bool send_update_item_packet(unsigned short id, unsigned short num); // 해당 아이템이 num개로 업데이트
 	bool send_update_gold(int sc_gold_offset);
+	bool send_update_quest_packet();
 
 public:
 

@@ -106,6 +106,18 @@ bool Player::send_update_gold(int sc_gold)
 	return true;
 }
 
+bool Player::send_update_quest_packet(unsigned short gid, unsigned short n)
+{
+	SC_UPDATE_QUEST_PACKET p;
+	p.size = sizeof(SC_UPDATE_QUEST_PACKET);
+	p.type = SC_UPDATE_QUEST;
+	p.giver_id = gid;
+	p.num = n;
+	cout << pinfo.id << "에게 SC_UPDATE_QUEST 보냄: " << gid << "에게 " << n << "번 퀘스트를 받음" << endl;
+	send(&p);
+	return true;
+}
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -302,6 +314,15 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
 		this->addinfo.gold += p->gold_offset;
 		send_update_gold(this->addinfo.gold);
+		break;
+	}
+	case CS_GET_QUEST: // todo
+	{
+		cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		CS_GET_QUEST_PACKET* p = reinterpret_cast<CS_GET_QUEST_PACKET*>(packet);
+		this->quests.emplace_back(p->giver_id, p->num);
+		send_update_quest_packet(p->giver_id, p->num); // 여기를 여러개 보낼 수 있도록 해야 하는가?
+
 		break;
 	}
     default:
