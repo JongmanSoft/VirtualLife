@@ -6,8 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlaceBuildActor.h"
-#include "Virtual_life_GameInstance.h"
-#include "FloatingTextWidget.h"
 
 APlacementActor::APlacementActor()
 {
@@ -68,30 +66,11 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
 
 void APlacementActor::PlaceBuild()
 {
-    UGameInstance* GI = GetGameInstance();
-    if (!GI) return;
-
-    auto MyGI = Cast<UVirtual_life_GameInstance>(GI);
-    if (!MyGI) return;
-
-    if (!MyGI || MyGI->GetCurrentGold() < BuildPrice)
-    {
-        // 돈 부족 음 !
-        return;
-    }
-
-    // 골드 차감
-    MyGI->SendUpdateGoldPacket(-BuildPrice);
-
-    // UI 알림
-    FString Text = FString::Printf(TEXT("-%d"), BuildPrice);
-    MyGI->ShowFloatingText(Text, FLinearColor::Red, GetActorLocation());
-
-    // 실제 배치
     FVector Loc = GetActorLocation();
     FRotator Rot(0.f, Rotate, 0.f);
 
     FVector AdjustedLoc = Loc;
+
     if (Mesh && Mesh->GetStaticMesh())
     {
         FVector Origin, BoxExtent;
@@ -105,15 +84,10 @@ void APlacementActor::PlaceBuild()
         Placed->SetMesh(Mesh->GetStaticMesh());
     }
 
-    Destroy(); // 제거
+    Destroy(); // 배치 완료 후 제거
 }
 
 void APlacementActor::AddRotation(float Delta)
 {
     Rotate = FMath::Fmod(Rotate + Delta, 360.f);
-}
-
-void APlacementActor::SetPrice(int32 Price)
-{
-    BuildPrice = Price;
 }

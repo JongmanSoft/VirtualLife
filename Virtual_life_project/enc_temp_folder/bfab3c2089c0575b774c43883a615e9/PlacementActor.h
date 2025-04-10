@@ -31,11 +31,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
     TSubclassOf<APlaceBuildActor> PlaceBuildClass;
 
-    UPROPERTY()
-    int32 BuildPrice = 0;
-
-    void SetPrice(int32 Price);
-
 protected:
     UPROPERTY(VisibleAnywhere)
     UStaticMeshComponent* Mesh;
