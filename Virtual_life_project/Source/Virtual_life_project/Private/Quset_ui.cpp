@@ -11,7 +11,7 @@ void UQuset_ui::InitializeWithQuestID(uint8 QuestID)
     {
         QuestRef = GameInstance->m_quest->Quests[QuestID];
 
-        for (auto a : QuestRef->Goals) {
+        for (const auto& a : QuestRef->Goals) {
             use_Item_ID.Add(a.requir_item_ID);
         }
     }
