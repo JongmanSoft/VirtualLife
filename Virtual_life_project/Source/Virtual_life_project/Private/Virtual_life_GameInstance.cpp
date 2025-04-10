@@ -428,22 +428,25 @@ int32 UVirtual_life_GameInstance::GetCurrentGold() const
 
 void UVirtual_life_GameInstance::ShowFloatingText(const FString& Text, const FLinearColor& Color, const FVector& WorldLocation)
 {
-	if (!FloatingTextWidgetClass) return;
-
-	UFloatingTextWidget* Widget = CreateWidget<UFloatingTextWidget>(GetWorld(), FloatingTextWidgetClass);
-	if (!Widget) return;
-
-	Widget->AddToViewport();
-	Widget->SetTextAndPlay(Text, Color);
-
-	// 위치 계산
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (!PC) return;
-
-	FVector2D ScreenPosition;
-	if (UGameplayStatics::ProjectWorldToScreen(PC, WorldLocation + FVector(0, 0, 100), ScreenPosition)) // Z값으로 살짝 띄우기
+	UClass* BPClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("Blueprint'/Game/UI/FloatingText_W.FloatingText_W_C'"));
+	if (BPClass)
 	{
-		Widget->SetPositionInViewport(ScreenPosition, true);
+		UFloatingTextWidget* Widget = CreateWidget<UFloatingTextWidget>(GetWorld(), BPClass);
+		if (Widget)
+		{
+			Widget->AddToViewport();
+			Widget->SetTextAndPlay(Text, Color);
+
+			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			if (PC)
+			{
+				FVector2D ScreenPosition;
+				if (UGameplayStatics::ProjectWorldToScreen(PC, WorldLocation + FVector(0, 0, 100), ScreenPosition))
+				{
+					Widget->SetPositionInViewport(ScreenPosition, true);
+				}
+			}
+		}
 	}
 }
 

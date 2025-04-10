@@ -15,6 +15,7 @@ class VIRTUAL_LIFE_PROJECT_API UFloatingTextWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+    UFUNCTION(BlueprintCallable)
     void SetTextAndPlay(const FString& Text, const FLinearColor& Color);
 
     UPROPERTY(meta = (BindWidget))
