@@ -5,12 +5,14 @@ class Quest
 	unsigned short type; // ¹øÈ£
 
 public:
-	Quest();
-	~Quest();
+	Quest() {};
+	~Quest() {};
 	Quest(unsigned short gid, unsigned short n) : giver_id{ gid }, type{ n } {}
 
 
 	Quest& GetQuestInfo() { return *this; }
+	unsigned short GetGID() { return giver_id; }
+	unsigned short GetNUM() { return type; }
 
 };
 

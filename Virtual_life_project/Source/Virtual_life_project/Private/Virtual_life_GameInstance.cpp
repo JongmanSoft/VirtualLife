@@ -292,6 +292,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			custom_data_update(m_custom, p.custom);
 
 			// todo: 퀘스트 데이터 넘겨주기
+			for (int i = 0; i < QUEST_MAX; ++i) {
+				if(p.num[i] != unsigned short(-1))
+					m_quest->ADD_QUEST(p.num[i]);
+			}
 
 
 			// 메인 맵으로 이동

@@ -39,4 +39,5 @@ public:
 protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
+	STATE st;
 };

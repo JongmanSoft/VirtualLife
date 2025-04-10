@@ -35,7 +35,7 @@ class Player
 	bool send_chat_packet(wstring name, wstring chat);
 	bool send_update_item_packet(unsigned short id, unsigned short num); // 해당 아이템이 num개로 업데이트
 	bool send_update_gold(int sc_gold_offset);
-	bool send_update_quest_packet();
+	bool send_update_quest_packet(unsigned short gid, unsigned short n);
 
 public:
 

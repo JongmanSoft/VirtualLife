@@ -32,6 +32,18 @@ bool Player::send_enter_game_packet()
 		else p.items[i] = 0;
 	}
 	
+	// 퀘스트 초기화
+	for (int i = 0; i < QUEST_MAX; ++i) {
+		if (quests.size() <= i) {
+			p.giver_id[i] = -1;
+			p.num[i] = -1;
+		}
+		else {
+			p.giver_id[i] = quests[i].GetGID();
+			p.num[i] = quests[i].GetNUM();
+		}
+	}
+
 	send(&p);
 
 	return true;
