@@ -24,7 +24,7 @@ struct AdditionalInfo
 	unsigned short age;
 	short hp;
 	short mp;
-	int gold = 500;
+	int gold;
 };
 
 struct Customizing

@@ -47,6 +47,13 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnGoldUpdated OnGoldUpdated;
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetCurrentGold() const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<class UFloatingTextWidget> FloatingTextWidgetClass;
+
+	void ShowFloatingText(const FString& Text, const FLinearColor& Color, const FVector& WorldLocation);
 
 public:
 	void OnStart();

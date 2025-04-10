@@ -15,11 +15,11 @@ class VIRTUAL_LIFE_PROJECT_API UFloatingTextWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-    void SetTextAndPlay(const FString& Text);
+    void SetTextAndPlay(const FString& Text, const FLinearColor& Color);
 
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* FloatingText;
 
-    UPROPERTY(Transient, meta = (BindWidgetAnim))
-    class UWidgetAnimation* FloatAndFade;
+    /*UPROPERTY(Transient, meta = (BindWidgetAnim))
+    class UWidgetAnimation* FloatAndFade;*/
 };
