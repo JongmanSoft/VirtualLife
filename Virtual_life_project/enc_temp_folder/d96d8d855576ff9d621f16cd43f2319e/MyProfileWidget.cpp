@@ -16,12 +16,6 @@ void UMyProfileWidget::NativeConstruct()
     SetMP(100, 100);
 }
 
-void UMyProfileWidget::NativeDestruct()
-{
-    Cast<UVirtual_life_GameInstance>(GetGameInstance())->OnGoldUpdated.RemoveDynamic(this, &UMyProfileWidget::SetCoin);
-    Super::NativeDestruct();
-}
-
 void UMyProfileWidget::SetHP(int32 Current, int32 Max)
 {
     if (HP_TXT)

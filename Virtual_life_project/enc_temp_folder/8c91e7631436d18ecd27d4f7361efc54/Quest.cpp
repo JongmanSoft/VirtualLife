@@ -12,7 +12,7 @@ UQuest::UQuest()
 
 void UQuest::init_quest(const uint8& Quest_ID)
 {
-    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Quest_system/Quest_Data_Table.Quest_Data_Table"));
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Path/To/Your/QuestDataTable"));
 
     if (DataTableFinder.Succeeded())
     {

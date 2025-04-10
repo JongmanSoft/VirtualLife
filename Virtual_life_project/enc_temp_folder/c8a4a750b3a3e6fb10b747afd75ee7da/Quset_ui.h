@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Virtual_life_GameInstance.h"
-#include "ItemDataTable.h"
 #include "Quset_ui.generated.h"
 
 /**

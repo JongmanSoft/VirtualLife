@@ -59,20 +59,10 @@ void UQuset_ui::UpdateQuestDisplay()
             return;
         }
 
-        static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Item_system/ITEM_DATA_Table.ITEM_DATA_Table"));
-        UDataTable* Item_Datatable = nullptr;
-        if (DataTableFinder.Succeeded())Item_Datatable = DataTableFinder.Object;
         for (const requir& Goal : QuestRef->Goals)
         {
-            
-            FString item_Name = "";
-            if (Item_Datatable) {
-                FString RowName = FString::FromInt(Goal.requir_item_ID);
-                FItemData* RowData = Item_Datatable->FindRow<FItemData>(FName(*RowName), TEXT("Quest Lookup"));
-                item_Name = RowData->ItemName;
-            }
-            GoalsText += FString::Printf(TEXT("%s  (%d / %d)\n"),
-                *item_Name, *Goal.have_num, Goal.requir_num);
+            GoalsText += FString::Printf(TEXT("(%d / %d)\n"),
+                *Goal.have_num, Goal.requir_num);
         }
         QuestRequiredValue->SetText(FText::FromString(GoalsText));
     }

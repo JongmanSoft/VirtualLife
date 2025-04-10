@@ -32,7 +32,6 @@ public:
 
 protected:
     virtual void NativeConstruct() override;
-    virtual void NativeDestruct() override;
 
     // 텍스트 바인딩
     UPROPERTY(meta = (BindWidget))
