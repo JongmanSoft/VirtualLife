@@ -85,7 +85,7 @@ void APlacementActor::PlaceBuild()
 
     // UI 알림
     FString Text = FString::Printf(TEXT("-%d"), BuildPrice);
-    MyGI->ShowFloatingText(Text, FLinearColor::Yellow, GetActorLocation());
+    MyGI->ShowFloatingText(Text, FLinearColor::Red, GetActorLocation());
 
     // 실제 배치
     FVector Loc = GetActorLocation();
