@@ -13,9 +13,6 @@ APlacementActor::APlacementActor()
 
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     RootComponent = Mesh;
-
-    // 자기 자신 무시
-    Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 }
 
 void APlacementActor::BeginPlay()
@@ -28,7 +25,6 @@ void APlacementActor::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     FVector HitLoc = MousePosition();
-
     FVector Snapped = FVector(
         FMath::GridSnap(HitLoc.X, GridSize),
         FMath::GridSnap(HitLoc.Y, GridSize),
@@ -46,13 +42,11 @@ FVector APlacementActor::MousePosition()
     if (!PC) return GetActorLocation();
 
     PC->DeprojectMousePositionToWorld(WorldLoc, WorldDir);
+
     FVector End = WorldLoc + WorldDir * 20000;
-
     FHitResult Hit;
-    FCollisionQueryParams Params;
-    Params.AddIgnoredActor(this);
 
-    GetWorld()->LineTraceSingleByChannel(Hit, WorldLoc, End, ECC_Visibility, Params);
+    GetWorld()->LineTraceSingleByChannel(Hit, WorldLoc, End, ECC_Visibility);
     return Hit.bBlockingHit ? Hit.Location : GetActorLocation();
 }
 
@@ -68,14 +62,15 @@ void APlacementActor::PlaceBuild()
 {
     FVector Loc = GetActorLocation();
     FRotator Rot(0.f, Rotate, 0.f);
+    // GetWorld()->SpawnActor<APlaceBuildActor>(APlaceBuildActor::StaticClass(), Loc, Rot);
 
     FVector AdjustedLoc = Loc;
 
     if (Mesh && Mesh->GetStaticMesh())
     {
         FVector Origin, BoxExtent;
-        Mesh->GetLocalBounds(Origin, BoxExtent);
-        AdjustedLoc.Z -= Origin.Z;
+        Mesh->GetLocalBounds(Origin, BoxExtent); // 메시 기준 로컬 바운드
+        AdjustedLoc.Z -= Origin.Z; // 중심 위치를 피벗 기준으로 내림
     }
 
     APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
