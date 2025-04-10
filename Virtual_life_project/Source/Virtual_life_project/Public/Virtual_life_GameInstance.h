@@ -20,6 +20,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
@@ -31,7 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACharacter> PlayerClass;
+public:
 
+	//이벤트
 	UPROPERTY(BlueprintAssignable)
 	FOnChatReceived OnChatReceived; // 블루프린트에서 이벤트 바인딩 가능!
 
@@ -41,6 +44,11 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnGoldChanged OnGoldChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnGoldUpdated OnGoldUpdated;
+
+
+public:
 	void OnStart();
 
 
