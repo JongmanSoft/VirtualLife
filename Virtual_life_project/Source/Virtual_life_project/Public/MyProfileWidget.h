@@ -27,6 +27,7 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetMP(int32 Current, int32 Max);
 
+    UFUNCTION(BlueprintCallable)
     void SetCoin(const int32& updated_coin);
 
 protected:

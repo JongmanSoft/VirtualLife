@@ -83,6 +83,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendUpadteCustomPacket();
 
+	UFUNCTION(BlueprintCallable)
 	void SendUpdateGoldPacket(int cs_gold_offset);
 
 
