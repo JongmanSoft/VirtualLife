@@ -15,8 +15,10 @@ UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UQuset_ui : public UUserWidget
 {
     GENERATED_BODY()
+
 public:
     // 퀘스트 ID로 위젯 초기화
+    UFUNCTION(BlueprintCallable)
     void InitializeWithQuestID(uint8 QuestID);
 
 protected:
