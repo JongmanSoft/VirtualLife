@@ -292,6 +292,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
 		pinfo = p->pl;
+		if (pinfo.st == JUMP)
+			int k = 0;
 
 		// 위치정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {

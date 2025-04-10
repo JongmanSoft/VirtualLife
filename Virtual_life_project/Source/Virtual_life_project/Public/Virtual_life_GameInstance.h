@@ -101,6 +101,7 @@ public:
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UVirtual_life_GameInstance, STATGROUP_Tickables); }
 	virtual void Shutdown() override;  // 게임 종료 시 실행될 함수
 
+	UFUNCTION(BlueprintCallable)
 	void SendPlayerLocationToServer();
 
 	// 기본 세팅

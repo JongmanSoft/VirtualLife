@@ -380,6 +380,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			auto pl = Cast<AVL_Player>(PlayerActor);
 			pl->setDestInfo(p.pl);
+			pl->setState(p.pl.st);
 
 			UAnimInstance* AnimInstance = pl->GetMesh()->GetAnimInstance();
 			if (UVL_AnimInstance* VLAnimInstance = Cast<UVL_AnimInstance>(AnimInstance))
@@ -511,6 +512,7 @@ void UVirtual_life_GameInstance::SendPlayerLocationToServer()
 	p.pl.z = Location.Z;
 	p.pl.yaw = Rotation.Yaw;
 	p.pl.id = MyPlayerInfo.id;
+	p.pl.st = MyPlayerInfo.st;
 
 	if (true == loaded)  // SendThread가 존재할 경우 전송
 	{

@@ -32,6 +32,9 @@ public:
 	void setCurInfo(PlayerInfo& v); // 현재위치 강제 이동하는 함수
 	void setDestInfo(PlayerInfo& v);
 
+	UFUNCTION(BlueprintCallable)
+	void setState(int st) { state = st; } // 3번이 점프임 명심하도록
+
 	bool canControl = false;
 
 	bool myPlayer();
@@ -39,5 +42,5 @@ public:
 protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
-	STATE st;
+	int state;
 };

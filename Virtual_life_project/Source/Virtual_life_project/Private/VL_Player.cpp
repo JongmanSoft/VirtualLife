@@ -32,12 +32,12 @@ void AVL_Player::Tick(float DeltaTime)
 
 	if (false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
 	{
-		if (st == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
+		if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
 		{
 			Jump();
 		}
 
-		if (true || st == RUN) // 이동중이라면
+		if (true || state == RUN) // 이동중이라면
 		{
 			FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
 			FVector CurrentLocation = GetActorLocation();
