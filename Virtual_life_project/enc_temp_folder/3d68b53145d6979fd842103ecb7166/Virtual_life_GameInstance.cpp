@@ -13,7 +13,6 @@
 #include "EngineUtils.h"
 #include "VL_AnimInstance.h"
 #include "VL_Player.h"
-#include "FloatingTextWidget.h"
 
 
 void UVirtual_life_GameInstance::ConnectServer()
@@ -415,32 +414,6 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
 
 	UE_LOG(LogTemp, Log, TEXT("Korean Text: %s"), *name);
-}
-
-int32 UVirtual_life_GameInstance::GetCurrentGold() const
-{
-	return AddInfo.gold;
-}
-
-void UVirtual_life_GameInstance::ShowFloatingText(const FString& Text, const FLinearColor& Color, const FVector& WorldLocation)
-{
-	if (!FloatingTextWidgetClass) return;
-
-	UFloatingTextWidget* Widget = CreateWidget<UFloatingTextWidget>(GetWorld(), FloatingTextWidgetClass);
-	if (!Widget) return;
-
-	Widget->AddToViewport();
-	Widget->SetTextAndPlay(Text, Color);
-
-	// 위치 계산
-	APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	if (!PC) return;
-
-	FVector2D ScreenPosition;
-	if (UGameplayStatics::ProjectWorldToScreen(PC, WorldLocation + FVector(0, 0, 100), ScreenPosition)) // Z값으로 살짝 띄우기
-	{
-		Widget->SetPositionInViewport(ScreenPosition, true);
-	}
 }
 
 void UVirtual_life_GameInstance::OnStart()

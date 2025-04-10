@@ -77,7 +77,6 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
         if (Spawned)
         {
             Spawned->SetMesh(Info->Mesh);
-            Spawned->SetPrice(Info->Price);
             UE_LOG(LogTemp, Warning, TEXT("Spawned: %s"), *GetNameSafe(Spawned));
         }
     }
