@@ -67,6 +67,8 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
         if (OverlayMaterial)
         {
             Mesh->SetMaterial(0, OverlayMaterial);
+            Mesh->SetRenderCustomDepth(true);
+            Mesh->SetCustomDepthStencilValue(1);
         }
     }
 }
