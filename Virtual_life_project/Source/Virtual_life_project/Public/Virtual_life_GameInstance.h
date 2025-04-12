@@ -21,6 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, Cha
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestUpdated);
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
@@ -49,6 +50,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetCurrentGold() const;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnQuestUpdated OnQusetUpdate;
+
+public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UFloatingTextWidget> FloatingTextWidgetClass;

@@ -7,16 +7,19 @@
 
 UQuest::UQuest()
 {
+    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Quest_system/Quest_Data_Table.Quest_Data_Table"));
+    if (DataTableFinder.Succeeded())
+    {
+        QuestDataTable = DataTableFinder.Object;
+    }
 
 }
 
 void UQuest::init_quest(const uint8& Quest_ID)
 {
-    static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Quest_system/Quest_Data_Table.Quest_Data_Table"));
 
-    if (DataTableFinder.Succeeded())
-    {
-        UDataTable* QuestDataTable = DataTableFinder.Object;
+
+    
         FString RowName = FString::FromInt(Quest_ID);
         FQuestDataRow* RowData = QuestDataTable->FindRow<FQuestDataRow>(FName(*RowName), TEXT("Quest Lookup"));
         if (RowData)
@@ -33,7 +36,7 @@ void UQuest::init_quest(const uint8& Quest_ID)
 
         }
 
-    }
+    
     
 	
 }

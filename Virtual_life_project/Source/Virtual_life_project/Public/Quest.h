@@ -20,7 +20,8 @@ class VIRTUAL_LIFE_PROJECT_API UQuest : public UObject
     GENERATED_BODY()
 
 public:
- 
+ //데이터 테이블
+    UDataTable* QuestDataTable;
     //퀘스트 정보
     FQuestDataRow Quest_info;
     //현재 진행정보

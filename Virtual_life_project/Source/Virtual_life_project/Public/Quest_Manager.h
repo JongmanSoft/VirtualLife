@@ -17,6 +17,7 @@ class VIRTUAL_LIFE_PROJECT_API UQuest_Manager : public UObject
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	TMap <uint8 , UQuest*> Quests; //퀘스트의 각 아이디에 대해서 매핑, 없으면 nullptr
 
 public:
@@ -24,6 +25,7 @@ public:
 	//void Load_Quest();
 	
 	//퀘스트를 추가
+	UFUNCTION(BlueprintCallable)
 	void ADD_QUEST(const uint8& quest_id);
 	//퀘스트 완료했니?
 	bool Quest_complete(const uint8& quest_id);

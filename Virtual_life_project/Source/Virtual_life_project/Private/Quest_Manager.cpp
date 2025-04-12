@@ -10,13 +10,13 @@ void UQuest_Manager::ADD_QUEST(const uint8& quest_id)
     NewQuest->init_quest(quest_id);
     if (NewQuest)
     {
-        Quests[quest_id] = NewQuest; // TArray¿¡ Ãß°¡
+        Quests.Add(quest_id, NewQuest);
     }
 }
 
 bool UQuest_Manager::Quest_complete(const uint8& quest_id)
 {
-    if (Quests.Contains(quest_id)) return false;
+    if (!Quests.Contains(quest_id)) return false;
     return Quests[quest_id]->quest_success();
 }
 
