@@ -46,6 +46,9 @@ public:
 
     void SetPrice(int32 Price);
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+    USoundBase* PlaceSound;
+
 protected:
     UPROPERTY(VisibleAnywhere)
     UStaticMeshComponent* Mesh;

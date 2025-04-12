@@ -98,6 +98,11 @@ void APlacementActor::PlaceBuild()
         return;
     }
 
+    if (PlaceSound)
+    {
+        UGameplayStatics::PlaySoundAtLocation(this, PlaceSound, GetActorLocation());
+    }
+
     // °ñµå Â÷°¨
     MyGI->SendUpdateGoldPacket(-BuildPrice);
 
