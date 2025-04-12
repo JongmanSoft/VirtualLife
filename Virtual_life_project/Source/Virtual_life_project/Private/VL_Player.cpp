@@ -30,38 +30,35 @@ void AVL_Player::Tick(float DeltaTime)
 
 	// 여기서 목적지로 이동하고 회전하는 코드 작성
 
-	if (false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
+	if (false == isMyPlayer || false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
 	{
 		if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
 		{
 			Jump();
 		}
 
-		if (true || state == RUN) // 이동중이라면
+		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
+		FVector CurrentLocation = GetActorLocation();
+
+		// 이동 방향 계산 (정규화)
+		FVector Direction = (TargetLocation - CurrentLocation);
+		Direction.Z = 0.f; // 수직 방향 제거
+		float Distance = Direction.Size();
+
+		if (Distance > 10.f) // 너무 가까우면 이동 안 해도 됨
 		{
-			FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
-			FVector CurrentLocation = GetActorLocation();
+			Direction.Normalize();
 
-			// 이동 방향 계산 (정규화)
-			FVector Direction = (TargetLocation - CurrentLocation);
-			Direction.Z = 0.f; // 수직 방향 제거
-			float Distance = Direction.Size();
-
-			if (Distance > 10.f) // 너무 가까우면 이동 안 해도 됨
-			{
-				Direction.Normalize();
-
-				// 이동 입력 (이렇게 하면 애니메이션 블루프린트에도 반영됨)
-				AddMovementInput(Direction, 1.0f);
-			}
-
-			// 회전 보간 처리
-			FRotator TargetRotation(0.f, destInfo.yaw, 0.f);
-			FRotator CurrentRotation = GetActorRotation();
-			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
-
-			SetActorRotation(NewRotation);
+			// 이동 입력 (이렇게 하면 애니메이션 블루프린트에도 반영됨)
+			AddMovementInput(Direction, 1.0f);
 		}
+
+		// 회전 보간 처리
+		FRotator TargetRotation(0.f, destInfo.yaw, 0.f);
+		FRotator CurrentRotation = GetActorRotation();
+		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
+
+		SetActorRotation(NewRotation);
 	}
 }
 
@@ -70,6 +67,18 @@ void AVL_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AVL_Player::Landed(const FHitResult& Hit)
+{
+	if (true == isMyPlayer || true == myPlayer()) {
+		Super::Landed(Hit);
+
+		if (state == JUMP)
+		{
+			setState(IDLE); // 혹은 상황 따라 RUN으로도 가능
+		}
+	}
 }
 
 void AVL_Player::setCurInfo(PlayerInfo& v) // 현재 위치로 강제 이동
@@ -86,6 +95,18 @@ void AVL_Player::setDestInfo(PlayerInfo& v) // 다음에 이동할 위치 설정
 	destInfo = v;
 }
 
+void AVL_Player::setState(int st)
+{
+
+	auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance) { 
+		std::lock_guard ll{ m };
+		state = st;
+		GameInstance->set_state(st);
+		GameInstance->SendPlayerLocationToServer();
+	}
+}
+
 bool AVL_Player::myPlayer()
 {
 	UWorld* World = GetWorld();
@@ -97,9 +118,11 @@ bool AVL_Player::myPlayer()
 		if (PlayerPawn)
 		{
 			auto p = Cast<AVL_Player>(PlayerPawn);
-			return this == p;
+			isMyPlayer = (this == p);
+			return isMyPlayer;
 		}
 	}
-	return false;
+	isMyPlayer = false;
+	return isMyPlayer;
 }
 

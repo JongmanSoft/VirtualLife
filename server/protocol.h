@@ -88,6 +88,7 @@ enum PACKETID : char
 	CS_ENTER_GAME, // 클라의 게임접속.
 	CS_UPDATE_GOLD,
 	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
+	CS_NPC_CHAT,
 
 	// server to client
 	SC_LOGININFO,
@@ -100,7 +101,8 @@ enum PACKETID : char
 	SC_UPDATE_ITEM,
 	SC_UPDATE_CUSTOM,
 	SC_UPDATE_GOLD,
-	SC_UPDATE_QUEST
+	SC_UPDATE_QUEST,
+	SC_NPC_RESPONSE
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -161,6 +163,13 @@ struct CS_GET_QUEST_PACKET {
 	PACKETID type;
 	unsigned short giver_id;
 	unsigned short num; // 퀘스트 번호
+};
+
+struct CS_NPC_CHAT_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short npc_id;
+	wchar_t	msg[CHAT_SIZE];
 };
 
 // server to client //
@@ -243,4 +252,10 @@ struct SC_UPDATE_QUEST_PACKET {
 	unsigned short num; // 퀘스트 번호
 };
 
+struct SC_NPC_RESPONSE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short npc_id;
+	wchar_t	msg[CHAT_SIZE];
+};
 #pragma pack (pop)

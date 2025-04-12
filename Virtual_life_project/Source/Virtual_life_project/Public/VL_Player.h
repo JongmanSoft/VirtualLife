@@ -29,13 +29,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Landed(const FHitResult& Hit) override; // ← 여기!!
+
 	void setCurInfo(PlayerInfo& v); // 현재위치 강제 이동하는 함수
 	void setDestInfo(PlayerInfo& v);
 
 	UFUNCTION(BlueprintCallable)
-	void setState(int st) { state = st; } // 3번이 점프임 명심하도록
+	void setState(int st); // 3번이 점프임 명심하도록
 
-	bool canControl = false;
+	bool isMyPlayer = false;
 
 	bool myPlayer();
 
@@ -43,4 +45,6 @@ protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
 	int state;
+private:
+	std::mutex m;
 };
