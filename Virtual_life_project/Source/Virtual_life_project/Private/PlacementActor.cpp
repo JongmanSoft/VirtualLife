@@ -158,15 +158,17 @@ bool APlacementActor::IsOutOfBounds(const FVector& Location) const
 
 bool APlacementActor::IsOverlapping() const
 {
-    TArray<AActor*> OverlappingActors;
-    Mesh->GetOverlappingActors(OverlappingActors);
-
-    // 배치 가능한 액터만 제외하고 검사
-    for (AActor* Actor : OverlappingActors)
+    for (TActorIterator<APlaceBuildActor> It(GetWorld()); It; ++It)
     {
-        if (!Actor->IsA<APlacementActor>() && !Actor->IsA<APlaceBuildActor>())
+        const APlaceBuildActor* Other = *It;
+        if (!Other || Other == Cast<APlaceBuildActor>(this)) continue;
+
+        const FBox MyBox = Mesh->Bounds.GetBox();
+        const FBox OtherBox = Other->GetComponentsBoundingBox();
+
+        if (MyBox.Intersect(OtherBox))
         {
-            return true; // 겹침 발생
+            return true;
         }
     }
     return false;
