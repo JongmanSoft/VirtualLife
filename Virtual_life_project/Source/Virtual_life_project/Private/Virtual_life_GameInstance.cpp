@@ -128,7 +128,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		if (PlayerPawn)
 		{
 			auto p = Cast<AVL_Player>(PlayerPawn);
-			p->canControl = true;
+			p->isMyPlayer = true;
 			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
 			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
 
@@ -382,12 +382,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			pl->setDestInfo(p.pl);
 			pl->setState(p.pl.st);
 
-			UAnimInstance* AnimInstance = pl->GetMesh()->GetAnimInstance();
-			if (UVL_AnimInstance* VLAnimInstance = Cast<UVL_AnimInstance>(AnimInstance))
-			{
-				// AnimInstance에 있는 변수를 사용하거나 메서드를 호출
-				VLAnimInstance->setState(RUN);
-			}
+			
 
 			break;
 		}
