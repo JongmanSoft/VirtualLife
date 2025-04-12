@@ -31,9 +31,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
     TSubclassOf<APlaceBuildActor> PlaceBuildClass;
 
-    UPROPERTY(EditAnywhere, Category = "Material")
-    UMaterialInterface* OverlayMaterial;
-
     UPROPERTY()
     int32 BuildPrice = 0;
 
