@@ -63,11 +63,6 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
     if (NewMesh)
     {
         Mesh->SetStaticMesh(NewMesh);
-
-        if (OverlayMaterial)
-        {
-            Mesh->SetMaterial(0, OverlayMaterial);
-        }
     }
 }
 
