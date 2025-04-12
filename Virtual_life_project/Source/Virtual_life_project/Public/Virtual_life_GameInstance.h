@@ -153,4 +153,5 @@ private:
 	float TimeAccumulator = 0.0f;  // 위치 전송 간격 관리
 public :
 	void set_name(FString _name) { name = _name; };
+	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
 };

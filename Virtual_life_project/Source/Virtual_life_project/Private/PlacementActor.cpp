@@ -8,6 +8,8 @@
 #include "PlaceBuildActor.h"
 #include "Virtual_life_GameInstance.h"
 #include "FloatingTextWidget.h"
+#include "EngineUtils.h"
+
 
 APlacementActor::APlacementActor()
 {
@@ -16,7 +18,6 @@ APlacementActor::APlacementActor()
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     RootComponent = Mesh;
 
-    // 자기 자신 무시
     Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Ignore);
 }
 
@@ -39,6 +40,12 @@ void APlacementActor::Tick(float DeltaTime)
 
     FRotator Rot(0.f, Rotate, 0.f);
     SetActorTransform(FTransform(Rot, Snapped, FVector(1.f)));
+
+    bool bOutOfBounds = IsOutOfBounds(Snapped);
+    bool bOverlapping = IsOverlapping();
+    bool bCanPlace = !(bOutOfBounds || bOverlapping);
+
+    UpdateOverlayColor(bCanPlace);
 }
 
 FVector APlacementActor::MousePosition()
@@ -63,6 +70,17 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
     if (NewMesh)
     {
         Mesh->SetStaticMesh(NewMesh);
+
+        if (OverlayMaterial)
+        {
+            DynMaterial = UMaterialInstanceDynamic::Create(OverlayMaterial, this);
+            Mesh->SetMaterial(0, DynMaterial);
+            Mesh->SetRenderCustomDepth(true);
+            Mesh->SetCustomDepthStencilValue(1);
+
+            // 초기 색상 설정
+            UpdateOverlayColor(true);
+        }
     }
 }
 
@@ -78,6 +96,11 @@ void APlacementActor::PlaceBuild()
     {
         // 돈 부족 음 !
         return;
+    }
+
+    if (PlaceSound)
+    {
+        UGameplayStatics::PlaySoundAtLocation(this, PlaceSound, GetActorLocation());
     }
 
     // 골드 차감
@@ -116,4 +139,42 @@ void APlacementActor::AddRotation(float Delta)
 void APlacementActor::SetPrice(int32 Price)
 {
     BuildPrice = Price;
+}
+
+
+void APlacementActor::UpdateOverlayColor(bool bCanPlace)
+{
+    if (DynMaterial)
+    {
+        FLinearColor Color = bCanPlace ? FLinearColor(0.0f, 1.0f, 0.0f) : FLinearColor(1.0f, 0.0f, 0.0f);
+        DynMaterial->SetVectorParameterValue(TEXT("OverlayColor"), Color);
+        DynMaterial->SetScalarParameterValue(TEXT("Opacity"), 0.3f);
+    }
+}
+
+bool APlacementActor::IsOutOfBounds(const FVector& Location) const
+{
+    const FVector2D Min(-3610.f, -10280.f);
+    const FVector2D Max(-1210.f, -7850.f);
+
+    return !(Location.X >= Min.X && Location.X <= Max.X &&
+        Location.Y >= Min.Y && Location.Y <= Max.Y);
+}
+
+bool APlacementActor::IsOverlapping() const
+{
+    for (TActorIterator<APlaceBuildActor> It(GetWorld()); It; ++It)
+    {
+        const APlaceBuildActor* Other = *It;
+        if (!Other || Other == Cast<APlaceBuildActor>(this)) continue;
+
+        const FBox MyBox = Mesh->Bounds.GetBox();
+        const FBox OtherBox = Other->GetComponentsBoundingBox();
+
+        if (MyBox.Intersect(OtherBox))
+        {
+            return true;
+        }
+    }
+    return false;
 }

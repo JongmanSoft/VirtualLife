@@ -288,14 +288,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
 	case CS_MOVEP:
 	{
-		cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
 		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
+		cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << endl;
 		pinfo = p->pl;
-		if (pinfo.st == JUMP)
-			int k = 0;
 
 		// 위치정보 브로드캐스팅
+		std::lock_guard<std::mutex> lock(players_mutex); // 자동으로 unlock됨
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING and i != id) {
 				players[i].send_move_packet(p->pl);

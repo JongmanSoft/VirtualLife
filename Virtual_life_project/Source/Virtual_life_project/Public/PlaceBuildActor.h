@@ -19,5 +19,4 @@ public:
 
     UFUNCTION()
     void SetMesh(UStaticMesh* StaticMesh);
-
 };

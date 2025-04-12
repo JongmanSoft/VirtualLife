@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "PlaceBuildActor.h"
 #include "BuildingPlayerController.generated.h"
 
 /**
@@ -16,4 +17,17 @@ class VIRTUAL_LIFE_PROJECT_API ABuildingPlayerController : public APlayerControl
 	
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	APlaceBuildActor* SelectedBuildActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> InteractionWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Spawn")
+	TSubclassOf<class APlacementActor> PlacementActorClass;
+
+	UFUNCTION(BlueprintCallable)
+	void TrySelectBuildActor();
 };

@@ -69,3 +69,4 @@ public:
 
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
+extern std::mutex players_mutex;
