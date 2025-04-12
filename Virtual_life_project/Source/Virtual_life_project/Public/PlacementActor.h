@@ -35,6 +35,13 @@ public:
     UMaterialInterface* OverlayMaterial;
 
     UPROPERTY()
+    UMaterialInstanceDynamic* DynMaterial = nullptr;
+
+    bool IsOverlapping() const;
+    bool IsOutOfBounds(const FVector& Location) const;
+    void UpdateOverlayColor(bool bCanPlace);
+
+    UPROPERTY()
     int32 BuildPrice = 0;
 
     void SetPrice(int32 Price);
