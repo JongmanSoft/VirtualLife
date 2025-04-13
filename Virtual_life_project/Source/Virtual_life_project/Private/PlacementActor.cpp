@@ -26,6 +26,11 @@ void APlacementActor::BeginPlay()
     Super::BeginPlay();
 }
 
+void APlacementActor::SetRowID(FName InRowID)
+{
+    RowID = InRowID;
+}
+
 void APlacementActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -126,6 +131,14 @@ void APlacementActor::PlaceBuild()
     if (Placed && Mesh)
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
+
+        // 서버로 전송
+        if (MyGI)
+        {
+            // unsigned short item_id = FNameToItemID(RowID); // 변환 방식 정해야 함
+            uint16 item_id = NULL;
+            // MyGI->SendPlaceBuildPacket(item_id, Loc, Rot.Yaw);
+        }
     }
 
     Destroy(); // 제거

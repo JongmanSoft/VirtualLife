@@ -19,6 +19,14 @@ public:
     virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
 
+    FName RowID;
+
+    UFUNCTION()
+    void SetRowID(FName InRowID);
+
+    UFUNCTION()
+    FName GetRowID() const { return RowID; }
+
     UFUNCTION()
     void SetMesh(UStaticMesh* NewMesh);
 
