@@ -337,17 +337,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		break;
 	}
-	case CS_PLACE_BUILD:
-	{
-		auto pkt = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(buffer);
-
-		Room& room = GetRoomByClientID(client_id); // RoomManager 또는 map 사용
-		room.AddObject(pkt->build);
-
-		std::cout << "[BUILD] 클라 " << client_id << "이 건물 추가함. ID=" << pkt->build.item_id << std::endl;
-
-		break;
-	}
     default:
         break;
     }

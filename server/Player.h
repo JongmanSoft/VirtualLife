@@ -24,7 +24,7 @@ class Player
 	Customizing custom; // 커스텀
 	unordered_map<unsigned short, unsigned short> player_item;
 	vector<Quest> quests;
-	vector<Object> buildObjects;
+	// vector<Object> buildObjects;
 
 	// 동기화 관련
 	std::mutex m;
