@@ -9,8 +9,6 @@
 #include "Virtual_life_GameInstance.h"
 #include "FloatingTextWidget.h"
 #include "EngineUtils.h"
-#include "BuildItemRegistry.h"
-#include "FBuildInfo.h"
 
 
 APlacementActor::APlacementActor()
@@ -137,8 +135,9 @@ void APlacementActor::PlaceBuild()
         // 서버로 전송
         if (MyGI)
         {
-            uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
-            MyGI->SendPlaceBuildPacket(ItemID, Loc, Rot.Yaw);
+            // unsigned short item_id = FNameToItemID(RowID); // 변환 방식 정해야 함
+            uint16 item_id = NULL;
+            // MyGI->SendPlaceBuildPacket(item_id, Loc, Rot.Yaw);
         }
     }
 

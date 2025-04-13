@@ -14,8 +14,6 @@
 #include "VL_AnimInstance.h"
 #include "VL_Player.h"
 #include "FloatingTextWidget.h"
-#include "BuildItemRegistry.h"
-#include "FBuildInfo.h"
 
 
 void UVirtual_life_GameInstance::ConnectServer()
@@ -91,19 +89,19 @@ void UVirtual_life_GameInstance::SendUpdateGoldPacket(int cs_gold_offset)
 	OnGoldChanged.Broadcast(p.gold_offset);
 }
 
-void UVirtual_life_GameInstance::SendPlaceBuildPacket(int32 item_id, FVector loc, float yaw)
-{
-	CS_PLACE_BUILD_PACKET p;
-	p.size = sizeof(CS_PLACE_BUILD_PACKET);
-	p.type = CS_PLACE_BUILD;
-	p.build.item_id = static_cast<uint16>(item_id);
-	p.build.x = loc.X;
-	p.build.y = loc.Y;
-	p.build.z = loc.Z;
-	p.build.yaw = yaw;
-
-	SendEnqueue(&p, p.size);
-}
+//void UVirtual_life_GameInstance::SendPlaceBuildPacket(int32 item_id, FVector loc, float yaw)
+//{
+//	CS_PLACE_BUILD_PACKET p;
+//	p.size = sizeof(CS_PLACE_BUILD_PACKET);
+//	p.type = CS_PLACE_BUILD;
+//	//p.build.item_id = static_cast<uint16>(item_id);
+//	p.build.x = loc.X;
+//	p.build.y = loc.Y;
+//	p.build.z = loc.Z;
+//	p.build.yaw = yaw;
+//
+//	SendEnqueue(&p, p.size);
+//}
 
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
@@ -467,18 +465,6 @@ void UVirtual_life_GameInstance::OnStart()
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
-
-	UDataTable* BuildTable = Cast<UDataTable>(
-		StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/BuildingSystem/NewBuildData.NewBuildData'"))
-	);
-	if (BuildTable)
-	{
-		FBuildItemRegistry::Initialize(BuildTable);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Can Not Find Data Table"));
-	}
 
 	ConnectServer();
 }

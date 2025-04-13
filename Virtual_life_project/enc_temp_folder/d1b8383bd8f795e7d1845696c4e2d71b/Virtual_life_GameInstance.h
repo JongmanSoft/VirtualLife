@@ -99,8 +99,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendUpdateGoldPacket(int cs_gold_offset);
 
-	UFUNCTION(BlueprintCallable)
-	void SendPlaceBuildPacket(int32 item_id, FVector loc, float yaw);
+	/*UFUNCTION(BlueprintCallable)
+	void SendPlaceBuildPacket(int32 item_id, FVector loc, float yaw);*/
 
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
