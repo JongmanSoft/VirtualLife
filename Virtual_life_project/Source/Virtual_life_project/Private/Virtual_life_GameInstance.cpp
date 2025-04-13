@@ -380,9 +380,9 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			auto pl = Cast<AVL_Player>(PlayerActor);
 			pl->setDestInfo(p.pl);
+			if (p.pl.st == 3)
+				int a = 0;
 			pl->setState(p.pl.st);
-
-			
 
 			break;
 		}

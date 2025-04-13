@@ -25,6 +25,9 @@ class Player
 	unordered_map<unsigned short, unsigned short> player_item;
 	vector<Quest> quests;
 
+	// 동기화 관련
+	std::mutex m;
+
 	// 패킷 send 함수
 	bool send_login_info_packet(bool res, bool isnew);
 	bool send_enter_game_packet();
@@ -41,6 +44,12 @@ public:
 	Player() : socket(0), state(NONE) {}
 	Player(SOCKET s, int id) : socket(s) { pinfo.id = id; }
 	~Player() {}
+
+	void init_player(SOCKET s, int id)
+	{
+		socket = s;
+		pinfo.id = id;
+	}
 
 	void send(void* packet);
 	void recv();

@@ -35,7 +35,9 @@ public:
 	void setDestInfo(PlayerInfo& v);
 
 	UFUNCTION(BlueprintCallable)
-	void setState(int st); // 3번이 점프임 명심하도록
+	void setMyState(int st); // 3번이 점프임 명심하도록
+	
+	void setState(int st);
 
 	bool isMyPlayer = false;
 

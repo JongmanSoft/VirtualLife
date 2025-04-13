@@ -71,12 +71,12 @@ void AVL_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AVL_Player::Landed(const FHitResult& Hit)
 {
-	if (true == isMyPlayer || true == myPlayer()) {
+	if ( true == myPlayer()) {
 		Super::Landed(Hit);
 
 		if (state == JUMP)
 		{
-			setState(IDLE); // 혹은 상황 따라 RUN으로도 가능
+			setMyState(IDLE); // 혹은 상황 따라 RUN으로도 가능
 		}
 	}
 }
@@ -95,9 +95,8 @@ void AVL_Player::setDestInfo(PlayerInfo& v) // 다음에 이동할 위치 설정
 	destInfo = v;
 }
 
-void AVL_Player::setState(int st)
+void AVL_Player::setMyState(int st)
 {
-
 	auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
 	if (GameInstance) { 
 		std::lock_guard ll{ m };
@@ -105,6 +104,11 @@ void AVL_Player::setState(int st)
 		GameInstance->set_state(st);
 		GameInstance->SendPlayerLocationToServer();
 	}
+}
+
+void AVL_Player::setState(int st)
+{
+	state = st;
 }
 
 bool AVL_Player::myPlayer()
@@ -119,6 +123,8 @@ bool AVL_Player::myPlayer()
 		{
 			auto p = Cast<AVL_Player>(PlayerPawn);
 			isMyPlayer = (this == p);
+			if (false == isMyPlayer)
+				int k = 0;
 			return isMyPlayer;
 		}
 	}

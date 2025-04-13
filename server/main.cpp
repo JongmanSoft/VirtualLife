@@ -39,7 +39,7 @@ void workerThread(HANDLE iocp_hd)
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
             cout << "ACCEPT: 클라이언트 ID " << client_id << " 연결됨" << endl;
 
-            players[client_id] = Player(g_client, client_id);
+            players[client_id].init_player(g_client, client_id);
             players[client_id].recv(); // 첫 번째 패킷 받기 시작
 
             g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
