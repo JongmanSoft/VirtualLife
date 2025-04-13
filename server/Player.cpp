@@ -290,9 +290,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		if (p->pl.st == 3) {
-			cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << endl;
-		}
+		cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << endl;
 		pinfo = p->pl;
 
 		// 위치정보 브로드캐스팅

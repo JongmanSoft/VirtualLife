@@ -36,6 +36,7 @@ void AVL_Player::Tick(float DeltaTime)
 		{
 			Jump();
 		}
+		// todo: 애니메이션 동기화 해야 함.
 
 		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
 		FVector CurrentLocation = GetActorLocation();
