@@ -19,6 +19,8 @@
 #include "fishing_cpp_interface.h"
 #include "mining_cpp_interface.h"
 
+#include "VL_Player.h"
+
 
 
 // Sets default values for this component's properties
@@ -39,6 +41,17 @@ void UUse_equip_component::BeginPlay()
         if (InputComponent)
         {
             SetupInputComponent(InputComponent);
+        }
+    }
+    
+    // SkeletalMesh 찾아서 OnMontageEnded 바인딩
+    USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
+    if (SkeletalMeshComp)
+    {
+        UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+        if (AnimInstance && !AnimInstance->OnMontageEnded.IsAlreadyBound(this, &UUse_equip_component::OnMontageEnded))
+        {
+            AnimInstance->OnMontageEnded.AddDynamic(this, &UUse_equip_component::OnMontageEnded);
         }
     }
 
@@ -117,22 +130,18 @@ void UUse_equip_component::USE_fishing_rod()
                             if (AnimInstance)
                             {
                                 AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/metahuman_fishing_Montage.metahuman_fishing_Montage")), 1.0f);
+                                State_update(FISH);
                             }
 
                             bool fishing_result = 0;
                             Ifishing_cpp_interface::Execute_fishing_func(Actor,fishing_result);
 
                         }
-                    
-
 
                 }
             }
         }
-
-        
     }
-  
 }
 
 void UUse_equip_component::USE_tomato_seed()
@@ -140,9 +149,6 @@ void UUse_equip_component::USE_tomato_seed()
     AActor* ParentActor = GetOwner();
     if (ParentActor)
     {
-       
-       
-
         USkeletalMeshComponent* SkeletalMeshComp = ParentActor->FindComponentByClass<USkeletalMeshComponent>();
         if (SkeletalMeshComp)
         {
@@ -150,6 +156,7 @@ void UUse_equip_component::USE_tomato_seed()
             if (AnimInstance)
             {
                 AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/fast_plant.fast_plant")), 1.0f);
+                State_update(SEED);
             }
         }
 
@@ -192,6 +199,7 @@ void UUse_equip_component::USE_potato_seed()
             if (AnimInstance)
             {
                 AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/fast_plant.fast_plant")), 1.0f);
+                State_update(SEED);
             }
         }
 
@@ -235,6 +243,7 @@ void UUse_equip_component::USE_pickaxe()
                 UStaticMeshComponent* pickaxe_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("Pickaxe")));
                 if (pickaxe_mesh)pickaxe_mesh->SetVisibility(true);
                 AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/slash_pickaxe_montage.slash_pickaxe_montage")), 1.0f);
+                State_update(MINE);
             }
         }
 
@@ -253,4 +262,23 @@ void UUse_equip_component::USE_pickaxe()
             }
         }
     }
+}
+
+void UUse_equip_component::State_update(int st)
+{
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PlayerController)
+    {
+        APawn* ControlledPawn = PlayerController->GetPawn();
+        AVL_Player* MyPlayer = Cast<AVL_Player>(ControlledPawn);
+        if (MyPlayer)
+        {
+            MyPlayer->setMyState(st);
+        }
+    }
+}
+
+void UUse_equip_component::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+    State_update(IDLE);
 }

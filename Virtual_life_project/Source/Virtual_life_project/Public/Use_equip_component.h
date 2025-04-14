@@ -37,5 +37,10 @@ public:
     void USE_potato_seed();
     void USE_pickaxe();
 
+    // 동기화용 04.14 추가
+    void State_update(int st);
+
+    UFUNCTION()
+    void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
     
 };

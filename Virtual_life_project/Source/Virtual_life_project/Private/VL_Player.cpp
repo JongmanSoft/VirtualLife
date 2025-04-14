@@ -36,6 +36,39 @@ void AVL_Player::Tick(float DeltaTime)
 		{
 			Jump();
 		}
+		else if (state == SEED)
+		{
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/fast_plant.fast_plant")), 1.0f);
+				}
+			}
+		}
+		else if (state == MINE)
+		{
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/fast_plant.fast_plant")), 1.0f);
+				}
+			}
+		}
+		else if (state == FISH)
+		{
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/metahuman_fishing_Montage.metahuman_fishing_Montage")), 1.0f);
+				}
+			}
+		}
 		// todo: 애니메이션 동기화 해야 함.
 
 		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
