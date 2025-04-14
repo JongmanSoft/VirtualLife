@@ -13,6 +13,18 @@ void ABuildingPlayerController::BeginPlay()
     bEnableMouseOverEvents = true;
 }
 
+void ABuildingPlayerController::AddPendingBuild(const FObjectData& Data)
+{
+    PendingBuildObjects.Add(Data);
+}
+
+void ABuildingPlayerController::RemovePendingBuildAtLocation(const FVector& Location, float Tolerance)
+{
+    PendingBuildObjects.RemoveAll([&](const FObjectData& Obj) {
+        return FVector::Dist(Obj.Location, Location) <= Tolerance;
+        });
+}
+
 void ABuildingPlayerController::TrySelectBuildActor()
 {
     FHitResult Hit;

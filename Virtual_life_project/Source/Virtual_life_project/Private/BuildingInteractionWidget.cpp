@@ -28,6 +28,8 @@ void UBuildingInteractionWidget::OnClickModify()
     FRotator Rotation = PC->SelectedBuildActor->GetActorRotation();
     UStaticMesh* Mesh = PC->SelectedBuildActor->Mesh->GetStaticMesh();
 
+    PC->RemovePendingBuildAtLocation(Location);
+
     PC->SelectedBuildActor->Destroy();
 
     APlacementActor* NewPreview = GetWorld()->SpawnActor<APlacementActor>(
@@ -45,6 +47,9 @@ void UBuildingInteractionWidget::OnClickDelete()
 {
     auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     if (!PC || !PC->SelectedBuildActor) return;
+
+    FVector Location = PC->SelectedBuildActor->GetActorLocation();
+    PC->RemovePendingBuildAtLocation(Location);
 
     PC->SelectedBuildActor->Destroy();
     PC->SelectedBuildActor = nullptr;
