@@ -337,13 +337,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		break;
 	}
-	case CS_PLACE_BUILD:
-	{
-		std::cout << "RECV-CS_PLACE_BUILD_PACKET: " << pinfo.id << " 에게 " << length << " 만큼 받음!\n";
-		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
-		room.AddObject(p->build);
-		break;
-	}
     default:
         break;
     }
