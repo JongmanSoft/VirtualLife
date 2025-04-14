@@ -30,4 +30,5 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TrySelectBuildActor();
+
 };

@@ -93,7 +93,6 @@ enum PACKETID : char
 	CS_UPDATE_GOLD,
 	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
 	CS_NPC_CHAT,
-	CS_PLACE_BUILD,
 
 	// server to client
 	SC_LOGININFO,
@@ -108,7 +107,6 @@ enum PACKETID : char
 	SC_UPDATE_GOLD,
 	SC_UPDATE_QUEST,
 	SC_NPC_RESPONSE,
-	SC_PLACE_BUILD
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -242,12 +240,6 @@ struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 	PACKETID type;
 	unsigned short id;
 	Customizing c;
-};
-
-struct SC_PLACE_BUILD_PACKET {
-	unsigned short size;
-	PACKETID type;
-	Object build;
 };
 
 struct SC_ROOM_SETUP {

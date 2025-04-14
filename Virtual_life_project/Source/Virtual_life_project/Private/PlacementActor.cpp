@@ -133,13 +133,6 @@ void APlacementActor::PlaceBuild()
     if (Placed && Mesh)
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
-
-        // 서버로 전송
-        if (MyGI)
-        {
-            uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
-            MyGI->SendPlaceBuildPacket(ItemID, Loc, Rot.Yaw);
-        }
     }
 
     Destroy(); // 제거
