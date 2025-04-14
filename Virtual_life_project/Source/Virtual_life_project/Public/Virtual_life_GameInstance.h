@@ -14,6 +14,7 @@
 #include "PlayerInventory.h"
 #include "Custom_data.h"
 #include "Quest_Manager.h"
+#include "ObjectData.h"
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
@@ -105,6 +106,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendRemoveQuestPacket(uint8 giver_id, uint8 quest_id);
+
+	UFUNCTION(BlueprintCallable)
+    void SendPlaceBuildPacket(const TArray<FObjectData>& Objects);
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 

@@ -2,6 +2,7 @@
 
 
 #include "BuildingPlayerController.h"
+#include "Virtual_life_GameInstance.h"
 #include "Blueprint/UserWidget.h"
 
 
@@ -23,6 +24,16 @@ void ABuildingPlayerController::RemovePendingBuildAtLocation(const FVector& Loca
     PendingBuildObjects.RemoveAll([&](const FObjectData& Obj) {
         return FVector::Dist(Obj.Location, Location) <= Tolerance;
         });
+}
+
+void ABuildingPlayerController::ConfirmBuildPlacement()
+{
+    auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+    if (!GI) return;
+
+    GI->SendPlaceBuildPacket(PendingBuildObjects);
+
+    PendingBuildObjects.Empty();
 }
 
 void ABuildingPlayerController::TrySelectBuildActor()

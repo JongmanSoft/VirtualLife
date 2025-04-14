@@ -111,6 +111,25 @@ void UVirtual_life_GameInstance::SendRemoveQuestPacket(uint8 giver_id, uint8 que
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendPlaceBuildPacket(const TArray<FObjectData>& Objects)
+{
+	for (const FObjectData& Obj : Objects)
+	{
+		CS_PLACE_BUILD_PACKET p;
+		p.size = sizeof(CS_PLACE_BUILD_PACKET);
+		p.type = CS_PLACE_BUILD;
+		p.build.item_id = static_cast<uint16>(Obj.ItemID);
+		p.build.x = Obj.Location.X;
+		p.build.y = Obj.Location.Y;
+		p.build.z = Obj.Location.Z;
+		p.build.yaw = Obj.Yaw;
+
+		SendEnqueue(&p, p.size);
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("총 %d개의 건물을 서버로 전송했습니다."), Objects.Num());
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
