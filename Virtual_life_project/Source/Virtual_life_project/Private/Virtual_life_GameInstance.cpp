@@ -449,7 +449,9 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_UPDATE_QUEST_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_QUEST_PACKET));
 			m_quest->ADD_QUEST(p.num);
+			UE_LOG(LogTemp, Log, TEXT("퀘스트 추가"));
 			OnQusetUpdate.Broadcast();
+			break;
 		}
 		case SC_REMOVE_QUEST:
 		{
@@ -457,6 +459,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_QUEST_PACKET));
 			m_quest->Delete_Quest(p.num);
 			OnQusetUpdate.Broadcast();
+			break;
 		}
 		}
 	}
@@ -469,7 +472,7 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
 
-	UE_LOG(LogTemp, Log, TEXT("Korean Text: %s"), *name);
+	
 }
 
 int32 UVirtual_life_GameInstance::GetCurrentGold() const

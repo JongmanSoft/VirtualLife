@@ -353,7 +353,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
-		this->quests.erase(
+		/*this->quests.erase(
 			std::remove_if(
 				this->quests.begin(),
 				this->quests.end(),
@@ -362,7 +362,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				}
 			),
 			this->quests.end()
-		);
+		);*/
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}

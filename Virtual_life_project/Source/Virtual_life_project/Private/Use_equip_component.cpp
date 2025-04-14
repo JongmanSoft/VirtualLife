@@ -19,6 +19,8 @@
 #include "fishing_cpp_interface.h"
 #include "mining_cpp_interface.h"
 
+#include "Virtual_life_GameInstance.h"
+
 #include "VL_Player.h"
 
 
@@ -175,7 +177,8 @@ void UUse_equip_component::USE_tomato_seed()
 
                     if (plant_result) {
                         UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
-                        
+                        UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+                        game_inst->m_quest->finish_Quest(1); //농사 퀘스트 조건만족
                     }
                     
                 }
@@ -218,6 +221,9 @@ void UUse_equip_component::USE_potato_seed()
 
                     if (plant_result) {
                         UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
+
+                        UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+                        game_inst->m_quest->finish_Quest(1); //농사 퀘스트 조건만족
 
                     }
 
