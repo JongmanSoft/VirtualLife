@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "PlaceBuildActor.h"
+#include "ObjectData.h"
 #include "BuildingPlayerController.generated.h"
 
 /**
@@ -28,6 +29,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawn")
 	TSubclassOf<class APlacementActor> PlacementActorClass;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FObjectData> PendingBuildObjects;
+
+	void AddPendingBuild(const FObjectData& Data);
+	void RemovePendingBuildAtLocation(const FVector& Location, float Tolerance = 10.f);
+
 	UFUNCTION(BlueprintCallable)
 	void TrySelectBuildActor();
+
 };

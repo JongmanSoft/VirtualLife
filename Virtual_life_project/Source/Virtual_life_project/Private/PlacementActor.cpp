@@ -11,6 +11,8 @@
 #include "EngineUtils.h"
 #include "BuildItemRegistry.h"
 #include "FBuildInfo.h"
+#include "BuildingPlayerController.h"
+
 
 
 APlacementActor::APlacementActor()
@@ -134,11 +136,21 @@ void APlacementActor::PlaceBuild()
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
 
-        // 서버로 전송
         if (MyGI)
         {
             uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
-            MyGI->SendPlaceBuildPacket(ItemID, Loc, Rot.Yaw);
+
+            // 컨트롤러에 저장
+            auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+            if (PC)
+            {
+                FObjectData NewData;
+                NewData.ItemID = ItemID;
+                NewData.Location = Loc;
+                NewData.Yaw = Rot.Yaw;
+
+                PC->AddPendingBuild(NewData);
+            }
         }
     }
 
