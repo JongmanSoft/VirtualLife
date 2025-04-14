@@ -92,6 +92,7 @@ enum PACKETID : char
 	CS_ENTER_GAME, // 클라의 게임접속.
 	CS_UPDATE_GOLD,
 	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
+	CS_REMOVE_QUEST, //클라가 퀘스트 삭제요청 (완료시)
 	CS_NPC_CHAT,
 
 	// server to client
@@ -105,7 +106,8 @@ enum PACKETID : char
 	SC_UPDATE_ITEM,
 	SC_UPDATE_CUSTOM,
 	SC_UPDATE_GOLD,
-	SC_UPDATE_QUEST,
+	SC_GET_QUEST,
+	SC_REMOVE_QUEST,
 	SC_NPC_RESPONSE,
 };
 
@@ -162,7 +164,7 @@ struct CS_UPDATE_GOLD_PACKET
 	int gold_offset; //증감수치, 500원 썼으면 -500. 500원받았으면 +500
 };
 
-struct CS_GET_QUEST_PACKET {
+struct CS_UPDATE_QUEST_PACKET {
 	unsigned short size;
 	PACKETID type;
 	unsigned short giver_id;

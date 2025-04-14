@@ -91,6 +91,26 @@ void UVirtual_life_GameInstance::SendUpdateGoldPacket(int cs_gold_offset)
 	OnGoldChanged.Broadcast(p.gold_offset);
 }
 
+void UVirtual_life_GameInstance::SendGetQuestPacket(uint8 giver_id, uint8 quest_id)
+{
+	CS_UPDATE_QUEST_PACKET p;
+	p.size = sizeof(CS_UPDATE_GOLD_PACKET);
+	p.type = CS_GET_QUEST;
+	p.giver_id = giver_id;
+	p.num = quest_id;
+	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::SendRemoveQuestPacket(uint8 giver_id, uint8 quest_id)
+{
+	CS_UPDATE_QUEST_PACKET p;
+	p.size = sizeof(CS_UPDATE_GOLD_PACKET);
+	p.type = CS_REMOVE_QUEST;
+	p.giver_id = giver_id;
+	p.num = quest_id;
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -404,6 +424,20 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			AddInfo.gold = p.gold;
 			OnGoldUpdated.Broadcast(AddInfo.gold);
 			break;
+		}
+		case SC_GET_QUEST:
+		{
+			SC_UPDATE_QUEST_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_QUEST_PACKET));
+			m_quest->ADD_QUEST(p.num);
+			OnQusetUpdate.Broadcast();
+		}
+		case SC_REMOVE_QUEST:
+		{
+			SC_UPDATE_QUEST_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_QUEST_PACKET));
+			m_quest->Delete_Quest(p.num);
+			OnQusetUpdate.Broadcast();
 		}
 		}
 	}

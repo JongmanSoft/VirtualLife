@@ -100,6 +100,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendUpdateGoldPacket(int cs_gold_offset);
 
+	UFUNCTION(BlueprintCallable)
+	void SendGetQuestPacket(uint8 giver_id, uint8 quest_id);
+
+	UFUNCTION(BlueprintCallable)
+	void SendRemoveQuestPacket(uint8 giver_id, uint8 quest_id);
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 

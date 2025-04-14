@@ -14,6 +14,9 @@
     <ClCompile Include="Room.cpp">
       <Filter>Games</Filter>
     </ClCompile>
+    <ClCompile Include="Quest.cpp">
+      <Filter>Games</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -35,6 +38,9 @@
       <Filter>Games</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
+      <Filter>Games</Filter>
+    </ClInclude>
+    <ClInclude Include="Quest.h">
       <Filter>Games</Filter>
     </ClInclude>
   </ItemGroup>
