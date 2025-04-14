@@ -36,4 +36,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void finish_Quest(const uint8& quest_id);
+
+	UFUNCTION(BlueprintCallable)
+	void Done_Process(const uint8& quest_id); // 퀘스트가 완료된 후의 처리
 };

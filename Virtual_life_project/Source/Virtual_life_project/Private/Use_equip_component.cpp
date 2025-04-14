@@ -123,7 +123,7 @@ void UUse_equip_component::USE_fishing_rod()
             {
                 if (Actor->IsA(Afishing_spot::StaticClass())) {
 
-                    UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/water.water")));
+                    UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/water_dive.water_dive")));
                         UStaticMeshComponent* fishing_rod_mesh = Cast<UStaticMeshComponent>(ParentActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("FishingRod")));
                         if (fishing_rod_mesh)fishing_rod_mesh->SetVisibility(true);
                         if (SkeletalMeshComp)
@@ -137,7 +137,8 @@ void UUse_equip_component::USE_fishing_rod()
 
                             bool fishing_result = 0;
                             Ifishing_cpp_interface::Execute_fishing_func(Actor,fishing_result);
-
+                            UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+                            game_inst->m_quest->finish_Quest(2); //낚시 퀘스트 조건만족
                         }
 
                 }
@@ -264,6 +265,8 @@ void UUse_equip_component::USE_pickaxe()
                 if (Actor->IsA(Amining_spot::StaticClass()))
                 {
                     Imining_cpp_interface::Execute_mining_func(Actor);
+                    UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+                    game_inst->m_quest->finish_Quest(3); //채굴 퀘스트 조건만족
                 }
             }
         }
