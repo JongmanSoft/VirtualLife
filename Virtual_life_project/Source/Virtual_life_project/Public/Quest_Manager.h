@@ -28,6 +28,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ADD_QUEST(const uint8& quest_id);
 	//퀘스트 완료했니?
+	UFUNCTION(BlueprintCallable)
 	bool Quest_complete(const uint8& quest_id);
 	//퀘스트 삭제
 	void Delete_Quest(const uint8& quest_id);
