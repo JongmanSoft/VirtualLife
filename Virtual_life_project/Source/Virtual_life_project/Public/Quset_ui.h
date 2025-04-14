@@ -30,6 +30,7 @@ protected:
 
 
 protected:
+    UFUNCTION()
     void UpdateQuestDisplay(); // 내부 UI 갱신 함수
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")

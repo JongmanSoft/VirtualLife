@@ -26,6 +26,7 @@ void UQuset_ui::NativeConstruct()
     {
 
         GameInstance->OnInventoryChanged.AddDynamic(this, &UQuset_ui::OnInventoryUpdated);
+        QuestRef->OnChangeQuestComplete.AddDynamic(this ,&UQuset_ui::UpdateQuestDisplay);
         // 초기화된 QuestID로 UI 갱신
         UpdateQuestDisplay();
     }

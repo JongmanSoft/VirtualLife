@@ -31,4 +31,7 @@ public:
 	bool Quest_complete(const uint8& quest_id);
 	//퀘스트 삭제
 	void Delete_Quest(const uint8& quest_id);
+	
+	UFUNCTION(BlueprintCallable)
+	void finish_Quest(const uint8& quest_id);
 };

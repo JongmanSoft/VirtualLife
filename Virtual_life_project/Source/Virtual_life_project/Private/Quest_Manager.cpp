@@ -24,3 +24,10 @@ void UQuest_Manager::Delete_Quest(const uint8& quest_id)
 {
     Quests.Remove(quest_id);
 }
+
+void UQuest_Manager::finish_Quest(const uint8& quest_id)
+{
+    if (Quests.Contains(quest_id)) {
+        Quests[quest_id]->set_complete(true);
+    }
+}

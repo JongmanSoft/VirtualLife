@@ -43,7 +43,17 @@ void UQuest::init_quest(const uint8& Quest_ID)
 
 bool UQuest::quest_success()
 {
+
+    if (Quest_info.IsMain) {
+        return complete;
+    }
     bool all_complete = true;
     for (const auto& a : Goals) all_complete = all_complete && (*a.have_num >= a.requir_num);
     return all_complete;
+}
+
+void UQuest::set_complete(const bool& com)
+{
+    complete = com;
+    OnChangeQuestComplete.Broadcast();
 }
