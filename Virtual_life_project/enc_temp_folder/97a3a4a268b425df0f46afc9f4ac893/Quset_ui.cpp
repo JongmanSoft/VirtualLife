@@ -3,7 +3,6 @@
 
 #include "Quset_ui.h"
 #include "Components/TextBlock.h"
-#include "Components/Image.h"
 
 void UQuset_ui::InitializeWithQuestID(uint8 QuestID)
 {
@@ -39,7 +38,6 @@ void UQuset_ui::NativeDestruct()
     {
         //구독 끊겠습니다...
         GameInstance->OnInventoryChanged.RemoveDynamic(this, &UQuset_ui::OnInventoryUpdated);
-        QuestRef->OnChangeQuestComplete.RemoveDynamic(this, &UQuset_ui::UpdateQuestDisplay);
     }
     Super::NativeDestruct();
 }
@@ -53,13 +51,6 @@ void UQuset_ui::UpdateQuestDisplay()
 {
     if (QuestRef)
     {
-        //완료이미지 셋팅
-        if (QuestRef->quest_success()) {
-            cheak_image->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/UI/Quest_UI/complete.complete")));
-        }
-        else cheak_image->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/UI/Quest_UI/not_complete.not_complete")));
-
-
         QuestNameText->SetText(FText::FromString(QuestRef->Quest_info.Quest_Name));
 
         FString GoalsText;

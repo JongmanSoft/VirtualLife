@@ -46,7 +46,4 @@ protected:
     UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
     class UTextBlock* QuestRequiredValue;
 
-    UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-    class UImage* cheak_image;
-
 };
