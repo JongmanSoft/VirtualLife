@@ -15,12 +15,10 @@ void Room::packet_setup(SC_ROOM_SETUP_PACKET& pkt)
     pkt.type = SC_ROOM_SETUP;
 
     int count = std::min(objs.size(), (size_t)MAX_BUILD_ITEM);
+    pkt.count = count;
+
     for (int i = 0; i < count; ++i)
     {
         pkt.objs[i] = *objs[i]; 
-    }
-    for (int i = count; i < MAX_BUILD_ITEM; ++i)
-    {
-        pkt.objs[i] = Object(); // 디폴트로 채우기
     }
 }

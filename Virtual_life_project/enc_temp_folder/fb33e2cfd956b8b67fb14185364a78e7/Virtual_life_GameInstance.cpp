@@ -475,7 +475,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
 				if (RowName.IsNone()) continue;
 
-				if (!BuildingDataTable) continue;
+				if (!BuildingDataTable) continue; // 혹시 모를 예외
 				const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
 
 				if (Info && Info->Mesh && PlaceBuildClass)

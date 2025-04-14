@@ -250,6 +250,7 @@ struct SC_ROOM_SETUP_PACKET {
 	unsigned short size;
 	PACKETID type;
 	unsigned short id; // 현재 접속한 집 주인의 아이디
+	unsigned short count; // 실제 오브젝트 개수
 	Object objs[MAX_BUILD_ITEM]; // 오브젝트들
 };
 

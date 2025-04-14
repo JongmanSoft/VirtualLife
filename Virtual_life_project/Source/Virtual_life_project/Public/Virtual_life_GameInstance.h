@@ -137,6 +137,13 @@ public:
 
 	TArray<FString> chats;
 
+public:
+	// 건축 관련
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building")
+	TSubclassOf<class APlaceBuildActor> PlaceBuildClass;
+
+	UPROPERTY()
+	UDataTable* BuildingDataTable = nullptr;
 
 public:
 	//장비,아이템을 관리하는 인벤토리클래스
