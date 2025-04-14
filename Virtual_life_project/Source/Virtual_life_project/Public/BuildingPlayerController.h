@@ -34,6 +34,7 @@ public:
 
 	void AddPendingBuild(const FObjectData& Data);
 	void RemovePendingBuildAtLocation(const FVector& Location, float Tolerance = 10.f);
+	void ConfirmBuildPlacement();
 
 	UFUNCTION(BlueprintCallable)
 	void TrySelectBuildActor();

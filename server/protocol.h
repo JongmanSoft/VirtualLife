@@ -94,6 +94,7 @@ enum PACKETID : char
 	CS_GET_QUEST, // 클라가 퀘스트 획득 요청
 	CS_REMOVE_QUEST, //클라가 퀘스트 삭제요청 (완료시)
 	CS_NPC_CHAT,
+	CS_PLACE_BUILD,
 
 	// server to client
 	SC_LOGININFO,
