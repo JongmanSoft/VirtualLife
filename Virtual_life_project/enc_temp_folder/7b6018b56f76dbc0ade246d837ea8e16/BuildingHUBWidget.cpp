@@ -5,8 +5,6 @@
 #include "Components/Button.h"
 #include "Components/WrapBox.h"
 #include "Components/ScrollBox.h"
-#include "BuildingPlayerController.h"
-#include "Kismet/GameplayStatics.h"
 #include "BuildingSelectButtonWidget.h"
 
 void UBuildingHUBWidget::NativeConstruct()
@@ -34,9 +32,6 @@ void UBuildingHUBWidget::BindTabButtons()
 
     if (DecorTab_BTN)
         DecorTab_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnDecorTabClicked);
-
-    if (Confirm_BTN)
-        Confirm_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnConfirmClicked);
 }
 
 void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
@@ -88,14 +83,4 @@ void UBuildingHUBWidget::OnInteriorDecorTabClicked()
 void UBuildingHUBWidget::OnDecorTabClicked()
 {
     OnCategorySelected(EBuildCategories::Decor);
-}
-
-void UBuildingHUBWidget::OnConfirmClicked()
-{
-    ABuildingPlayerController* PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-    if (!PC) return;
-
-    PC->ConfirmBuildPlacement();
-
-    UE_LOG(LogTemp, Warning, TEXT("확정 버튼 눌림! 건물 정보 전송."));
 }
