@@ -434,7 +434,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_UPDATE_ITEM_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_ITEM_PACKET));
 
-			m_inventory->Add_Item(p.id, p.num);
+			m_inventory->update_item(p.id, p.num);
 			OnInventoryChanged.Broadcast(p.id);
 			break;
 		}

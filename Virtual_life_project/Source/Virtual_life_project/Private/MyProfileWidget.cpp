@@ -14,6 +14,8 @@ void UMyProfileWidget::NativeConstruct()
 
     SetHP(100, 100);
     SetMP(100, 100);
+
+    SetCoin(Cast<UVirtual_life_GameInstance>(GetGameInstance())->GetCurrentGold());
 }
 
 void UMyProfileWidget::NativeDestruct()

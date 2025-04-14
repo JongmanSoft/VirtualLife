@@ -48,7 +48,7 @@ void UPlayerInventory::get_item(uint8 id, uint8 num)
 
 void UPlayerInventory::update_item(uint8 id, uint8 num)
 {
-    Owned_Items[id] = num;
+    Owned_Items.Add(id,num);
 }
 
 void UPlayerInventory::delete_zero_item()
