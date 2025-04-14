@@ -178,7 +178,7 @@ void UUse_equip_component::USE_tomato_seed()
                     if (plant_result) {
                         UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
                         UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
-                        game_inst->m_quest->finish_Quest(1); //농사 퀘스트 조건만족
+                        game_inst->m_quest->Quest_complete(1); //농사 퀘스트 조건만족
                     }
                     
                 }
@@ -223,7 +223,7 @@ void UUse_equip_component::USE_potato_seed()
                         UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/Use_seeds.Use_seeds")));
 
                         UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
-                        game_inst->m_quest->finish_Quest(1); //농사 퀘스트 조건만족
+                        game_inst->m_quest->Quest_complete(1); //농사 퀘스트 조건만족
 
                     }
 
