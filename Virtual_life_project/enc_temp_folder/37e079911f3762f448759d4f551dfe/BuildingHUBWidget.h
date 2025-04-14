@@ -60,9 +60,6 @@ protected:
     UButton* DecorTab_BTN;
 
     UPROPERTY(meta = (BindWidget))
-    UButton* Confirm_BTN;
-
-    UPROPERTY(meta = (BindWidget))
     UMyProfileWidget* MyProfile_UI;
 
 private:
@@ -85,7 +82,4 @@ private:
 
     UFUNCTION()
     void OnDecorTabClicked();
-
-    UFUNCTION()
-    void OnConfirmClicked();
 };
