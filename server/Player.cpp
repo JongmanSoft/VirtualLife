@@ -377,6 +377,17 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}
+	case CS_ROOM_ENTER:
+	{
+		std::cout << "CS_ENTER_ROOM 받음! id: " << pinfo.id << std::endl;
+
+		SC_ROOM_SETUP_PACKET pkt;
+		pkt.id = pinfo.id;
+		room.packet_setup(pkt);
+		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
+		send(&pkt);
+		break;
+	}
 	case CS_PLACE_BUILD:
 	{
 		// std::cout << "RECV-CS_PLACE_BUILD: " << pinfo.id << " 건물 건설 요청!" << std::endl;

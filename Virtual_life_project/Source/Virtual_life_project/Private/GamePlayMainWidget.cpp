@@ -6,11 +6,24 @@
 #include "WeatherWidget.h"
 #include "DateWidget.h"
 #include "MyProfileWidget.h"
+#include "Components/Button.h"
+#include "Virtual_life_GameInstance.h"
 
 void UGamePlayMainWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // 확인용 로그
-    UE_LOG(LogTemp, Log, TEXT("GamePlay_UI initialized"));
+    if (HomeMode_WB)
+    {
+        HomeMode_WB->OnClicked.AddDynamic(this, &UGamePlayMainWidget::OnHomeModeClicked);
+    }
+
+}
+
+void UGamePlayMainWidget::OnHomeModeClicked()
+{
+    auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+    if (!GI) return;
+
+    GI->EnterMyRoom();
 }

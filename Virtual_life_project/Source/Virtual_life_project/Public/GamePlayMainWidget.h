@@ -38,4 +38,10 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UMyProfileWidget* MyProfile_UI;
 
+    UPROPERTY(meta = (BindWidget))
+    class UButton* HomeMode_WB;
+
+    UFUNCTION()
+    void OnHomeModeClicked();
+
 };
