@@ -468,28 +468,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_ROOM_SETUP_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_SETUP_PACKET));
 
-			for (int i = 0; i < p.count; ++i)
-			{
-				const Object& obj = p.objs[i];
-
-				FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
-				if (RowName.IsNone()) continue;
-
-				if (!BuildingDataTable) continue;
-				const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
-
-				if (Info && Info->Mesh && PlaceBuildClass)
-				{
-					FVector SpawnLoc(obj.x, obj.y, obj.z);
-					FRotator SpawnRot(0.f, obj.yaw, 0.f);
-
-					APlaceBuildActor* Spawned = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
-					if (Spawned)
-					{
-						Spawned->SetMesh(Info->Mesh);
-					}
-				}
-			}
+			HandleRoomSetup(p);
 
 			break;
 		}
@@ -553,6 +532,58 @@ void UVirtual_life_GameInstance::OnStart()
 	}
 
 	ConnectServer();
+}
+
+void UVirtual_life_GameInstance::EnterMyRoom()
+{
+	CS_ROOM_ENTER_PACKET p;
+	p.size = sizeof(CS_ROOM_ENTER_PACKET);
+	p.type = CS_ROOM_ENTER;
+
+	SendEnqueue(&p, p.size);
+
+	UE_LOG(LogTemp, Log, TEXT("Ask Enter My Room Send"));
+}
+
+void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
+{
+	CachedRoomObjects.Empty();
+
+	// 받은 오브젝트 저장
+	for (int i = 0; i < p.count; ++i)
+	{
+		CachedRoomObjects.Add(p.objs[i]);
+	}
+
+	UGameplayStatics::OpenLevel(this, MyRoomMapName);
+}
+
+void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
+{
+	if (!PlaceBuildClass) return;
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	for (const Object& obj : CachedRoomObjects)
+	{
+		FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
+		if (RowName.IsNone()) continue;
+
+		const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
+		if (!Info || !Info->Mesh) continue;
+
+		FVector SpawnLoc(obj.x, obj.y, obj.z);
+		FRotator SpawnRot(0.f, obj.yaw, 0.f);
+
+		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
+		if (Spawned)
+		{
+			Spawned->SetMesh(Info->Mesh);
+		}
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("[GameInstance] %d Building Objects Spawn!!!"), CachedRoomObjects.Num());
 }
 
 void UVirtual_life_GameInstance::Shutdown()
