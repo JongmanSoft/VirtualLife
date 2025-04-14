@@ -59,6 +59,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<class UFloatingTextWidget> FloatingTextWidgetClass;
 
+	UFUNCTION(BlueprintCallable)
 	void ShowFloatingText(const FString& Text, const FLinearColor& Color, const FVector& WorldLocation);
 
 public:
