@@ -1,3 +1,7 @@
+#pragma once
+
+#define __PROTOCOL_H__
+
 // 최대 길이 설정
 constexpr int PORT_NUM = 7777;
 constexpr int M_ID_SIZE = 20;
@@ -176,7 +180,7 @@ struct CS_NPC_CHAT_PACKET {
 
 struct CS_PLACE_BUILD_PACKET {
 	unsigned short size;
-	PACKETID type = CS_PLACE_BUILD;
+	PACKETID type;
 	Object build;
 };
 
@@ -242,7 +246,7 @@ struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 
 struct SC_PLACE_BUILD_PACKET {
 	unsigned short size;
-	PACKETID type = SC_PLACE_BUILD;
+	PACKETID type;
 	Object build;
 };
 
