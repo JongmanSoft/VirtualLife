@@ -40,6 +40,7 @@ class Player
 	bool send_update_gold(int sc_gold_offset);
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
+	bool send_room_setup_packet();
 
 public:
 

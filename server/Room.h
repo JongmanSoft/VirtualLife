@@ -14,7 +14,8 @@ public:
 	Room() {};
 	~Room() {};
 
-	void packet_setup(SC_ROOM_SETUP& pkt);
+	void AddObject(const Object& obj);
+	void packet_setup(SC_ROOM_SETUP_PACKET& pkt);
 
 };
 

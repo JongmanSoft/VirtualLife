@@ -142,6 +142,17 @@ bool Player::send_remove_quest_packet(unsigned short gid, unsigned short n)
 	return true;
 }
 
+bool Player::send_room_setup_packet()
+{
+	SC_ROOM_SETUP_PACKET p;
+	p.size = sizeof(SC_ROOM_SETUP_PACKET);
+	p.type = SC_ROOM_SETUP;
+	p.id = pinfo.id;
+	room.packet_setup(p);
+	send(&p);
+	return true;
+}
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -364,6 +375,23 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			this->quests.end()
 		);*/
 		send_remove_quest_packet(p->giver_id, p->num);
+		break;
+	}
+	case CS_PLACE_BUILD:
+	{
+		// std::cout << "RECV-CS_PLACE_BUILD: " << pinfo.id << " 건물 건설 요청!" << std::endl;
+
+		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
+		Object obj;
+		obj.item_id = p->build.item_id;
+		obj.x = p->build.x;
+		obj.y = p->build.y;
+		obj.z = p->build.z;
+		obj.yaw = p->build.yaw;
+
+		room.AddObject(obj);
+
+		// std::cout << "저장 완료: ID " << obj.item_id << ", Pos(" << obj.x << ", " << obj.y << ", " << obj.z << ")\n";
 		break;
 	}
     default:

@@ -110,6 +110,7 @@ enum PACKETID : char
 	SC_GET_QUEST,
 	SC_REMOVE_QUEST,
 	SC_NPC_RESPONSE,
+	SC_ROOM_SETUP
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -245,7 +246,7 @@ struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 	Customizing c;
 };
 
-struct SC_ROOM_SETUP {
+struct SC_ROOM_SETUP_PACKET {
 	unsigned short size;
 	PACKETID type;
 	unsigned short id; // 현재 접속한 집 주인의 아이디
