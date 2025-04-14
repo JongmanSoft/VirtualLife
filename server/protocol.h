@@ -95,6 +95,7 @@ enum PACKETID : char
 	CS_REMOVE_QUEST, //클라가 퀘스트 삭제요청 (완료시)
 	CS_NPC_CHAT,
 	CS_PLACE_BUILD,
+	CS_ROOM_ENTER,
 
 	// server to client
 	SC_LOGININFO,
@@ -184,6 +185,12 @@ struct CS_PLACE_BUILD_PACKET {
 	unsigned short size;
 	PACKETID type;
 	Object build;
+};
+
+struct CS_ROOM_ENTER_PACKET
+{
+	unsigned short size;
+	PACKETID type;
 };
 
 // server to client //

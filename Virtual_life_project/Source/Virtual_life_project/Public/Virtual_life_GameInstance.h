@@ -66,6 +66,18 @@ public:
 public:
 	void OnStart();
 
+	// 내 방 관련
+	FName MyRoomMapName = TEXT("BuildingSystemMap");
+	TArray<Object> CachedRoomObjects; // 서버에서 받은 내 방 건물들
+
+	UFUNCTION(BlueprintCallable)
+	void EnterMyRoom(); // 서버에 방 진입 요청
+
+	void HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p);
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnCachedRoomObjects();
+
 
 	// network
 	UFUNCTION(BlueprintCallable)
