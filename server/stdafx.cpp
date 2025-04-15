@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-atomic_int id = 0;
+std::atomic_int id = 0;
 std::array<Player, MAX_PLAYER> players{};
 std::mutex players_mutex;
 

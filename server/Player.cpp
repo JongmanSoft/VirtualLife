@@ -80,7 +80,7 @@ bool Player::send_move_packet(PlayerInfo pi)
 	return true;
 }
 
-bool Player::send_chat_packet(wstring name, wstring chat)
+bool Player::send_chat_packet(std::wstring name, std::wstring chat)
 {
 	SC_CHAT_PACKET p;
 	p.size = sizeof(SC_CHAT_PACKET);
@@ -102,7 +102,7 @@ bool Player::send_update_item_packet(unsigned short id, unsigned short num)
 	p.id = id;
 	p.num = num;
 
-	cout << pinfo.id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << endl;
+	std::cout << pinfo.id << "에게 SC_UPDATE_ITEM_PACKET 보냄: " << id << "번 아이템이 " << num << "개로 변화!" << std::endl;
 	send(&p);
 	return true;
 }
@@ -113,7 +113,7 @@ bool Player::send_update_gold(int sc_gold)
 	p.size = sizeof(SC_UPDATE_GOLD_PACKET);
 	p.type = SC_UPDATE_GOLD;
 	p.gold = sc_gold;
-	cout << pinfo.id << "에게 SC_GOLD_UPDATE 보냄: " << sc_gold<<"원이 됨!" << endl;
+	std::cout << pinfo.id << "에게 SC_GOLD_UPDATE 보냄: " << sc_gold<<"원이 됨!" << std::endl;
 	send(&p);
 	return true;
 }
@@ -125,7 +125,7 @@ bool Player::send_get_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_GET_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	cout << pinfo.id << "에게 SC_UPDATE_QUEST 보냄: " << gid << "에게 " << n << "번 퀘스트를 받음" << endl;
+	std::cout << pinfo.id << "에게 SC_UPDATE_QUEST 보냄: " << gid << "에게 " << n << "번 퀘스트를 받음" << std::endl;
 	send(&p);
 	return true;
 }
@@ -137,7 +137,7 @@ bool Player::send_remove_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_REMOVE_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	cout << pinfo.id << "에게 SC_UPDATE_QUEST 보냄: " << gid << "에게 받은" << n << "번 퀘스트가 없어짐" << endl;
+	std::cout << pinfo.id << "에게 SC_UPDATE_QUEST 보냄: " << gid << "에게 받은" << n << "번 퀘스트가 없어짐" << std::endl;
 	send(&p);
 	return true;
 }
@@ -216,7 +216,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
-		cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << std::endl;
 		// todo: db 연동해야 함
 
 		// 1. 접속중인 플레이어인지 확인
@@ -249,7 +249,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
 	case CS_ENTER_GAME: // 게임 접속 요청
 	{
-		cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		this->name = p->name;
 		state = PLAYING;
@@ -273,7 +273,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
     case CS_CHAT:
     {
-		cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		int id = pinfo.id;
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
 
@@ -289,7 +289,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
     case CS_LEAVE: // todo: 여기 왜 안들어오지 이상하다..
     {
-		cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		int id = pinfo.id;
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
 
@@ -304,7 +304,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				players[i].send_despawn_packet(id);
 		}
 		
-		cout << id << "가 종료!" << endl;
+		std::cout << id << "가 종료!" << std::endl;
 
 		state = NONE;
         break;
@@ -313,7 +313,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << endl;
+		std::cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << std::endl;
 		pinfo = p->pl;
 
 		// 위치정보 브로드캐스팅
@@ -327,7 +327,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_GET_ITEM:
 	{
-		cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		int id = pinfo.id;
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		if (player_item.contains(p->id)) player_item[p->id] += p->num;
@@ -338,7 +338,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_UPDATE_CUSTOM:
 	{
-		cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
@@ -353,7 +353,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_GET_QUEST: // todo
 	{
-		cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		this->quests.emplace_back(p->giver_id, p->num);
 		send_get_quest_packet(p->giver_id, p->num); // 여기를 여러개 보낼 수 있도록 해야 하는가? 아니여...퀘스트는 한종류당 하나씩만 가능
@@ -362,7 +362,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_REMOVE_QUEST:
 	{
-		cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << endl;
+		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		/*this->quests.erase(
 			std::remove_if(

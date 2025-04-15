@@ -1,4 +1,5 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN
 
 #include <iostream>
 #include <WS2tcpip.h>
@@ -19,9 +20,16 @@
 #include <codecvt>
 #include <locale>
 
+// db때문에 04.15 추가
+#include <memory>
+#include <stdexcept>
+#include "db/include/jdbc/mysql_driver.h"
+#include "db/include/jdbc/mysql_connection.h"
+#include "db/include/jdbc/mysql_error.h"
+
+
 #pragma comment(lib, "WS2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
-using namespace std;
 
 #include "protocol.h"
 #include "Utility.h"
@@ -37,6 +45,7 @@ enum class TASK_TYPE
     ACCEPT,
     RECV,
     SEND,
+    DB_UPDATE // 플레이어 정보 업데이트
 };
 
 class EXT_OVER // overlapped, packet size, type

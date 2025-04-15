@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Player.h"
+#include "DB.h"
 
 // iocp에 관련된 전역 변수들 //
 HANDLE g_iocp_handle;
@@ -7,7 +8,6 @@ SOCKET g_server;
 SOCKET g_client;
 
 // 그 외 //
-
 
 // 함수 전방선언 //
 void initialize_server();
@@ -37,7 +37,7 @@ void workerThread(HANDLE iocp_hd)
             // todo: id 지정해주기, LoginID 받아오기
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
-            cout << "ACCEPT: 클라이언트 ID " << client_id << " 연결됨" << endl;
+            std::cout << "ACCEPT: 클라이언트 ID " << client_id << " 연결됨" << std::endl;
 
             players[client_id].init_player(g_client, client_id);
             players[client_id].recv(); // 첫 번째 패킷 받기 시작
@@ -59,12 +59,20 @@ void workerThread(HANDLE iocp_hd)
         {
             delete ext_over;
         }
+        else if (ext_over->ov == TASK_TYPE::DB_UPDATE)
+        {
+            // todo: 모든 플레이어 정보 업데이트하기
+        }
     }
 }
 
+
 int main()
 {
+    // 서버 초기화
     initialize_server();
+
+    auto db_header = db_connect("127.0.0.1", "root", "12345678", "VL_DB"); // 여기 잘확인..
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -72,8 +80,8 @@ int main()
     ac_over.ov = TASK_TYPE::ACCEPT;
     AcceptEx(g_server, g_client, ac_over.wb_buf, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, 0, &ac_over.over);
 
-    vector <thread> worker_threads;
-    for (int i = 0; i < int(thread::hardware_concurrency()); ++i)
+    std::vector<std::thread> worker_threads;
+    for (int i = 0; i < int(std::thread::hardware_concurrency()); ++i)
         worker_threads.emplace_back(workerThread, g_iocp_handle);
     for (auto& th : worker_threads)
         th.join();

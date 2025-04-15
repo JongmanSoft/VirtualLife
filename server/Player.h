@@ -12,18 +12,18 @@ class Player
 	// 네트워크 통신 관련
 	EXT_OVER over;
 	SOCKET socket;
-	vector<char> packet_data; // deque를 사용할까?
+	std::vector<char> packet_data; // deque를 사용할까?
 	
 	// 플레이어 정보
-	string id; // 접속용 id
-	wstring name; // 플레이어 이름
+	std::string id; // 접속용 id
+	std::wstring name; // 플레이어 이름
 	PlayerInfo pinfo; // obj id, 위치/회전정보
 	AdditionalInfo addinfo; // 직업 등 정보
 	STATES state; // 상태
 
 	Customizing custom; // 커스텀
-	unordered_map<unsigned short, unsigned short> player_item;
-	vector<Quest> quests;
+	std::unordered_map<unsigned short, unsigned short> player_item;
+	std::vector<Quest> quests;
 	Room room;
 
 	// 동기화 관련
@@ -35,7 +35,7 @@ class Player
 	bool send_spawn_packet(PlayerInfo pi, Customizing cus);
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
-	bool send_chat_packet(wstring name, wstring chat);
+	bool send_chat_packet(std::wstring name, std::wstring chat);
 	bool send_update_item_packet(unsigned short id, unsigned short num); // 해당 아이템이 num개로 업데이트
 	bool send_update_gold(int sc_gold_offset);
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);

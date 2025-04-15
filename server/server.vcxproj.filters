@@ -43,5 +43,8 @@
     <ClInclude Include="Quest.h">
       <Filter>Games</Filter>
     </ClInclude>
+    <ClInclude Include="DB.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
