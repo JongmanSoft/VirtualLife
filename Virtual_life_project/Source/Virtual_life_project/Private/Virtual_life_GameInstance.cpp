@@ -528,7 +528,7 @@ void UVirtual_life_GameInstance::OnStart()
 		FBuildItemRegistry::Initialize(BuildTable);
 		BuildingDataTable = BuildTable;
 
-		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/BP_PlaceBuildActor.BP_PlaceBuildActor_C'"));
+		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 	}
 
 	ConnectServer();
@@ -542,17 +542,21 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 
 	SendEnqueue(&p, p.size);
 
-	UE_LOG(LogTemp, Log, TEXT("Ask Enter My Room Send"));
+	UE_LOG(LogTemp, Warning, TEXT("Ask Enter My Room Send"));
 }
 
 void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
 {
+	UE_LOG(LogTemp, Warning, TEXT("[GameInstance] SC_ROOM_SETUP_PACKET 수신!오브젝트 수 : % d"), p.count);
+
 	CachedRoomObjects.Empty();
 
 	// 받은 오브젝트 저장
 	for (int i = 0; i < p.count; ++i)
 	{
 		CachedRoomObjects.Add(p.objs[i]);
+		UE_LOG(LogTemp, Log, TEXT("Object[%d] - ID: %d, Pos: (%.1f, %.1f, %.1f), Yaw: %.1f"),
+			i, p.objs[i].item_id, p.objs[i].x, p.objs[i].y, p.objs[i].z, p.objs[i].yaw);
 	}
 
 	UGameplayStatics::OpenLevel(this, MyRoomMapName);
@@ -560,18 +564,53 @@ void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
 
 void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 {
-	if (!PlaceBuildClass) return;
+	if (!PlaceBuildClass)
+	{
+		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
+
+		if (!PlaceBuildClass)
+		{
+			// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] Still NULL after reload attempt"));
+			return;
+		}
+
+		// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] PlaceBuildClass reloaded manually."));
+	}
 
 	UWorld* World = GetWorld();
-	if (!World) return;
-
-	for (const Object& obj : CachedRoomObjects)
+	if (!World)
 	{
+		// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] World is invalid!"));
+		return;
+	}
+
+	// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Starting spawn... Total objects: %d"), CachedRoomObjects.Num());
+
+	int32 SpawnedCount = 0;
+
+	for (int32 i = 0; i < CachedRoomObjects.Num(); ++i)
+	{
+		const Object& obj = CachedRoomObjects[i];
 		FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
-		if (RowName.IsNone()) continue;
+
+		if (RowName.IsNone())
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Failed to find RowName for item_id: %d"), obj.item_id);
+			continue;
+		}
 
 		const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
-		if (!Info || !Info->Mesh) continue;
+		if (!Info)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] No FBuildInfo found for RowName: %s"), *RowName.ToString());
+			continue;
+		}
+
+		if (!Info->Mesh)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Mesh is null for item_id: %d"), obj.item_id);
+			continue;
+		}
 
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
@@ -580,10 +619,17 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		if (Spawned)
 		{
 			Spawned->SetMesh(Info->Mesh);
+			// UE_LOG(LogTemp, Log, TEXT("[SpawnCachedRoomObjects] Spawned object ID: %d at (%.1f, %.1f, %.1f) Yaw: %.1f"),
+			// 	obj.item_id, obj.x, obj.y, obj.z, obj.yaw);
+			SpawnedCount++;
+		}
+		else
+		{
+			// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] Failed to spawn actor for item_id: %d"), obj.item_id);
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("[GameInstance] %d Building Objects Spawn!!!"), CachedRoomObjects.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Spawn complete. Total spawned: %d"), SpawnedCount);
 }
 
 void UVirtual_life_GameInstance::Shutdown()

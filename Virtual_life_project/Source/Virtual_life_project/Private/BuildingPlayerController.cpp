@@ -4,6 +4,7 @@
 #include "BuildingPlayerController.h"
 #include "Virtual_life_GameInstance.h"
 #include "Blueprint/UserWidget.h"
+#include "EnhancedInputSubsystems.h"
 
 
 void ABuildingPlayerController::BeginPlay()

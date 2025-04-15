@@ -67,7 +67,7 @@ public:
 	void OnStart();
 
 	// 내 방 관련
-	FName MyRoomMapName = TEXT("BuildingSystemMap");
+	FName MyRoomMapName = TEXT("RoomPlayMap");
 	TArray<Object> CachedRoomObjects; // 서버에서 받은 내 방 건물들
 
 	UFUNCTION(BlueprintCallable)

@@ -19,33 +19,7 @@ void URoomPlayWidget::NativeConstruct()
 
 void URoomPlayWidget::OnEnterBuildModeClicked()
 {
-	UWorld* World = GetWorld();
-	if (!World) return;
-
-	APlayerController* OldController = UGameplayStatics::GetPlayerController(World, 0);
-	if (!OldController || !BuildingPawnClass || !BuildingControllerClass) return;
-
-	FVector SpawnLoc(-2400.000366f, -7139.999878f, 4390.0f);
-	FRotator SpawnRot(0.f, -40.f, 0.f);
-
-	RemoveFromParent();
-
-	APawn* NewPawn = World->SpawnActor<APawn>(BuildingPawnClass, SpawnLoc, SpawnRot);
-	if (!NewPawn) return;
-
-	APlayerController* NewController = World->SpawnActor<APlayerController>(BuildingControllerClass, SpawnLoc, SpawnRot);
-	if (!NewController) return;
-
-	NewController->Possess(NewPawn);
-
-	if (BuildingUIClass)
-	{
-		UUserWidget* NewUI = CreateWidget<UUserWidget>(NewController, BuildingUIClass);
-		if (NewUI)
-		{
-			NewUI->AddToViewport();
-		}
-	}
+	UGameplayStatics::OpenLevel(this, FName(TEXT("BuildingMap")));
 }
 
 void URoomPlayWidget::OnQuitClicked()

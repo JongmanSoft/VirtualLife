@@ -29,15 +29,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
-	// 클래스 참조들 (에디터에서 설정)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	TSubclassOf<APawn> BuildingPawnClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	TSubclassOf<APlayerController> BuildingControllerClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setup")
-	TSubclassOf<UUserWidget> BuildingUIClass;
 
 private:
 	UFUNCTION()
