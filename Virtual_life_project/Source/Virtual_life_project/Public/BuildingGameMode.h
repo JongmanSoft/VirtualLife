@@ -16,4 +16,7 @@ class VIRTUAL_LIFE_PROJECT_API ABuildingGameMode : public AGameModeBase
 	
 public:
 	ABuildingGameMode();
+
+protected:
+	virtual void BeginPlay() override;
 };

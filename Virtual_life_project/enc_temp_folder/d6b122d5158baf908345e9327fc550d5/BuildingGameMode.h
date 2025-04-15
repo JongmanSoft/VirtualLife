@@ -4,14 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "RoomPlayGameMode.generated.h"
+#include "BuildingGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VIRTUAL_LIFE_PROJECT_API ARoomPlayGameMode : public AGameModeBase
+class VIRTUAL_LIFE_PROJECT_API ABuildingGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	ABuildingGameMode();
 };

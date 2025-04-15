@@ -382,6 +382,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "CS_ENTER_ROOM 받음! id: " << pinfo.id << std::endl;
 
 		SC_ROOM_SETUP_PACKET pkt;
+		pkt.type = SC_ROOM_SETUP;
 		pkt.id = pinfo.id;
 		room.packet_setup(pkt);
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;

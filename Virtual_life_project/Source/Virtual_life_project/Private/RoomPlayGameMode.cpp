@@ -16,5 +16,7 @@ void ARoomPlayGameMode::BeginPlay()
     if (auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
     {
         GI->SpawnCachedRoomObjects();
+        UE_LOG(LogTemp, Error, TEXT("SpawnCachedRoomObjects Called!!!!!"));
+
     }
 }

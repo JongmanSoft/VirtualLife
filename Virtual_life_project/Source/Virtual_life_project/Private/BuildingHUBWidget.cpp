@@ -105,6 +105,6 @@ void UBuildingHUBWidget::OnConfirmClicked()
     if (GI)
     {
         GI->EnterMyRoom();
-        // UE_LOG(LogTemp, Warning, TEXT("방 재입장 요청 전송 완료"));
+        UE_LOG(LogTemp, Warning, TEXT("Enter My Room Send Completed"));
     }
 }
