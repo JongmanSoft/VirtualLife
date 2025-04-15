@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "PlaceBuildActor.h"
 #include "ObjectData.h"
+#include "InputActionValue.h"
 #include "BuildingPlayerController.generated.h"
 
 /**
@@ -28,6 +29,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Spawn")
 	TSubclassOf<class APlacementActor> PlacementActorClass;
+
+	UPROPERTY()
+	UUserWidget* BuildingUI;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FObjectData> PendingBuildObjects;
