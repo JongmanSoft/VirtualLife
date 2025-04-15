@@ -72,7 +72,7 @@ int main()
     // 서버 초기화
     initialize_server();
 
-    auto db_header = db_connect("127.0.0.1", "root", "12345678", "VL_DB"); // 여기 잘확인..
+    //auto db_header = db_connect("127.0.0.1", "root", "12345678", "VL_DB"); // 여기 잘확인..
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
