@@ -547,16 +547,12 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 
 void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[GameInstance] SC_ROOM_SETUP_PACKET 수신!오브젝트 수 : % d"), p.count);
-
 	CachedRoomObjects.Empty();
 
 	// 받은 오브젝트 저장
 	for (int i = 0; i < p.count; ++i)
 	{
 		CachedRoomObjects.Add(p.objs[i]);
-		UE_LOG(LogTemp, Log, TEXT("Object[%d] - ID: %d, Pos: (%.1f, %.1f, %.1f), Yaw: %.1f"),
-			i, p.objs[i].item_id, p.objs[i].x, p.objs[i].y, p.objs[i].z, p.objs[i].yaw);
 	}
 
 	UGameplayStatics::OpenLevel(this, MyRoomMapName);
@@ -587,7 +583,7 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		}
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[GameInstance] %d Building Objects Spawn!!!"), CachedRoomObjects.Num());
+	UE_LOG(LogTemp, Log, TEXT("[GameInstance] %d Building Objects Spawn!!!"), CachedRoomObjects.Num());
 }
 
 void UVirtual_life_GameInstance::Shutdown()

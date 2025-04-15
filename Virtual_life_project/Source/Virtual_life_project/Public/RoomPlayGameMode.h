@@ -16,4 +16,6 @@ class VIRTUAL_LIFE_PROJECT_API ARoomPlayGameMode : public AGameModeBase
 	
 public:
 	ARoomPlayGameMode();
+protected:
+	virtual void BeginPlay() override;
 };

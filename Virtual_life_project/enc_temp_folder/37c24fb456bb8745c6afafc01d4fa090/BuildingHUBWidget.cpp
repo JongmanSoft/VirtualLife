@@ -8,8 +8,6 @@
 #include "BuildingPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "BuildingSelectButtonWidget.h"
-#include "Virtual_life_GameInstance.h"
-
 
 void UBuildingHUBWidget::NativeConstruct()
 {
@@ -100,11 +98,4 @@ void UBuildingHUBWidget::OnConfirmClicked()
     PC->ConfirmBuildPlacement();
 
     UE_LOG(LogTemp, Warning, TEXT("확정 버튼 눌림! 건물 정보 전송."));
-
-    auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-    if (GI)
-    {
-        GI->EnterMyRoom();
-        // UE_LOG(LogTemp, Warning, TEXT("방 재입장 요청 전송 완료"));
-    }
 }
