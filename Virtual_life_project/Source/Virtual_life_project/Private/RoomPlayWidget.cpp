@@ -19,7 +19,7 @@ void URoomPlayWidget::NativeConstruct()
 
 void URoomPlayWidget::OnEnterBuildModeClicked()
 {
-	
+	UGameplayStatics::OpenLevel(this, FName(TEXT("BuildingMap")));
 }
 
 void URoomPlayWidget::OnQuitClicked()
