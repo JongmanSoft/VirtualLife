@@ -313,6 +313,35 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 	targer_data.face_width =  recv_cus->face_width;
 }
 
+void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
+{
+	BGMComponent->RegisterComponentWithWorld(GetWorld());
+	if (BGMComponent && BGMSoundCue)
+	{
+		BGMComponent->SetSound(BGMSoundCue);
+		if (!BGMComponent->IsPlaying())
+		{
+			UE_LOG(LogTemp, Log, TEXT("BGM start"));
+			BGMComponent->Play();
+		}
+		else UE_LOG(LogTemp, Log, TEXT("already playing bgm"));
+	}
+	else {
+		UE_LOG(LogTemp, Log, TEXT("not component bgm"));
+	}
+}
+
+void UVirtual_life_GameInstance::StopBGM()
+{
+	if (BGMComponent && BGMComponent->IsPlaying())
+	{
+		BGMComponent->Stop();
+		BGMComponent->DestroyComponent();
+		BGMComponent = nullptr;
+
+	}
+}
+
 void UVirtual_life_GameInstance::ProcessRecvPackets()
 {
 	TArray<uint8> PacketData;
@@ -512,7 +541,11 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
 
-	
+	BGMComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BGM_Cue"));
+	BGMComponent->bAutoDestroy = false; // 자동 소멸 방지
+	BGMComponent->bIsUISound = true;   // UI 사운드로 설정
+	BGMComponent->VolumeMultiplier = 1.0f; // 볼륨 설정
+
 }
 
 int32 UVirtual_life_GameInstance::GetCurrentGold() const
@@ -559,6 +592,8 @@ void UVirtual_life_GameInstance::OnStart()
 
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 	}
+	
+	
 
 	ConnectServer();
 }

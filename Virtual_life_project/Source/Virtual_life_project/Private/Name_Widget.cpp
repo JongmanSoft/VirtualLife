@@ -50,6 +50,7 @@ void UName_Widget::OnOKClicked()
     }
 
     // custom 맵으로 전환
+    my_instance->StopBGM();
     FName LevelName = FName("custom_map"); // 맵 이름은 Level Browser 기준으로 정확히 확인
     UGameplayStatics::OpenLevel(this, LevelName);
 }

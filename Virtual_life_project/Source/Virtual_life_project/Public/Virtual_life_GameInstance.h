@@ -9,6 +9,8 @@
 #include "Virtual_life_project/Virtual_life_project.h"
 #include "../Network/NetworkManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h" 
+#include "Sound/SoundCue.h"       
 #include "Virtual_life_project/Virtual_life_projectCharacter.h"
 #include "Player_data.h"
 #include "PlayerInventory.h"
@@ -178,6 +180,21 @@ public:
 	//퀘스트들을 관리하는 퀘스트매니저클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	UQuest_Manager* m_quest;
+
+public:
+	
+	UPROPERTY()
+	UAudioComponent* BGMComponent;
+
+	// BGM 재생 함수
+	UFUNCTION(BlueprintCallable)
+	void PlayBGM(USoundCue* BGMSoundCue);
+
+	// BGM 정지 함수
+	UFUNCTION(BlueprintCallable)
+	void StopBGM();
+	
+
 
 private:
 	std::atomic_bool loaded = false;
