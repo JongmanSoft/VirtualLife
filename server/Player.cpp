@@ -406,6 +406,23 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// std::cout << "저장 완료: ID " << obj.item_id << ", Pos(" << obj.x << ", " << obj.y << ", " << obj.z << ")\n";
 		break;
 	}
+	case CS_REMOVE_BUILD:
+	{
+		CS_REMOVE_BUILD_PACKET* p = reinterpret_cast<CS_REMOVE_BUILD_PACKET*>(packet);
+		std::cout << "건물 삭제 요청 받음! 위치: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
+
+		room.RemoveObjectByPosition(p->x, p->y, p->z);
+		break;
+	}
+	case CS_UPDATE_BUILD:
+	{
+		CS_UPDATE_BUILD_PACKET* p = reinterpret_cast<CS_UPDATE_BUILD_PACKET*>(packet);
+		std::cout << "건물 수정 요청 받음! 위치: (" << p->old_x << ", " << p->old_y << ", " << p->old_z << ") → ("
+			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
+
+		room.UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+		break;
+	}
     default:
         break;
     }

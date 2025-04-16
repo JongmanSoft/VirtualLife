@@ -122,12 +122,6 @@ public:
 	UFUNCTION(BlueprintCallable)
     void SendPlaceBuildPacket(const TArray<FObjectData>& Objects);
 
-	UFUNCTION(BlueprintCallable)
-	void SendRemoveBuildPacket(const FVector& Location);
-
-	UFUNCTION(BlueprintCallable)
-	void SendUpdateBuildPacket(const FVector& OldLoc, const FVector& NewLoc, float NewYaw);
-
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;

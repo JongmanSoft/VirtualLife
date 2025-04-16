@@ -7,8 +7,6 @@
 #include "PlacementActor.h"
 #include "PlaceBuildActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "Virtual_life_GameInstance.h"
-
 
 void UBuildingInteractionWidget::NativeConstruct()
 {
@@ -29,12 +27,6 @@ void UBuildingInteractionWidget::OnClickModify()
     FVector Location = PC->SelectedBuildActor->GetActorLocation();
     FRotator Rotation = PC->SelectedBuildActor->GetActorRotation();
     UStaticMesh* Mesh = PC->SelectedBuildActor->Mesh->GetStaticMesh();
-    FName RowID = PC->SelectedBuildActor->GetRowID();
-
-    if (auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
-    {
-        GI->SendRemoveBuildPacket(Location);
-    }
 
     PC->RemovePendingBuildAtLocation(Location);
 
@@ -46,8 +38,6 @@ void UBuildingInteractionWidget::OnClickModify()
     if (NewPreview && Mesh)
     {
         NewPreview->SetMesh(Mesh);
-        NewPreview->SetRowID(RowID);
-        NewPreview->SetPrice(0);
     }
 
     RemoveFromParent();
@@ -59,13 +49,8 @@ void UBuildingInteractionWidget::OnClickDelete()
     if (!PC || !PC->SelectedBuildActor) return;
 
     FVector Location = PC->SelectedBuildActor->GetActorLocation();
-
-    if (auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
-    {
-        GI->SendRemoveBuildPacket(Location); // 서버로 전송!!
-    }
-
     PC->RemovePendingBuildAtLocation(Location);
+
     PC->SelectedBuildActor->Destroy();
     PC->SelectedBuildActor = nullptr;
 

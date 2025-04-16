@@ -22,3 +22,33 @@ void Room::packet_setup(SC_ROOM_SETUP_PACKET& pkt)
         pkt.objs[i] = *objs[i]; 
     }
 }
+
+void Room::RemoveObjectByPosition(float x, float y, float z)
+{
+    objs.erase(std::remove_if(objs.begin(), objs.end(),
+        [&](std::shared_ptr<Object> obj)
+        {
+            return fabs(obj->x - x) < 0.1f && fabs(obj->y - y) < 0.1f && fabs(obj->z - z) < 0.1f;
+        }),
+        objs.end());
+
+    std::cout << "°Ç¹° »èÁ¦µÊ\n";
+}
+
+void Room::UpdateObjectTransform(float old_x, float old_y, float old_z, float new_x, float new_y, float new_z, float new_yaw)
+{
+    for (auto& obj : objs)
+    {
+        if (fabs(obj->x - old_x) < 0.1f &&
+            fabs(obj->y - old_y) < 0.1f &&
+            fabs(obj->z - old_z) < 0.1f)
+        {
+            obj->x = new_x;
+            obj->y = new_y;
+            obj->z = new_z;
+            obj->yaw = new_yaw;
+            std::cout << "°Ç¹° ¼öÁ¤µÊ\n";
+            break;
+        }
+    }
+}

@@ -12,8 +12,6 @@ class VIRTUAL_LIFE_PROJECT_API APlaceBuildActor : public AActor
 	GENERATED_BODY()
 	
 public:
-    FName RowID;
-
     APlaceBuildActor();
 
     UPROPERTY(VisibleAnywhere)
@@ -21,7 +19,4 @@ public:
 
     UFUNCTION()
     void SetMesh(UStaticMesh* StaticMesh);
-
-    void SetRowID(FName InRowID) { RowID = InRowID; }
-    FName GetRowID() const { return RowID; }
 };

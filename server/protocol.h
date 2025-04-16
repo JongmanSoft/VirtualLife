@@ -96,6 +96,8 @@ enum PACKETID : char
 	CS_NPC_CHAT,
 	CS_PLACE_BUILD,
 	CS_ROOM_ENTER,
+	CS_REMOVE_BUILD,
+	CS_UPDATE_BUILD,
 
 	// server to client
 	SC_LOGININFO,
@@ -191,6 +193,20 @@ struct CS_ROOM_ENTER_PACKET
 {
 	unsigned short size;
 	PACKETID type;
+};
+
+struct CS_REMOVE_BUILD_PACKET {
+	unsigned short size;
+	PACKETID type;
+    float x, y, z;
+};
+
+struct CS_UPDATE_BUILD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float old_x, old_y, old_z;
+	float new_x, new_y, new_z;
+	float new_yaw;
 };
 
 // server to client //

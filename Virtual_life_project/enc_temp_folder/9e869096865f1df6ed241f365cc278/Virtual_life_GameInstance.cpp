@@ -132,34 +132,6 @@ void UVirtual_life_GameInstance::SendPlaceBuildPacket(const TArray<FObjectData>&
 	UE_LOG(LogTemp, Log, TEXT("총 %d개의 건물을 서버로 전송했습니다."), Objects.Num());
 }
 
-void UVirtual_life_GameInstance::SendRemoveBuildPacket(const FVector& Location)
-{
-	CS_REMOVE_BUILD_PACKET p;
-	p.size = sizeof(CS_REMOVE_BUILD_PACKET);
-	p.type = CS_REMOVE_BUILD;
-	p.x = Location.X;
-	p.y = Location.Y;
-	p.z = Location.Z;
-
-	SendEnqueue(&p, p.size);
-}
-
-void UVirtual_life_GameInstance::SendUpdateBuildPacket(const FVector& OldLoc, const FVector& NewLoc, float NewYaw)
-{
-	CS_UPDATE_BUILD_PACKET p;
-	p.size = sizeof(CS_UPDATE_BUILD_PACKET);
-	p.type = CS_UPDATE_BUILD;
-	p.old_x = OldLoc.X;
-	p.old_y = OldLoc.Y;
-	p.old_z = OldLoc.Z;
-	p.new_x = NewLoc.X;
-	p.new_y = NewLoc.Y;
-	p.new_z = NewLoc.Z;
-	p.new_yaw = NewYaw;
-
-	SendEnqueue(&p, p.size);
-}
-
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -647,8 +619,8 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		if (Spawned)
 		{
 			Spawned->SetMesh(Info->Mesh);
-			Spawned->SetRowID(FBuildItemRegistry::ItemIDToFName(obj.item_id));
-
+			// UE_LOG(LogTemp, Log, TEXT("[SpawnCachedRoomObjects] Spawned object ID: %d at (%.1f, %.1f, %.1f) Yaw: %.1f"),
+			// 	obj.item_id, obj.x, obj.y, obj.z, obj.yaw);
 			SpawnedCount++;
 		}
 		else

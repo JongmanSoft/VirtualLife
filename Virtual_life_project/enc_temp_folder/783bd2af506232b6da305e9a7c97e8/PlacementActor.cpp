@@ -135,7 +135,7 @@ void APlacementActor::PlaceBuild()
     if (Placed && Mesh)
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
-        Placed->SetRowID(RowID);
+
         if (MyGI)
         {
             uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
