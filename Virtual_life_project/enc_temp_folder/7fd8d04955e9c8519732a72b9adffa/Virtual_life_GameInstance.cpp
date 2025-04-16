@@ -338,7 +338,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			// 로그인 성공 -> 타이틀 맵으로 이동
 			if (true == p.success) {
-				UGameplayStatics::OpenLevel(this, FName("RealTitleMap"));
+				UGameplayStatics::OpenLevel(this, FName("TitleMap"));
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));

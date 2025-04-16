@@ -6,6 +6,6 @@
 
 void ALogoDisplayGameMode::MoveToLoginMap()
 {
-	UGameplayStatics::OpenLevel(GetWorld(), FName("RealLoginMap"));
+	UGameplayStatics::OpenLevel(GetWorld(), FName("LogInMap"));
 
 }
