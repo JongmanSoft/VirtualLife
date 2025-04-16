@@ -181,7 +181,7 @@ void Ucustom_preview_handler::m_tick(float delta)
         FHitResult HitResult;
         if (PC->GetHitResultUnderCursor(ECC_GameTraceChannel1, true, HitResult))
         {
-           m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "NULL", -1);
+           m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "NULL", -1);
             UPrimitiveComponent* HitComponent = HitResult.GetComponent();
             if (HitComponent)
             {
@@ -189,7 +189,7 @@ void Ucustom_preview_handler::m_tick(float delta)
                
                 eye_click = HitComponent->ComponentHasTag(FName("eye"));
                 if (eye_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_EYE", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_EYE", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
@@ -197,14 +197,14 @@ void Ucustom_preview_handler::m_tick(float delta)
                 eye_slope_click = HitComponent->ComponentHasTag(FName("eye_slope"));
                 if (eye_slope_click) {
           
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_EYE", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_EYE", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
 
                 mouth_click = HitComponent->ComponentHasTag(FName("mouse"));
                 if (mouth_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_MOUTH", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_MOUTH", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
@@ -212,35 +212,35 @@ void Ucustom_preview_handler::m_tick(float delta)
 
                 mouth_slope_click = HitComponent->ComponentHasTag(FName("mouse_slope"));
                 if (mouth_slope_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_MOUTH", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_MOUTH", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
 
                 nose_click = HitComponent->ComponentHasTag(FName("nose"));
                 if (nose_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_NOSE", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_NOSE", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
 
                 chin_click = HitComponent->ComponentHasTag(FName("chin"));
                 if (chin_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_JAW", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_JAW", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
 
                 jaw_click = HitComponent->ComponentHasTag(FName("jaw"));
                 if (jaw_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_JAW", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_JAW", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
 
                 forehead_click = HitComponent->ComponentHasTag(FName("forehead"));
                 if (forehead_click) {
-                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("sign_texture_enum"), "P_FACE", -1);
+                    m_custom->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("preview_texture_enum"), "P_FACE", -1);
                     m_custom->apply_actor_custom();
                     return;
                 }
