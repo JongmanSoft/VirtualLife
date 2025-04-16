@@ -315,7 +315,7 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 
 void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
 {
-	BGMComponent->RegisterComponentWithWorld(GetWorld());
+	//BGMComponent->RegisterComponentWithWorld(GetWorld());
 	if (BGMComponent && BGMSoundCue)
 	{
 		BGMComponent->SetSound(BGMSoundCue);
