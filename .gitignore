@@ -14,7 +14,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+#*.dll
 
 # Fortran module files
 *.mod
@@ -23,7 +23,7 @@
 *.lai
 *.la
 *.a
-*.lib
+#*.lib
 
 # Executables
 *.exe
@@ -107,5 +107,5 @@ Virtual_life_project/DerivedDataCache/*
 
 # server
 server/.vs/*
-server/x64/*
+#server/x64/*
 server/server/*
