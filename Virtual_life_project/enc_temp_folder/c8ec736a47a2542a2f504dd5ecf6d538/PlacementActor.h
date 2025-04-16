@@ -62,7 +62,7 @@ protected:
     UStaticMeshComponent* Mesh;
 
     UPROPERTY(EditAnywhere)
-    float GridSize = 10.f;
+    float GridSize = 100.f;
 
     UPROPERTY(EditAnywhere)
     float Rotate = 0.f;

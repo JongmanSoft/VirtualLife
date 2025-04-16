@@ -44,7 +44,7 @@ void APlacementActor::Tick(float DeltaTime)
     FVector Snapped = FVector(
         FMath::GridSnap(HitLoc.X, GridSize),
         FMath::GridSnap(HitLoc.Y, GridSize),
-        FMath::GridSnap(HitLoc.Z, GridSize)
+        HitLoc.Z
     );
 
     FRotator Rot(0.f, Rotate, 0.f);
@@ -69,8 +69,9 @@ FVector APlacementActor::MousePosition()
     FHitResult Hit;
     FCollisionQueryParams Params;
     Params.AddIgnoredActor(this);
-
+    
     GetWorld()->LineTraceSingleByChannel(Hit, WorldLoc, End, ECC_Visibility, Params);
+
     return Hit.bBlockingHit ? Hit.Location : GetActorLocation();
 }
 
