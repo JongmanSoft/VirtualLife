@@ -47,8 +47,7 @@ void APlacementActor::Tick(float DeltaTime)
         HitLoc.Z
     );
 
-    FRotator Rot(0.f, Rotate, 0.f);
-    SetActorTransform(FTransform(Rot, Snapped, FVector(1.f)));
+    SetActorTransform(FTransform(FRotator(0.f, Rotate, 0.f), Snapped, FVector(CurrentScale)));
 
     bool bOutOfBounds = IsOutOfBounds(Snapped);
     bool bOverlapping = IsOverlapping();
@@ -132,10 +131,12 @@ void APlacementActor::PlaceBuild()
         AdjustedLoc.Z -= Origin.Z;
     }
 
-    APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
+    FTransform FinalTransform(Rot, AdjustedLoc, FVector(CurrentScale));
+    APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
     if (Placed && Mesh)
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
+        Placed->SetScale(CurrentScale);
         Placed->SetRowID(RowID);
         if (MyGI)
         {
@@ -149,7 +150,7 @@ void APlacementActor::PlaceBuild()
                 NewData.ItemID = ItemID;
                 NewData.Location = Loc;
                 NewData.Yaw = Rot.Yaw;
-
+                NewData.Scale = CurrentScale;
                 PC->AddPendingBuild(NewData);
             }
         }
@@ -166,6 +167,12 @@ void APlacementActor::AddRotation(float Delta)
 void APlacementActor::SetPrice(int32 Price)
 {
     BuildPrice = Price;
+}
+
+void APlacementActor::AdjustScaleByWheel(float AxisValue)
+{
+    CurrentScale += AxisValue * ScaleStep;
+    CurrentScale = FMath::Clamp(CurrentScale, MinScale, MaxScale);
 }
 
 

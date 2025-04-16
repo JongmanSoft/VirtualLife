@@ -31,8 +31,3 @@ void APlaceBuildActor::SetMesh(UStaticMesh* StaticMesh)
         Mesh->SetStaticMesh(StaticMesh);
     }
 }
-
-void APlaceBuildActor::SetScale(float InScale)
-{
-    SetActorScale3D(FVector(InScale));
-}

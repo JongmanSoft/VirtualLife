@@ -22,6 +22,9 @@ public:
     UFUNCTION()
     void SetMesh(UStaticMesh* StaticMesh);
 
+    UFUNCTION(BlueprintCallable)
+    void SetScale(float InScale);
+
     void SetRowID(FName InRowID) { RowID = InRowID; }
     FName GetRowID() const { return RowID; }
 };

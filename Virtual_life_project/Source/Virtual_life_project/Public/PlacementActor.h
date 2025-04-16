@@ -57,6 +57,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
     USoundBase* PlaceSound;
 
+    UFUNCTION(BlueprintCallable, Category = "Placement")
+    void AdjustScaleByWheel(float AxisValue);
+
 protected:
     UPROPERTY(VisibleAnywhere)
     UStaticMeshComponent* Mesh;
@@ -68,4 +71,11 @@ protected:
     float Rotate = 0.f;
 
     FVector MousePosition();
+
+protected:
+    float CurrentScale = 1.0f;
+
+    const float MinScale = 0.2f;
+    const float MaxScale = 3.0f;
+    const float ScaleStep = 0.1f;
 };

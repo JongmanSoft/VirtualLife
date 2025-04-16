@@ -76,7 +76,6 @@ struct Object // 건축 오브젝트
 	float y;
 	float z;
 	float yaw; // 회전값
-	float scale; // 크기
 };
 
 // Packet ID

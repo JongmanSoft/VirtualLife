@@ -22,7 +22,4 @@ struct FObjectData
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Yaw;
-
-    UPROPERTY()
-    float Scale;
 };

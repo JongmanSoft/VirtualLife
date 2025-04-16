@@ -400,6 +400,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		obj.y = p->build.y;
 		obj.z = p->build.z;
 		obj.yaw = p->build.yaw;
+		obj.scale = p->build.scale;
 
 		room.AddObject(obj);
 

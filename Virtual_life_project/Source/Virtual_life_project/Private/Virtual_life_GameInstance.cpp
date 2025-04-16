@@ -125,6 +125,7 @@ void UVirtual_life_GameInstance::SendPlaceBuildPacket(const TArray<FObjectData>&
 		p.build.y = Obj.Location.Y;
 		p.build.z = Obj.Location.Z;
 		p.build.yaw = Obj.Yaw;
+		p.build.scale = Obj.Scale;
 
 		SendEnqueue(&p, p.size);
 	}
@@ -648,7 +649,7 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		{
 			Spawned->SetMesh(Info->Mesh);
 			Spawned->SetRowID(FBuildItemRegistry::ItemIDToFName(obj.item_id));
-
+			Spawned->SetScale(obj.scale);
 			SpawnedCount++;
 		}
 		else
