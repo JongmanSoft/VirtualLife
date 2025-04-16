@@ -17,16 +17,16 @@ class VIRTUAL_LIFE_PROJECT_API UTitle_Widget : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* NewStart_BTN; // 새로 시작하기
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* Start_BTN; // 이어 하기
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* Quit_BTN; // 게임 종료
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* Option_BTN; // 설정
 
 	// 이벤트 함수
