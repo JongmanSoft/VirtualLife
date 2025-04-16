@@ -184,7 +184,7 @@ public:
 public:
 	
 	UPROPERTY()
-	UAudioComponent* BGMComponent;
+	UAudioComponent* BGMaudio;
 
 	// BGM 재생 함수
 	UFUNCTION(BlueprintCallable)

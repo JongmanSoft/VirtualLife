@@ -6,6 +6,7 @@
 #include "Sockets.h"
 #include <Common/TcpSocketBuilder.h>
 #include "m_CustomizableSkeletalComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include <Serialization/ArrayWriter.h>
 #include "Networking.h"
 #include "../Virtual_life_projectCharacter.h"
@@ -315,31 +316,12 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 
 void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
 {
-	//BGMComponent->RegisterComponentWithWorld(GetWorld());
-	if (BGMComponent && BGMSoundCue)
-	{
-		BGMComponent->SetSound(BGMSoundCue);
-		if (!BGMComponent->IsPlaying())
-		{
-			UE_LOG(LogTemp, Log, TEXT("BGM start"));
-			BGMComponent->Play();
-		}
-		else UE_LOG(LogTemp, Log, TEXT("already playing bgm"));
-	}
-	else {
-		UE_LOG(LogTemp, Log, TEXT("not component bgm"));
-	}
+	BGMaudio = UGameplayStatics::SpawnSound2D(GetWorld(), BGMSoundCue,1,1,0.0,NULL,true,false);
 }
 
 void UVirtual_life_GameInstance::StopBGM()
 {
-	if (BGMComponent && BGMComponent->IsPlaying())
-	{
-		BGMComponent->Stop();
-		BGMComponent->DestroyComponent();
-		BGMComponent = nullptr;
-
-	}
+	BGMaudio->SetActive(false);
 }
 
 void UVirtual_life_GameInstance::ProcessRecvPackets()
@@ -541,10 +523,7 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
 
-	BGMComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BGM_Cue"));
-	BGMComponent->bAutoDestroy = false; // 자동 소멸 방지
-	BGMComponent->bIsUISound = true;   // UI 사운드로 설정
-	BGMComponent->VolumeMultiplier = 1.0f; // 볼륨 설정
+
 
 }
 
