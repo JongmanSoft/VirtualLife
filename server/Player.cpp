@@ -364,16 +364,11 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
-		/*this->quests.erase(
-			std::remove_if(
-				this->quests.begin(),
-				this->quests.end(),
-				[&](Quest& quest) {
-					return quest.GetGID() == p->giver_id && quest.GetNUM() == p->num;
-				}
-			),
-			this->quests.end()
-		);*/
+		for (int i = 0; i < this->quests.size(); ++i) {
+			if (this->quests[i].GetNUM() == p->num) {
+				this->quests.erase(this->quests.begin() + i);
+			}
+		}
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}
