@@ -89,7 +89,7 @@ public:
 	void DisconnectServer();
 
 	UFUNCTION(BlueprintCallable)
-	void SendLoginInfoPacket(FString s);
+	void SendLoginInfoPacket(FString s, FString pw);
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnPlayer();

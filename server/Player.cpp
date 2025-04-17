@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include "DBManager.h"
 #include "Player.h"
 
 // todo: 시간!
@@ -219,7 +219,10 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << std::endl;
 		// todo: db 연동해야 함
 
-		// 1. 접속중인 플레이어인지 확인
+		// 1. 신규유저 확인
+		//DBManager::checkLogin(p->id, p->pw);
+
+		// 2. 접속중인 플레이어인지 확인
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		bool success = true;
 		for (int i = 0; i < players.size(); ++i) {

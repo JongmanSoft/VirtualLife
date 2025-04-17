@@ -17,6 +17,7 @@
     <ClCompile Include="Quest.cpp">
       <Filter>Games</Filter>
     </ClCompile>
+    <ClCompile Include="DBManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -46,5 +47,6 @@
     <ClInclude Include="DB.h">
       <Filter>utils</Filter>
     </ClInclude>
+    <ClInclude Include="DBManager.h" />
   </ItemGroup>
 </Project>

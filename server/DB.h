@@ -1,10 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#include "db/include/jdbc/mysql_driver.h"
-#include "db/include/jdbc/mysql_connection.h"
-#include "db/include/jdbc/mysql_error.h"
-#include "db/include/jdbc/cppconn/statement.h"
-#include "db/include/jdbc/cppconn/resultset.h"
+
 
 
 // DB 연결 전역 함수

@@ -33,8 +33,8 @@ void ULogin_Widget::OnLoginClicked()
 
         // 로그인 요청
         auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
-        if (GameInstance) { // todo: pw전송 추가해야 함
-            GameInstance->SendLoginInfoPacket(ID);
+        if (GameInstance) { 
+            GameInstance->SendLoginInfoPacket(ID, Password);
         }
     }
 }

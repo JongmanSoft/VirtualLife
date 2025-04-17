@@ -171,13 +171,13 @@ bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 	return true;
 }
 
-void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s)
+void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s, FString pw)
 {
 	CS_LOGIN_PACKET	p;
 	p.size = sizeof(CS_LOGIN_PACKET);
 	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
+	strcpy_s(p.pw, M_ID_SIZE, TCHAR_TO_ANSI(*pw));
 	p.type = CS_LOGIN;
-	
 
 	SendEnqueue(&p, p.size);
 }

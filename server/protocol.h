@@ -124,6 +124,7 @@ struct CS_LOGIN_PACKET { // 로그인 요청.
 	unsigned short size;
 	PACKETID	type;
 	char	id[M_ID_SIZE];
+	char	pw[M_ID_SIZE];
 };
 
 struct CS_ENTER_GAME_PACKET { // 게임 접속

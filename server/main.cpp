@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Player.h"
-#include "DB.h"
+#include "DBManager.h"
 
 // iocp에 관련된 전역 변수들 //
 HANDLE g_iocp_handle;
@@ -14,6 +14,8 @@ void initialize_server();
 
 void workerThread(HANDLE iocp_hd)
 {
+    DBManager::Init();
+
     while (true)
     {
         DWORD num_bytes;
@@ -71,36 +73,6 @@ int main()
 {
     // 서버 초기화
     initialize_server();
-
-    // db 제발 돼라 돼라..
-    {
-        try {
-            sql::mysql::MySQL_Driver* driver;
-            sql::Connection* conn;
-            sql::Statement* stmt;
-            sql::ResultSet* res;
-
-            driver = sql::mysql::get_mysql_driver_instance();
-            conn = driver->connect("tcp://127.0.0.1:3306", "root", "12345678");
-
-            conn->setSchema("VL_DB");
-            stmt = conn->createStatement();
-
-            res = stmt->executeQuery("SELECT * FROM LOGIN_INFO");
-
-            while (res->next()) {
-                std::cout << "ID: " << res->getString("ID");
-                std::cout << ", PW: " << res->getString("PW") << std::endl;
-            }
-
-            delete stmt;
-            delete conn;
-            delete res;
-        }
-        catch (sql::SQLException& e) {
-            std::cerr << "MySQL error: " << e.what() << std::endl;
-        }
-    }
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

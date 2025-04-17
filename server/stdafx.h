@@ -27,6 +27,9 @@
 #include "db/include/jdbc/mysql_driver.h"
 #include "db/include/jdbc/mysql_connection.h"
 #include "db/include/jdbc/mysql_error.h"
+#include "db/include/jdbc/cppconn/statement.h"
+#include "db/include/jdbc/cppconn/resultset.h"
+#include "db/include/jdbc/cppconn/prepared_statement.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "db\\lib64\\vs14\\mysqlcppconn.lib")
