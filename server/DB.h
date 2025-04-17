@@ -11,7 +11,9 @@
 std::unique_ptr<sql::Connection> db_connect(const std::string& host, const std::string& user, const std::string& pass, const std::string& db) {
     try {
         sql::mysql::MySQL_Driver* driver = sql::mysql::get_mysql_driver_instance();
-        std::string connection_str = "tcp://" + host + ":3306";  // 주소 및 포트
+        //std::string connection_str = "tcp://" + host + ":3306";  // 주소 및 포트
+        std::string connection_str = "tcp://127.0.0.1:3306";
+
         std::unique_ptr<sql::Connection> conn(driver->connect(connection_str, user, pass));
         conn->setSchema(db);  // 데이터베이스 선택
         std::cout << "DB connected successfully!" << std::endl;

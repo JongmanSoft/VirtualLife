@@ -1,5 +1,6 @@
 #pragma once
 #define WIN32_LEAN_AND_MEAN
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #include <iostream>
 #include <WS2tcpip.h>
@@ -27,6 +28,11 @@
 #include "db/include/jdbc/mysql_connection.h"
 #include "db/include/jdbc/mysql_error.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "db\\lib64\\vs14\\mysqlcppconn.lib")
+#else
+#pragma comment(lib, "db\\lib64\\vs14\\mysqlcppconn.lib")
+#endif
 
 #pragma comment(lib, "WS2_32.lib")
 #pragma comment(lib, "MSWSock.lib")
