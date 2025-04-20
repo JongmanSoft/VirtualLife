@@ -8,9 +8,11 @@ SOCKET g_server;
 SOCKET g_client;
 
 // 그 외 //
+concurrency::concurrent_priority_queue<EVENT> g_evt_queue;
 
 // 함수 전방선언 //
 void initialize_server();
+void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
 
 void workerThread(HANDLE iocp_hd)
 {
@@ -63,16 +65,54 @@ void workerThread(HANDLE iocp_hd)
         }
         else if (ext_over->ov == TASK_TYPE::DB_UPDATE)
         {
-            // todo: 모든 플레이어 정보 업데이트하기
+            std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장 시작" << std::endl;
+
+            for (Player& player : players)
+            {
+                if (player.get_state() != PLAYING)
+                    continue;
+                player.save_db_pinfo();
+            }
+
+            std::cout << "[EVENT] DB_UPDATE - 완료됨\n";
+            push_evt_queue(-1, -1, TASK_TYPE::DB_UPDATE, DB_UPDATE_TIME); // 10분 뒤 저장
         }
     }
 }
 
+void check_evt(HANDLE iocp_hd)
+{
+    while (true)
+    {
+        EVENT ev;
+        bool event_processed = false;
+
+        if (g_evt_queue.try_pop(ev))
+        {
+            if (ev.GETTIME() <= std::chrono::system_clock::now())
+            {
+                EXT_OVER* ex_over = new EXT_OVER();
+                ex_over->ov = ev.evt_type;
+                ex_over->from = ev.from_id;
+                ex_over->to = ev.to_id;
+
+                PostQueuedCompletionStatus(iocp_hd, 0, ev.to_id, &ex_over->over);
+            }
+            else
+            {
+                g_evt_queue.push(ev);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
+    }
+}
 
 int main()
 {
     // 서버 초기화
     initialize_server();
+
+    push_evt_queue(-1, -1, TASK_TYPE::DB_UPDATE, 60000);
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -81,6 +121,10 @@ int main()
     AcceptEx(g_server, g_client, ac_over.wb_buf, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, 0, &ac_over.over);
 
     std::vector<std::thread> worker_threads;
+
+    // 0420 이벤트 큐 추가
+    std::thread evt_thread{ check_evt, g_iocp_handle };
+    
     for (int i = 0; i < int(std::thread::hardware_concurrency()); ++i)
         worker_threads.emplace_back(workerThread, g_iocp_handle);
     for (auto& th : worker_threads)
@@ -127,3 +171,10 @@ void initialize_server()
         server_error("CreateIoCompletionPort for server socket failed");
 }
 
+void push_evt_queue(int from, int to, TASK_TYPE ev, int time) // time: milisecond 단위.
+{
+    // todo
+    EVENT evt;
+    evt.setup(ev, time, from, to);
+    g_evt_queue.push(evt);
+}

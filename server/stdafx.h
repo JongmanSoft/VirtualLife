@@ -47,6 +47,7 @@ int setid();
 void server_error(const char* msg);
 
 constexpr int BUFSIZE = 256;
+constexpr int DB_UPDATE_TIME = 60000; // 여기 수정해서 디비 업데이트 텀 수정 가능
 
 enum class TASK_TYPE
 {
@@ -54,7 +55,34 @@ enum class TASK_TYPE
     ACCEPT,
     RECV,
     SEND,
-    DB_UPDATE // 플레이어 정보 업데이트
+    DB_UPDATE, // 플레이어 정보 업데이트
+    TIME_UPDATE // 시간 업데이트
+};
+
+class EVENT
+{
+public:
+    TASK_TYPE evt_type;
+    int to_id; // 누구에게 -> 이거 필요할까
+    int from_id; // 누가
+    std::chrono::system_clock::time_point do_time;
+
+    EVENT() {}
+
+    void setup(TASK_TYPE evt, int s_time, int from = -1, int to = -1)// time->ms
+    {
+        evt_type = evt;
+        from_id = from;
+        to_id = to;
+        do_time = std::chrono::system_clock::now() + std::chrono::milliseconds(s_time);
+    }
+
+    std::chrono::system_clock::time_point& GETTIME() { return do_time; }
+
+    bool operator<(const EVENT& other) const
+    {
+        return do_time > other.do_time;
+    }
 };
 
 class EXT_OVER // overlapped, packet size, type

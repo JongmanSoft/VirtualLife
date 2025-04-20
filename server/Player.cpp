@@ -153,6 +153,12 @@ bool Player::send_room_setup_packet()
 	return true;
 }
 
+bool Player::save_db_pinfo()
+{
+	DBManager::SavePInfo(this->id, this->pinfo);
+	return true;
+}
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -317,6 +323,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 		
 		std::cout << id << "가 종료!" << std::endl;
+		DBManager::SavePInfo(this->id, this->pinfo);
 
 		state = NONE;
         break;

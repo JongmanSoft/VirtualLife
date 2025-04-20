@@ -42,6 +42,7 @@ class Player
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
 	bool send_room_setup_packet();
 
+
 public:
 
 	Player() : socket(0), state(NONE) {}
@@ -80,6 +81,7 @@ public:
 			expected_packet_size = packet_data[0] + packet_data[1];
 		}
 	}
+	bool save_db_pinfo();
 
 	// 추가적인 기능을 위해 getter와 setter를 추가할 수 있습니다.
 	SOCKET get_socket() const { return socket; }

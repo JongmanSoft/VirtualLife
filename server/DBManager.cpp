@@ -201,6 +201,30 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
     }
 }
 
+void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement(R"(
+                UPDATE PLAYER_INFO
+                SET POS_X = ?, POS_Y = ?, POS_Z = ?, YAW = ?, LAST_LOGIN = NOW()
+                WHERE ID = ?
+            )"));
+
+        stmt->setDouble(1, data.x);
+        stmt->setDouble(2, data.y);
+        stmt->setDouble(3, data.z);
+        stmt->setDouble(4, data.yaw);
+        stmt->setString(5, userID);
+
+        stmt->executeUpdate();
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SavePInfo] " << e.what() << std::endl;
+    }
+}
+
 
 void DBManager::SaveCustomizing(const std::string& userID, const Customizing& data)
 {

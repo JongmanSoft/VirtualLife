@@ -16,6 +16,7 @@ public:
     // pinfo
     static void SaveDefPInfo(const std::string& userID, const PlayerInfo& data);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data, const std::string& name);
+    static void SavePInfo(const std::string& userID, const PlayerInfo& data);
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;
