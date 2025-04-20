@@ -382,7 +382,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 
 			// 메인 맵으로 이동
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); // todo: 여기 수정
+			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); 
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			break;
 		}

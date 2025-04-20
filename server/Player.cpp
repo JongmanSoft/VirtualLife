@@ -219,35 +219,44 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << std::endl;
 		// todo: db 연동해야 함
 
-		// 1. 신규유저 확인
-		//DBManager::checkLogin(p->id, p->pw);
+		bool is_new = false;
+		bool success = true;
+		// 여기 주석 풀고 실행해보고 안되면 주석 처리해줘
+		//{
+		//	// 1. 신규유저 확인
+		//	if (DBManager::checkLogin(p->id, p->pw, is_new)) {
+		//		if (false == is_new) {
+		//			// 기존유저
+		//			Customizing custom;
+		//			if (DBManager::LoadCustomizing(p->id, custom)) {
+		//				this->custom = custom;
+		//			}
+		//		}
+		//		else {
+		//			// 신규 유저
+		//			this->id = p->id;
+		//			player_setup();
+		//		}
+		//	}
+		//	else {
+		//		// 로그인 실패
+		//		success = false;
+		//	}
+		//}
+
+		this->id = p->id;
+		player_setup();
 
 		// 2. 접속중인 플레이어인지 확인
 		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
-		bool success = true;
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
 				break;
 			}
 		}
-
-		// 텟트용으로 바까둠
-		bool is_new = false;
-		if (true == success) { // 접속성공
-			// todo: 신규유저 확인 -> DB연동해야함
-			if (false == is_new)  // 신규유저라면
-			{
-				player_setup();
-				this->id = p->id;
-			}
-			
-		}
-		else
-			state = NONE;
 		
 		send_login_info_packet(success, is_new);
-
 		break;
     }
 	case CS_ENTER_GAME: // 게임 접속 요청
@@ -345,6 +354,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
+		DBManager::SaveCustomizing(this->id, this->custom);
 		break;
 	}
 	case  CS_UPDATE_GOLD:
@@ -429,9 +439,11 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 void Player::player_setup() // 신규 플레이어 위치 등 셋업
 {
-	//5000 6500 3400
 	pinfo.x = 960 + Utility::GetRandom(100.0f, 200.0f);
 	pinfo.y = 1650 + Utility::GetRandom(100.0f, 200.0f);
 	pinfo.z = 3200;
 	pinfo.yaw = 0.f;
+
+	DBManager::SaveDefPInfo(this->id, pinfo);
+	DBManager::SaveDefCustomizing(this->id);
 }
