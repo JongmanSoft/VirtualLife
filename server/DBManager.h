@@ -18,6 +18,9 @@ public:
     static void SavePInfo(const std::string& userID, const PlayerInfo& data, const std::string& name);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data);
 
+    // inventory
+    static void SaveItem(const std::string& userID, int itemCode, int itemCount);
+
 private:
     static sql::mysql::MySQL_Driver* g_driver;
     static thread_local std::unique_ptr<sql::Connection> t_conn;

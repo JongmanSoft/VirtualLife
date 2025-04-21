@@ -63,7 +63,7 @@ void workerThread(HANDLE iocp_hd)
         {
             delete ext_over;
         }
-        else if (ext_over->ov == TASK_TYPE::DB_UPDATE)
+        else if (ext_over->ov == TASK_TYPE::DB_POS_UPDATE)
         {
             std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장 시작" << std::endl;
 
@@ -74,8 +74,14 @@ void workerThread(HANDLE iocp_hd)
                 player.save_db_pinfo();
             }
 
-            std::cout << "[EVENT] DB_UPDATE - 완료됨\n";
-            push_evt_queue(-1, -1, TASK_TYPE::DB_UPDATE, DB_UPDATE_TIME); // 10분 뒤 저장
+            std::cout << "[EVENT] DB_UPDATE - 완료됨" << std::endl;
+            push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME); // 10분 뒤 저장
+        }
+        else if (ext_over->ov == TASK_TYPE::DB_INVENTORY_UPDATE)
+        {
+            std::cout << "[EVENT] DB_INVENTORY_UPDATE - 플레이어 인벤토리 저장 시작" << std::endl;
+
+            push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         }
     }
 }
@@ -112,7 +118,8 @@ int main()
     // 서버 초기화
     initialize_server();
 
-    push_evt_queue(-1, -1, TASK_TYPE::DB_UPDATE, 60000);
+    push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
+    push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

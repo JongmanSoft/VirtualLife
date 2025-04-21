@@ -47,7 +47,8 @@ int setid();
 void server_error(const char* msg);
 
 constexpr int BUFSIZE = 256;
-constexpr int DB_UPDATE_TIME = 60000; // 여기 수정해서 디비 업데이트 텀 수정 가능
+constexpr int DB_POS_UPDATE_TIME = 60000; // 여기 수정해서 디비 업데이트 텀 수정 가능
+constexpr int DB_INVENTORY_UPDATE_TIME = 18000;
 
 enum class TASK_TYPE
 {
@@ -55,8 +56,9 @@ enum class TASK_TYPE
     ACCEPT,
     RECV,
     SEND,
-    DB_UPDATE, // 플레이어 정보 업데이트
-    TIME_UPDATE // 시간 업데이트
+    DB_POS_UPDATE, // 플레이어 정보 업데이트
+    TIME_UPDATE, // 시간 업데이트
+    DB_INVENTORY_UPDATE
 };
 
 class EVENT

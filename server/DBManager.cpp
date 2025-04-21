@@ -297,3 +297,37 @@ void DBManager::SaveCustomizing(const std::string& userID, const Customizing& da
         std::cerr << "[DB Error - SaveCustom] " << e.what() << std::endl;
     }
 }
+
+void DBManager::SaveItem(const std::string& userID, int itemCode, int itemCount)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+
+        if (itemCount <= 0)
+        {
+            // 0개 이하일 경우 삭제
+            std::unique_ptr<sql::PreparedStatement> delStmt(
+                conn->prepareStatement("DELETE FROM player_inventory WHERE ID=? AND ITEM_CODE=?"));
+            delStmt->setString(1, userID);
+            delStmt->setInt(2, itemCode);
+            delStmt->executeUpdate();
+        }
+        else
+        {
+            // 삽입 또는 갱신
+            std::unique_ptr<sql::PreparedStatement> stmt(
+                conn->prepareStatement(R"(
+                    INSERT INTO player_inventory (ID, ITEM_CODE, ITEM_COUNT)
+                    VALUES (?, ?, ?)
+                    ON DUPLICATE KEY UPDATE ITEM_COUNT = VALUES(ITEM_COUNT)
+                )"));
+            stmt->setString(1, userID);
+            stmt->setInt(2, itemCode);
+            stmt->setInt(3, itemCount);
+            stmt->executeUpdate();
+        }
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SaveItem] " << e.what() << std::endl;
+    }
+}
