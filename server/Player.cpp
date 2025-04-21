@@ -324,7 +324,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// db 정리 라인 - 안되면 주석 ㄱㄱ
 		{
 			DBManager::SavePInfo(this->id, this->pinfo);
-
+			//DBManager::save
 		}
 
 		state = NONE;

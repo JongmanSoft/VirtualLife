@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include "DBManager.h"
 #include "protocol.h"
 
 class Room
@@ -18,5 +19,8 @@ public:
 	void packet_setup(SC_ROOM_SETUP_PACKET& pkt);
 	void RemoveObjectByPosition(float x, float y, float z);
 	void UpdateObjectTransform(float old_x, float old_y, float old_z, float new_x, float new_y, float new_z, float new_yaw);
+
+	void SaveToDB(const std::string& userID);
+	void LoadFromDB(const std::string& userID);
 };
 

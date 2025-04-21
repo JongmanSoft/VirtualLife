@@ -24,7 +24,9 @@ public:
     static void SaveItem(const std::string& userID, int itemCode, int itemCount);
     static bool LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData);
 
-    
+    // Room
+    static void SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects);
+    static bool LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects);
 
 
 private:

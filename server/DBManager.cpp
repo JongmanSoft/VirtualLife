@@ -402,3 +402,75 @@ bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned 
         return false;
     }
 }
+
+void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn || objects.empty()) return;
+
+        std::ostringstream query;
+        query << "INSERT INTO player_room (ID, ITEM_ID, POS_X, POS_Y, POS_Z, SCALE, YAW) VALUES ";
+
+        for (size_t i = 0; i < objects.size(); ++i) {
+            const Object& obj = objects[i];
+            query << "('" << userID << "', "
+                << obj.item_id << ", "
+                << obj.x << ", "
+                << obj.y << ", "
+                << obj.z << ", "
+                << obj.scale << ", "
+                << obj.yaw << ")";
+            if (i < objects.size() - 1)
+                query << ", ";
+        }
+
+        query << " ON DUPLICATE KEY UPDATE "
+            << "SCALE=VALUES(SCALE), YAW=VALUES(YAW)";
+
+        std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+        stmt->execute(query.str());
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SaveRoomObjects(Bulk)] " << e.what() << std::endl;
+    }
+}
+
+bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return false;
+
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement(R"(
+                SELECT ITEM_ID, POS_X, POS_Y, POS_Z, SCALE, YAW
+                FROM player_room
+                WHERE ID = ?
+            )"));
+        stmt->setString(1, userID);
+
+        std::unique_ptr<sql::ResultSet> res(stmt->executeQuery());
+
+        outObjects.clear();  // 기존 데이터 초기화
+
+        while (res->next())
+        {
+            Object obj;
+            obj.item_id = res->getUInt("ITEM_ID");
+            obj.x = res->getDouble("POS_X");
+            obj.y = res->getDouble("POS_Y");
+            obj.z = res->getDouble("POS_Z");
+            obj.scale = res->getDouble("SCALE");
+            obj.yaw = res->getDouble("YAW");
+
+            outObjects.emplace_back(obj);
+        }
+
+        return true;
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - LoadRoomObjects] " << e.what() << std::endl;
+        return false;
+    }
+}
