@@ -8,6 +8,7 @@ public:
 
     // 디비에 아이디 PW 저장
     static bool checkLogin(const std::string& id, const std::string& pw, bool& is_new);
+
     // 커마값 디비에 업데이트
     static void SaveCustomizing(const std::string& userID, const Customizing& data);
     static bool LoadCustomizing(const std::string& userID, Customizing& outData);
@@ -17,9 +18,14 @@ public:
     static void SaveDefPInfo(const std::string& userID, const PlayerInfo& data);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data, const std::string& name);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data);
+    static bool LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName);
 
     // inventory
     static void SaveItem(const std::string& userID, int itemCode, int itemCount);
+    static bool LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData);
+
+    
+
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;

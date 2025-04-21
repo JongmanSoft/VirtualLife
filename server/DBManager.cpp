@@ -225,6 +225,46 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data)
     }
 }
 
+bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) {
+            std::cerr << "[DB Error - LoadPInfo] Connection is null!" << std::endl;
+            return false;
+        }
+
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement(R"(
+                SELECT NAME, POS_X, POS_Y, POS_Z, YAW
+                FROM player_info
+                WHERE ID = ?
+            )"));
+
+        stmt->setString(1, userID);
+        std::unique_ptr<sql::ResultSet> res(stmt->executeQuery());
+
+        if (!res->next()) {
+            std::cerr << "[DB] LoadPInfo: No entry found for ID = " << userID << std::endl;
+            return false;
+        }
+
+        // 문자열 변환 (UTF-8 → wstring)
+        std::string name_utf8 = res->getString("NAME");
+        outName = std::wstring(name_utf8.begin(), name_utf8.end());
+
+        outInfo.x = res->getDouble("POS_X");
+        outInfo.y = res->getDouble("POS_Y");
+        outInfo.z = res->getDouble("POS_Z");
+        outInfo.yaw = res->getDouble("YAW");
+
+        return true;
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - LoadPInfo] " << e.what() << std::endl;
+        return false;
+    }
+}
 
 void DBManager::SaveCustomizing(const std::string& userID, const Customizing& data)
 {
@@ -329,5 +369,36 @@ void DBManager::SaveItem(const std::string& userID, int itemCode, int itemCount)
     }
     catch (sql::SQLException& e) {
         std::cerr << "[DB Error - SaveItem] " << e.what() << std::endl;
+    }
+}
+
+bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) {
+            std::cerr << "[DB Error - LoadItem] Connection is null!" << std::endl;
+            return false;
+        }
+
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement("SELECT ITEM_CODE, ITEM_COUNT FROM player_inventory WHERE ID = ?"));
+        stmt->setString(1, userID);
+
+        std::unique_ptr<sql::ResultSet> res(stmt->executeQuery());
+
+        outData.clear();  // 기존 데이터 초기화
+
+        while (res->next()) {
+            unsigned short code = static_cast<unsigned short>(res->getInt("ITEM_CODE"));
+            unsigned short count = static_cast<unsigned short>(res->getInt("ITEM_COUNT"));
+            outData[code] = count;
+        }
+
+        return true;
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - LoadItem] " << e.what() << std::endl;
+        return false;
     }
 }

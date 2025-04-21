@@ -227,34 +227,32 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		bool is_new = false;
 		bool success = true;
-		// 여기 주석 풀고 실행해보고 안되면 주석 처리해줘
-		//{
-		//	// 1. 신규유저 확인
-		//	if (DBManager::checkLogin(p->id, p->pw, is_new)) {
-		//		if (false == is_new) {
-		//			// 기존유저
-		//			Customizing custom;
-		//			if (DBManager::LoadCustomizing(p->id, custom)) {
-		//				this->custom = custom;
-		//			}
-		//		}
-		//		else {
-		//			// 신규 유저
-		//			this->id = p->id;
-		//			player_setup();
-		//		}
-		//	}
-		//	else {
-		//		// 로그인 실패
-		//		success = false;
-		//	}
-		//}
+		// 디비 접근 라인 -> 안되면 주석 ㄱㄱ
+		{
+			// 1. 신규유저 확인
+			if (DBManager::checkLogin(p->id, p->pw, is_new)) {
+				if (false == is_new) {
+					// 기존유저
+					DBManager::LoadCustomizing(p->id, this->custom);
+					DBManager::LoadItem(p->id, player_item);
+					// todo : Load Quest
+				}
+				else {
+					// 신규 유저
+					this->id = p->id;
+					player_setup();
+				}
+			}
+			else {
+				// 로그인 실패
+				success = false;
+			}
+		}
 
 		this->id = p->id;
 		player_setup();
 
 		// 2. 접속중인 플레이어인지 확인
-		// todo: 여기 어떻게 처리할지 고민하기 -> 개선의 방법이 여러가지 있음
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
@@ -323,7 +321,11 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 		
 		std::cout << id << "가 종료!" << std::endl;
-		DBManager::SavePInfo(this->id, this->pinfo);
+		// db 정리 라인 - 안되면 주석 ㄱㄱ
+		{
+			DBManager::SavePInfo(this->id, this->pinfo);
+
+		}
 
 		state = NONE;
         break;
@@ -371,12 +373,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		send_update_gold(this->addinfo.gold);
 		break;
 	}
-	case CS_GET_QUEST: // todo
+	case CS_GET_QUEST:
 	{
 		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		this->quests.emplace_back(p->giver_id, p->num);
-		send_get_quest_packet(p->giver_id, p->num); // 여기를 여러개 보낼 수 있도록 해야 하는가? 아니여...퀘스트는 한종류당 하나씩만 가능
+		send_get_quest_packet(p->giver_id, p->num);
 
 		break;
 	}
