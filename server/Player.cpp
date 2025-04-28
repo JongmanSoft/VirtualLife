@@ -155,7 +155,7 @@ bool Player::send_room_setup_packet()
 
 bool Player::save_db_pinfo()
 {
-	DBManager::SavePInfo(this->id, this->pinfo);
+	//DBManager::SavePInfo(this->id, this->pinfo);
 	return true;
 }
 
@@ -228,26 +228,26 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		bool is_new = false;
 		bool success = true;
 		// 디비 접근 라인 -> 안되면 주석 ㄱㄱ
-		{
-			// 1. 신규유저 확인
-			if (DBManager::checkLogin(p->id, p->pw, is_new)) {
-				if (false == is_new) {
-					// 기존유저
-					DBManager::LoadCustomizing(p->id, this->custom);
-					DBManager::LoadItem(p->id, player_item);
-					// todo : Load Quest
-				}
-				else {
-					// 신규 유저
-					this->id = p->id;
-					player_setup();
-				}
-			}
-			else {
-				// 로그인 실패
-				success = false;
-			}
-		}
+		//{
+		//	// 1. 신규유저 확인
+		//	if (DBManager::checkLogin(p->id, p->pw, is_new)) {
+		//		if (false == is_new) {
+		//			// 기존유저
+		//			DBManager::LoadCustomizing(p->id, this->custom);
+		//			DBManager::LoadItem(p->id, player_item);
+		//			// todo : Load Quest
+		//		}
+		//		else {
+		//			// 신규 유저
+		//			this->id = p->id;
+		//			player_setup();
+		//		}
+		//	}
+		//	else {
+		//		// 로그인 실패
+		//		success = false;
+		//	}
+		//}
 
 		this->id = p->id;
 		player_setup();
@@ -323,7 +323,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << id << "가 종료!" << std::endl;
 		// db 정리 라인 - 안되면 주석 ㄱㄱ
 		{
-			DBManager::SavePInfo(this->id, this->pinfo);
+			//DBManager::SavePInfo(this->id, this->pinfo);
 			//DBManager::save
 		}
 
@@ -363,7 +363,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
-		DBManager::SaveCustomizing(this->id, this->custom);
+		//DBManager::SaveCustomizing(this->id, this->custom);
 		break;
 	}
 	case  CS_UPDATE_GOLD:
@@ -453,6 +453,6 @@ void Player::player_setup() // 신규 플레이어 위치 등 셋업
 	pinfo.z = 3200;
 	pinfo.yaw = 0.f;
 
-	DBManager::SaveDefPInfo(this->id, pinfo);
-	DBManager::SaveDefCustomizing(this->id);
+	/*DBManager::SaveDefPInfo(this->id, pinfo);
+	DBManager::SaveDefCustomizing(this->id);*/
 }

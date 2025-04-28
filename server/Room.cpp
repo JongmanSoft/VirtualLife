@@ -1,4 +1,5 @@
 #include "Room.h"
+#include "DBManager.h"
 
 void Room::AddObject(const Object& obj)
 {

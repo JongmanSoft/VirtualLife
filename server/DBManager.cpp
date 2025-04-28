@@ -3,6 +3,7 @@
 sql::mysql::MySQL_Driver* DBManager::g_driver = nullptr;
 thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
 
+
 void DBManager::Init() 
 {
     if (!g_driver) {
