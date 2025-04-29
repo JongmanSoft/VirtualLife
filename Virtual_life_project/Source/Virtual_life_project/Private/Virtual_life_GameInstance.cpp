@@ -480,8 +480,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FRotator NewRotation(0.f, p.pl.yaw, 0.f);
 
 			auto pl = Cast<AVL_Player>(PlayerActor);
-			pl->setDestInfo(p.pl);
-			pl->setState(p.pl.st);
+			if (pl != nullptr) {
+				pl->setDestInfo(p.pl);
+				pl->setState(p.pl.st);
+			}
 
 			break;
 		}
