@@ -29,7 +29,6 @@ void ATimeOfDayManager::BeginPlay()
 void ATimeOfDayManager::IncrementTime()
 {
     Time = FMath::Fmod(Time + TimeStep, 24.0f);
-    UE_LOG(LogTemp, Log, TEXT("HI"));
 
     UpdateSun();
 
