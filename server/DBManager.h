@@ -15,8 +15,8 @@ public:
     static void SaveDefCustomizing(const std::string& id);
     
     // pinfo
-    static void SaveDefPInfo(const std::string& userID, const PlayerInfo& data);
-    static void SavePInfo(const std::string& userID, const PlayerInfo& data, const std::string& name);
+    static void SaveDefPInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata);
+    static void SavePInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata, const std::string& name);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data);
     static bool LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName);
 

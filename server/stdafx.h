@@ -48,7 +48,7 @@ void server_error(const char* msg);
 
 constexpr int BUFSIZE = 256;
 constexpr int DB_POS_UPDATE_TIME = 60000; // 여기 수정해서 디비 업데이트 텀 수정 가능
-constexpr int DB_INVENTORY_UPDATE_TIME = 18000;
+constexpr int DB_INVENTORY_UPDATE_TIME = 30000;
 
 enum class TASK_TYPE
 {
@@ -118,3 +118,5 @@ public:
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
 extern std::mutex players_mutex;
+extern float f_time;
+extern std::chrono::high_resolution_clock::time_point startTime;

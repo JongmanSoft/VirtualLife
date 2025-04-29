@@ -7,6 +7,7 @@ HANDLE g_iocp_handle;
 SOCKET g_server;
 SOCKET g_client;
 
+
 // 그 외 //
 concurrency::concurrent_priority_queue<EVENT> g_evt_queue;
 
@@ -41,7 +42,7 @@ void workerThread(HANDLE iocp_hd)
             // todo: id 지정해주기, LoginID 받아오기
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
-            std::cout << "ACCEPT: 클라이언트 ID " << client_id << " 연결됨" << std::endl;
+            std::cout << "[ACCEPT] 클라이언트 ID " << client_id << " 연결됨" << std::endl;
 
             players[client_id].init_player(g_client, client_id);
             players[client_id].recv(); // 첫 번째 패킷 받기 시작
@@ -65,7 +66,7 @@ void workerThread(HANDLE iocp_hd)
         }
         else if (ext_over->ov == TASK_TYPE::DB_POS_UPDATE)
         {
-            std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장 시작" << std::endl;
+            std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장" << std::endl;
 
             for (Player& player : players)
             {
@@ -74,12 +75,18 @@ void workerThread(HANDLE iocp_hd)
                 player.save_db_pinfo();
             }
 
-            std::cout << "[EVENT] DB_UPDATE - 완료됨" << std::endl;
             push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME); // 10분 뒤 저장
         }
         else if (ext_over->ov == TASK_TYPE::DB_INVENTORY_UPDATE)
         {
-            std::cout << "[EVENT] DB_INVENTORY_UPDATE - 플레이어 인벤토리 저장 시작" << std::endl;
+            std::cout << "[EVENT] DB_INVENTORY_UPDATE - 플레이어 인벤토리 저장" << std::endl;
+
+            for (Player& player : players)
+            {
+                if (player.get_state() != PLAYING)
+                    continue;
+                player.save_db_pInventory();
+            }
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         }
@@ -142,6 +149,9 @@ int main()
 
 void initialize_server()
 {
+    f_time = 15.0f;
+    startTime = std::chrono::high_resolution_clock::now();
+
     setlocale(LC_ALL, "korean");
 
     WSADATA wsaData;

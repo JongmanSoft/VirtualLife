@@ -10,7 +10,7 @@ bool Player::send_login_info_packet(bool res, bool isnew)
 	p.size = sizeof(SC_LOGIN_INFO_PACKET);
 	p.success = res;
 	p.type = SC_LOGININFO;
-	//p.isNew = isnew;
+	p.is_new = isnew;
 
 	send(&p);
 
@@ -25,7 +25,11 @@ bool Player::send_enter_game_packet()
 	p.player = pinfo;
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 	p.type = SC_ENTER_GAME;
-	
+	auto now = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+
+	p.time = f_time + (elapsed.count() * 0.001f);
+
 	// 인벤토리 초기화
 	for (int i = 0; i < ITEM_SIZE; ++i) {
 		if (true == player_item.contains(i)) p.items[i] = player_item[i];
@@ -153,9 +157,33 @@ bool Player::send_room_setup_packet()
 	return true;
 }
 
+bool Player::send_room_leave_packet()
+{
+	SC_ROOM_LEAVE_PACKET p;
+	p.size = sizeof(SC_ROOM_LEAVE_PACKET);
+	p.type = SC_ROOM_LEAVE;
+	auto now = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+
+	p.time = f_time + (elapsed.count() * 0.001f);
+	p.x = 960;
+	p.y = 1650;
+	p.z = 3300;
+	send(&p);
+	return true;
+}
+
 bool Player::save_db_pinfo()
 {
-	//DBManager::SavePInfo(this->id, this->pinfo);
+	DBManager::SavePInfo(this->id, this->pinfo);
+	return true;
+}
+
+bool Player::save_db_pInventory()
+{
+	for (auto& a : player_item) {
+		DBManager::SaveItem(this->id, a.first, a.second);
+	}
 	return true;
 }
 
@@ -228,29 +256,32 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		bool is_new = false;
 		bool success = true;
 		// 디비 접근 라인 -> 안되면 주석 ㄱㄱ
-		//{
-		//	// 1. 신규유저 확인
-		//	if (DBManager::checkLogin(p->id, p->pw, is_new)) {
-		//		if (false == is_new) {
-		//			// 기존유저
-		//			DBManager::LoadCustomizing(p->id, this->custom);
-		//			DBManager::LoadItem(p->id, player_item);
-		//			// todo : Load Quest
-		//		}
-		//		else {
-		//			// 신규 유저
-		//			this->id = p->id;
-		//			player_setup();
-		//		}
-		//	}
-		//	else {
-		//		// 로그인 실패
-		//		success = false;
-		//	}
-		//}
+		{
+			// 1. 신규유저 확인
+			if (DBManager::checkLogin(p->id, p->pw, is_new)) {
+				if (false == is_new) {
+					// 기존유저
+					DBManager::LoadPInfo(p->id, pinfo, name);
+					DBManager::LoadCustomizing(p->id, this->custom);
+					DBManager::LoadItem(p->id, player_item);
+					room.LoadFromDB(p->id);
+					this->id = p->id;
+					// todo : Load Quest
+				}
+				else {
+					// 신규 유저
+					this->id = p->id;
+					player_setup();
+				}
+			}
+			else {
+				// 로그인 실패
+				success = false;
+			}
+		}
 
-		this->id = p->id;
-		player_setup();
+		/*this->id = p->id;
+		player_setup();*/
 
 		// 2. 접속중인 플레이어인지 확인
 		for (int i = 0; i < players.size(); ++i) {
@@ -267,10 +298,16 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
-		this->name = p->name;
+		if(this->name == L"")
+			this->name = p->name;
 		state = PLAYING;
 		send_enter_game_packet();
 		
+		for (auto& a : player_item) {
+			send_update_item_packet(a.first, a.second);
+		}
+
+
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
@@ -303,7 +340,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
         break;
     }
-    case CS_LEAVE: // todo: 여기 왜 안들어오지 이상하다..
+    case CS_LEAVE:
     {
 		std::cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		int id = pinfo.id;
@@ -323,7 +360,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << id << "가 종료!" << std::endl;
 		// db 정리 라인 - 안되면 주석 ㄱㄱ
 		{
-			//DBManager::SavePInfo(this->id, this->pinfo);
+			DBManager::SavePInfo(this->id, this->pinfo);
 			//DBManager::save
 		}
 
@@ -343,7 +380,11 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				players[i].send_move_packet(p->pl);
 			}
 		}
+		
+		auto now = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
+		std::cout << "시간: " << f_time + (elapsed.count() * 0.001f) << std::endl;
 		break;
 	}
 	case CS_GET_ITEM:
@@ -363,7 +404,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
-		//DBManager::SaveCustomizing(this->id, this->custom);
+		DBManager::SaveCustomizing(this->id, this->custom);
 		break;
 	}
 	case  CS_UPDATE_GOLD:
@@ -420,6 +461,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		obj.scale = p->build.scale;
 
 		room.AddObject(obj);
+		DBManager::SaveRoomObjects(id, obj);
 
 		// std::cout << "저장 완료: ID " << obj.item_id << ", Pos(" << obj.x << ", " << obj.y << ", " << obj.z << ")\n";
 		break;
@@ -430,6 +472,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "건물 삭제 요청 받음! 위치: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
 
 		room.RemoveObjectByPosition(p->x, p->y, p->z);
+		DBManager::DeleteRoomObject(id, p->x, p->y, p->z);
 		break;
 	}
 	case CS_UPDATE_BUILD:
@@ -439,6 +482,15 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
 
 		room.UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+		DBManager::UpdateRoomObject(id, p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+		break;
+	}
+	case CS_ROOM_LEAVE:
+	{
+		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
+		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감" << std::endl;
+
+		send_room_leave_packet();
 		break;
 	}
     default:
@@ -453,6 +505,14 @@ void Player::player_setup() // 신규 플레이어 위치 등 셋업
 	pinfo.z = 3200;
 	pinfo.yaw = 0.f;
 
-	/*DBManager::SaveDefPInfo(this->id, pinfo);
-	DBManager::SaveDefCustomizing(this->id);*/
+	player_item[8] = 1;
+	player_item[9] = 1;
+	player_item[10] = 1;
+	player_item[11] = 1;
+
+	addinfo.gold = 1500; // todo: 돈저장.
+
+	DBManager::SaveDefPInfo(this->id, pinfo, addinfo);
+	DBManager::SaveDefCustomizing(this->id);
+	save_db_pInventory();
 }

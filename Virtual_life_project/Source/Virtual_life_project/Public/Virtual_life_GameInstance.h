@@ -131,6 +131,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendUpdateBuildPacket(const FVector& OldLoc, const FVector& NewLoc, float NewYaw);
 
+	UFUNCTION(BlueprintCallable)
+	void SendRoomLeavePacket();
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;

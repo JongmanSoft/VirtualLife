@@ -162,6 +162,15 @@ void UVirtual_life_GameInstance::SendUpdateBuildPacket(const FVector& OldLoc, co
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendRoomLeavePacket()
+{
+	CS_ROOM_LEAVE_PACKET p;
+	p.size = sizeof(CS_ROOM_LEAVE_PACKET);
+	p.type = CS_ROOM_LEAVE;
+
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -469,8 +478,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			auto pl = Cast<AVL_Player>(PlayerActor);
 			pl->setDestInfo(p.pl);
-			if (p.pl.st == 3)
-				int a = 0;
 			pl->setState(p.pl.st);
 
 			break;
@@ -516,6 +523,14 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			HandleRoomSetup(p);
 
+			break;
+		}
+		case SC_ROOM_LEAVE:
+		{
+			SC_ROOM_LEAVE_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_SETUP_PACKET));
+
+			enter_time = p.time;
 			break;
 		}
 		}

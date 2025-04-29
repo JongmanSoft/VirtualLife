@@ -16,7 +16,7 @@ class Player
 	
 	// 플레이어 정보
 	std::string id; // 접속용 id
-	std::wstring name; // 플레이어 이름
+	std::wstring name = L""; // 플레이어 이름
 	PlayerInfo pinfo; // obj id, 위치/회전정보
 	AdditionalInfo addinfo; // 직업 등 정보
 	STATES state; // 상태
@@ -41,6 +41,7 @@ class Player
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
 	bool send_room_setup_packet();
+	bool send_room_leave_packet();
 
 
 public:
@@ -82,6 +83,7 @@ public:
 		}
 	}
 	bool save_db_pinfo();
+	bool save_db_pInventory();
 
 	// 추가적인 기능을 위해 getter와 setter를 추가할 수 있습니다.
 	SOCKET get_socket() const { return socket; }

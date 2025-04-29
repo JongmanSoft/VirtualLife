@@ -6,7 +6,8 @@ thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
 
 void DBManager::Init() 
 {
-    if (!g_driver) {
+    while (!g_driver)
+    {
         g_driver = sql::mysql::get_driver_instance();
     }
 }
@@ -89,38 +90,38 @@ bool DBManager::LoadCustomizing(const std::string& userID, Customizing& outData)
 
         if (!res->next()) return false; // 데이터 없으면 false
 
-        outData.skin = res->getDouble("SKIN");
+        outData.skin = static_cast<float>(res->getDouble("SKIN"));
         outData.shirt = res->getUInt("SHIRT");
         outData.pants = res->getUInt("PANTS");
         outData.shoes = res->getUInt("SHOES");
 
-        outData.R_eye_color_hue = res->getDouble("R_EYE_COLOR_HUE");
-        outData.R_eye_color_sat = res->getDouble("R_EYE_COLOR_SAT");
-        outData.L_eye_color_hue = res->getDouble("L_EYE_COLOR_HUE");
-        outData.L_eye_color_sat = res->getDouble("L_EYE_COLOR_SAT");
-        outData.eye_scale = res->getDouble("EYE_SCALE");
-        outData.pupil_scale = res->getDouble("PUPIL_SCALE");
+        outData.R_eye_color_hue = static_cast<float>(res->getDouble("R_EYE_COLOR_HUE"));
+        outData.R_eye_color_sat = static_cast<float>(res->getDouble("R_EYE_COLOR_SAT"));
+        outData.L_eye_color_hue = static_cast<float>(res->getDouble("L_EYE_COLOR_HUE"));
+        outData.L_eye_color_sat = static_cast<float>(res->getDouble("L_EYE_COLOR_SAT"));
+        outData.eye_scale = static_cast<float>(res->getDouble("EYE_SCALE"));
+        outData.pupil_scale = static_cast<float>(res->getDouble("PUPIL_SCALE"));
 
         outData.hair = res->getUInt("HAIR");
-        outData.hair_color_R = res->getDouble("HAIR_COLOR_R");
-        outData.hair_color_G = res->getDouble("HAIR_COLOR_G");
-        outData.hair_color_B = res->getDouble("HAIR_COLOR_B");
+        outData.hair_color_R = static_cast<float>(res->getDouble("HAIR_COLOR_R"));
+        outData.hair_color_G = static_cast<float>(res->getDouble("HAIR_COLOR_G"));
+        outData.hair_color_B = static_cast<float>(res->getDouble("HAIR_COLOR_B"));
 
-        outData.eye_width = res->getDouble("EYE_WIDTH");
-        outData.eye_thick = res->getDouble("EYE_THICK");
-        outData.eye_slope = res->getDouble("EYE_SLOPE");
+        outData.eye_width = static_cast<float>(res->getDouble("EYE_WIDTH"));
+        outData.eye_thick = static_cast<float>(res->getDouble("EYE_THICK"));
+        outData.eye_slope = static_cast<float>(res->getDouble("EYE_SLOPE"));
 
-        outData.nose_width = res->getDouble("NOSE_WIDTH");
-        outData.nose_height = res->getDouble("NOSE_HEIGHT");
+        outData.nose_width = static_cast<float>(res->getDouble("NOSE_WIDTH"));
+        outData.nose_height = static_cast<float>(res->getDouble("NOSE_HEIGHT"));
 
-        outData.mouse_width = res->getDouble("MOUTH_WIDTH");
-        outData.mouse_thick = res->getDouble("MOUTH_THICK");
-        outData.mouse_slope = res->getDouble("MOUTH_SLOPE");
+        outData.mouse_width = static_cast<float>(res->getDouble("MOUTH_WIDTH"));
+        outData.mouse_thick = static_cast<float>(res->getDouble("MOUTH_THICK"));
+        outData.mouse_slope = static_cast<float>(res->getDouble("MOUTH_SLOPE"));
 
-        outData.chin = res->getDouble("CHIN");
-        outData.jaw = res->getDouble("JAW");
-        outData.heavy = res->getDouble("HEAVY");
-        outData.face_width = res->getDouble("FACE_WIDTH");
+        outData.chin = static_cast<float>(res->getDouble("CHIN"));
+        outData.jaw = static_cast<float>(res->getDouble("JAW"));
+        outData.heavy = static_cast<float>(res->getDouble("HEAVY"));
+        outData.face_width = static_cast<float>(res->getDouble("FACE_WIDTH"));
 
         return true;
     }
@@ -141,11 +142,11 @@ void DBManager::SaveDefCustomizing(const std::string& id)
     c.R_eye_color_sat = 1;
     c.L_eye_color_hue = 1;
     c.L_eye_color_sat = 1;
-    c.eye_scale = 0.35;
-    c.pupil_scale = 0.9;
+    c.eye_scale = 0.35f;
+    c.pupil_scale = 0.9f;
     c.hair = 0;
     c.hair_color_R = 1;
-    c.hair_color_G = 0.2;
+    c.hair_color_G = 0.2f;
     c.hair_color_B = 1;
     c.eye_width = 0;
     c.eye_thick = 0;
@@ -162,19 +163,19 @@ void DBManager::SaveDefCustomizing(const std::string& id)
     SaveCustomizing(id, c);
 }
 
-void DBManager::SaveDefPInfo(const std::string& userID, const PlayerInfo& data)
+void DBManager::SaveDefPInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata)
 {
-    SavePInfo(userID, data, "");
+    SavePInfo(userID, data, adddata, "");
 }
 
-void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, const std::string& name)
+void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata ,const std::string& name)
 {
     try {
         sql::Connection* conn = GetConnection();
 
         std::unique_ptr<sql::PreparedStatement> stmt(
             conn->prepareStatement(R"(
-                INSERT INTO PLAYER_INFO (ID, NAME, POS_X, POS_Y, POS_Z, YAW, LAST_LOGIN)
+                INSERT INTO PLAYER_INFO (ID, NAME, POS_X, POS_Y, POS_Z, YAW, LAST_LOGIN, MONEY)
                 VALUES (?, ?, ?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE
                     NAME = VALUES(NAME),
@@ -182,7 +183,8 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
                     POS_Y = VALUES(POS_Y),
                     POS_Z = VALUES(POS_Z),
                     YAW = VALUES(YAW),
-                    LAST_LOGIN = NOW()
+                    LAST_LOGIN = NOW(),
+                    MONEY = VALUES(MONEY)
             )"));
 
         stmt->setString(1, userID);
@@ -194,6 +196,7 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
         stmt->setDouble(4, data.y);
         stmt->setDouble(5, data.z);
         stmt->setDouble(6, data.yaw);
+        stmt->setInt(7, adddata.gold);
 
         stmt->executeUpdate();
     }
@@ -254,10 +257,10 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
         std::string name_utf8 = res->getString("NAME");
         outName = std::wstring(name_utf8.begin(), name_utf8.end());
 
-        outInfo.x = res->getDouble("POS_X");
-        outInfo.y = res->getDouble("POS_Y");
-        outInfo.z = res->getDouble("POS_Z");
-        outInfo.yaw = res->getDouble("YAW");
+        outInfo.x = static_cast<float>(res->getDouble("POS_X"));
+        outInfo.y = static_cast<float>(res->getDouble("POS_Y"));
+        outInfo.z = static_cast<float>(res->getDouble("POS_Z"));
+        outInfo.yaw = static_cast<float>(res->getDouble("YAW"));
 
         return true;
     }
@@ -495,11 +498,11 @@ bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& 
         {
             Object obj;
             obj.item_id = res->getUInt("ITEM_ID");
-            obj.x = res->getDouble("POS_X");
-            obj.y = res->getDouble("POS_Y");
-            obj.z = res->getDouble("POS_Z");
-            obj.scale = res->getDouble("SCALE");
-            obj.yaw = res->getDouble("YAW");
+            obj.x = static_cast<float>(res->getDouble("POS_X"));
+            obj.y = static_cast<float>(res->getDouble("POS_Y"));
+            obj.z = static_cast<float>(res->getDouble("POS_Z"));
+            obj.scale = static_cast<float>(res->getDouble("SCALE"));
+            obj.yaw = static_cast<float>(res->getDouble("YAW"));
 
             outObjects.emplace_back(obj);
         }
