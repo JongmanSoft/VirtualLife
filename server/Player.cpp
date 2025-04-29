@@ -28,7 +28,7 @@ bool Player::send_enter_game_packet()
 	auto now = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
-	p.time = f_time + (elapsed.count() * 0.001f);
+	p.time = std::fmod(f_time + (elapsed.count() * 0.0001f), 24);
 
 	// 인벤토리 초기화
 	for (int i = 0; i < ITEM_SIZE; ++i) {
@@ -165,10 +165,25 @@ bool Player::send_room_leave_packet()
 	auto now = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
-	p.time = f_time + (elapsed.count() * 0.001f);
+	p.time = std::fmod(f_time + (elapsed.count() * 0.0001f), 24);
+	std::cout << "시간: " << p.time << std::endl;
 	p.x = 960;
 	p.y = 1650;
 	p.z = 3300;
+	send(&p);
+	return true;
+}
+
+bool Player::send_time_sync_packet()
+{
+	SC_TIME_SYNC_PACKET p;
+	p.size = sizeof(SC_TIME_SYNC_PACKET);
+	p.type = SC_ROOM_LEAVE;
+	auto now = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+	p.curtime = ping;
+	p.time = std::fmod(f_time + (elapsed.count() * 0.001f), 24);
+
 	send(&p);
 	return true;
 }
@@ -384,7 +399,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		auto now = std::chrono::high_resolution_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
-		std::cout << "시간: " << f_time + (elapsed.count() * 0.001f) << std::endl;
+		std::cout << "시간: " << std::fmod(f_time + (elapsed.count() * 0.0001f), 24) << std::endl;
 		break;
 	}
 	case CS_GET_ITEM:
@@ -488,9 +503,20 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	case CS_ROOM_LEAVE:
 	{
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
-		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감" << std::endl;
+
+		auto now = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
 		send_room_leave_packet();
+		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
+
+		break;
+	}
+	case CS_TIME_SYNC:
+	{
+		CS_TIME_SYNC_PACKET* p = reinterpret_cast<CS_TIME_SYNC_PACKET*>(packet);
+		
+
 		break;
 	}
     default:

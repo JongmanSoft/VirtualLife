@@ -26,6 +26,8 @@ class Player
 	std::vector<Quest> quests;
 	Room room;
 
+	float ping = 0.0f;
+
 	// 동기화 관련
 	std::mutex m;
 
@@ -42,6 +44,7 @@ class Player
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
 	bool send_room_setup_packet();
 	bool send_room_leave_packet();
+	bool send_time_sync_packet();
 
 
 public:

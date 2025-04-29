@@ -90,6 +90,16 @@ void workerThread(HANDLE iocp_hd)
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         }
+        else if (ext_over->ov == TASK_TYPE::TIME_UPDATE)
+        {
+            // 모든 아이들에게 현재 시간 전송
+            for (Player& player : players) 
+            {
+                if (player.get_state() != PLAYING)
+                    continue;
+                //player.
+            }
+        }
     }
 }
 

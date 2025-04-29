@@ -28,10 +28,11 @@ void ATimeOfDayManager::BeginPlay()
 
 void ATimeOfDayManager::IncrementTime()
 {
-    float Now = GetWorld()->GetRealTimeSeconds();
-    float Elapsed = Now - LocalReceiveTime;
-    float GameMinutesPassed = Elapsed * 0.1f; // 배속
-    Time = FMath::Fmod(Time + GameMinutesPassed, 24.0f);
+    //float Now = GetWorld()->GetRealTimeSeconds();
+    //float Elapsed = Now - LocalReceiveTime;
+    //float GameMinutesPassed = Elapsed * 0.1f; // 배속
+    Time = FMath::Fmod(Time + 0.01f, 24.0f);
+    //LocalReceiveTime = Now;
 
     UpdateSun();
 

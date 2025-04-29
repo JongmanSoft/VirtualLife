@@ -100,6 +100,7 @@ enum PACKETID : char
 	CS_REMOVE_BUILD,
 	CS_UPDATE_BUILD,
 	CS_ROOM_LEAVE,
+	CS_TIME_SYNC,
 
 	// server to client
 	SC_LOGININFO,
@@ -116,7 +117,8 @@ enum PACKETID : char
 	SC_REMOVE_QUEST,
 	SC_NPC_RESPONSE,
 	SC_ROOM_SETUP,
-	SC_ROOM_LEAVE
+	SC_ROOM_LEAVE,
+	SC_TIME_SYNC
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -218,6 +220,12 @@ struct CS_ROOM_LEAVE_PACKET {
 	PACKETID type;
 };
 
+struct CS_TIME_SYNC_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float ping;
+};
+
 // server to client //
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
@@ -311,6 +319,13 @@ struct SC_ROOM_LEAVE_PACKET {
 	unsigned short size;
 	PACKETID type;
 	float x, y, z;
+	float time;
+};
+
+struct SC_TIME_SYNC_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float curtime;
 	float time;
 };
 

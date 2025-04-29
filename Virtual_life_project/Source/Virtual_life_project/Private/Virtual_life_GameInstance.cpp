@@ -534,6 +534,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_SETUP_PACKET));
 
 			enter_time = p.time;
+			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
 			break;
 		}
 		}

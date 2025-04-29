@@ -26,7 +26,7 @@ void URoomPlayWidget::OnEnterBuildModeClicked()
 
 void URoomPlayWidget::OnQuitClicked()
 {
-	UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
+	
 	UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
 	if (my_instance)
 	{
