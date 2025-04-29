@@ -533,7 +533,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		case SC_ROOM_LEAVE:
 		{
 			SC_ROOM_LEAVE_PACKET p;
-			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_SETUP_PACKET));
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_LEAVE_PACKET));
 
 			enter_time = p.time;
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
