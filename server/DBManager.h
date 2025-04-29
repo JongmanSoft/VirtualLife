@@ -25,8 +25,10 @@ public:
     static bool LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData);
 
     // Room
-    static void SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects);
+    static void SaveRoomObjects(const std::string& userID, const Object& objects);
+    static void UpdateRoomObject(const std::string& userID, float oldX, float oldY, float oldZ, float newX, float newY, float newZ, float newYaw);
     static bool LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects);
+    static void DeleteRoomObject(const std::string& userID, float posX, float posY, float posZ);
 
 
 private:

@@ -404,27 +404,22 @@ bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned 
     }
 }
 
-void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects)
+void DBManager::SaveRoomObjects(const std::string& userID, const Object& object)
 {
     try {
         sql::Connection* conn = GetConnection();
-        if (!conn || objects.empty()) return;
+        if (!conn) return;
 
         std::ostringstream query;
         query << "INSERT INTO player_room (ID, ITEM_ID, POS_X, POS_Y, POS_Z, SCALE, YAW) VALUES ";
 
-        for (size_t i = 0; i < objects.size(); ++i) {
-            const Object& obj = objects[i];
             query << "('" << userID << "', "
-                << obj.item_id << ", "
-                << obj.x << ", "
-                << obj.y << ", "
-                << obj.z << ", "
-                << obj.scale << ", "
-                << obj.yaw << ")";
-            if (i < objects.size() - 1)
-                query << ", ";
-        }
+                << object.item_id << ", "
+                << object.x << ", "
+                << object.y << ", "
+                << object.z << ", "
+                << object.scale << ", "
+                << object.yaw << ")";
 
         query << " ON DUPLICATE KEY UPDATE "
             << "SCALE=VALUES(SCALE), YAW=VALUES(YAW)";
@@ -436,6 +431,47 @@ void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Obj
         std::cerr << "[DB Error - SaveRoomObjects(Bulk)] " << e.what() << std::endl;
     }
 }
+
+void DBManager::UpdateRoomObject(
+    const std::string& userID,
+    float oldX, float oldY, float oldZ,
+    float newX, float newY, float newZ,
+    float newYaw
+)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement(R"(
+                UPDATE player_room
+                SET POS_X = ?, POS_Y = ?, POS_Z = ?, YAW = ?
+                WHERE ID = ?
+                AND ABS(POS_X - ?) < 0.001
+                AND ABS(POS_Y - ?) < 0.001
+                AND ABS(POS_Z - ?) < 0.001
+            )"));
+
+        // SET 절 (새 위치와 새 YAW)
+        stmt->setDouble(1, newX);
+        stmt->setDouble(2, newY);
+        stmt->setDouble(3, newZ);
+        stmt->setDouble(4, newYaw);
+
+        // WHERE 절 (기존 값 비교)
+        stmt->setString(5, userID);
+        stmt->setDouble(6, oldX);
+        stmt->setDouble(7, oldY);
+        stmt->setDouble(8, oldZ);
+
+        stmt->executeUpdate();
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - UpdateRoomObjectPositionAndYaw] " << e.what() << std::endl;
+    }
+}
+
 
 bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects)
 {
@@ -473,5 +509,32 @@ bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& 
     catch (sql::SQLException& e) {
         std::cerr << "[DB Error - LoadRoomObjects] " << e.what() << std::endl;
         return false;
+    }
+}
+
+void DBManager::DeleteRoomObject(const std::string& userID, float posX, float posY, float posZ)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::unique_ptr<sql::PreparedStatement> stmt(
+            conn->prepareStatement(R"(
+                DELETE FROM player_room
+                WHERE ID = ?
+                AND ABS(POS_X - ?) < 0.001
+                AND ABS(POS_Y - ?) < 0.001
+                AND ABS(POS_Z - ?) < 0.001
+            )"));
+
+        stmt->setString(1, userID);
+        stmt->setDouble(2, posX);
+        stmt->setDouble(3, posY);
+        stmt->setDouble(4, posZ);
+
+        stmt->executeUpdate();
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - DeleteRoomObject] " << e.what() << std::endl;
     }
 }

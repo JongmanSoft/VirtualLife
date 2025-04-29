@@ -216,6 +216,7 @@ struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
 	PACKETID type;
 	bool success;
+	bool is_new;
 };
 
 struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
