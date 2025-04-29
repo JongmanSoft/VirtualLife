@@ -316,12 +316,12 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 
 void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
 {
-	BGMaudio = UGameplayStatics::SpawnSound2D(GetWorld(), BGMSoundCue,1,1,0.0,NULL,true,false);
+	if (nullptr != BGMaudio)BGMaudio = UGameplayStatics::SpawnSound2D(GetWorld(), BGMSoundCue,1,1,0.0,NULL,true,false);
 }
 
 void UVirtual_life_GameInstance::StopBGM()
 {
-	if(!BGMaudio)BGMaudio->SetActive(false);
+	if(nullptr != BGMaudio)BGMaudio->SetActive(false);
 }
 
 void UVirtual_life_GameInstance::ProcessRecvPackets()
