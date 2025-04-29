@@ -17,6 +17,7 @@
 #include "Custom_data.h"
 #include "Quest_Manager.h"
 #include "ObjectData.h"
+
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
@@ -181,6 +182,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	UQuest_Manager* m_quest;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "time")
+	float enter_time =0.0f;
 public:
 	
 	UPROPERTY()

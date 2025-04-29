@@ -23,12 +23,13 @@ void ATimeOfDayManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
+	//SGetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
 }
 
 void ATimeOfDayManager::IncrementTime()
 {
     Time = FMath::Fmod(Time + TimeStep, 24.0f);
+    UE_LOG(LogTemp, Log, TEXT("HI"));
 
     UpdateSun();
 
@@ -132,5 +133,10 @@ void ATimeOfDayManager::OnSunrise()
 
 void ATimeOfDayManager::OnSunset()
 {
+}
+
+void ATimeOfDayManager::StartTimer()
+{
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
 }
 

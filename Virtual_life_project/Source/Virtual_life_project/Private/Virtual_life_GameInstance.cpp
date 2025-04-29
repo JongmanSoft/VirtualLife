@@ -321,7 +321,7 @@ void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
 
 void UVirtual_life_GameInstance::StopBGM()
 {
-	BGMaudio->SetActive(false);
+	if(!BGMaudio)BGMaudio->SetActive(false);
 }
 
 void UVirtual_life_GameInstance::ProcessRecvPackets()
@@ -383,10 +383,13 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 					m_quest->ADD_QUEST(p.num[i]);
 			}
 
+			enter_time = p.time;
 
 			// 메인 맵으로 이동
 			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); 
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
+			StopBGM();
+
 			break;
 		}
 		case SC_SPAWN:

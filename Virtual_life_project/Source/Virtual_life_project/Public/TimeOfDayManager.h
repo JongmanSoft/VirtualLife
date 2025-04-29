@@ -49,4 +49,7 @@ protected:
 	// Sunrise/Sunset Ã³¸®
 	void OnSunrise();
 	void OnSunset();
+
+	UFUNCTION(BlueprintCallable)
+	void StartTimer();
 };
