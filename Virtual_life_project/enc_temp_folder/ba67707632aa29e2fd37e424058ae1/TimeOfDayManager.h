@@ -39,9 +39,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float TimeStep = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float  LocalReceiveTime = 0.0f;
-
 	// 현재 낮인지 밤인지
 	bool bIsDaytime = true;
 

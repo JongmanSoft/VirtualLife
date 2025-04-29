@@ -28,10 +28,7 @@ void ATimeOfDayManager::BeginPlay()
 
 void ATimeOfDayManager::IncrementTime()
 {
-    float Now = GetWorld()->GetRealTimeSeconds();
-    float Elapsed = Now - LocalReceiveTime;
-    float GameMinutesPassed = Elapsed * 0.1f; // ¹è¼Ó
-    Time = FMath::Fmod(Time + GameMinutesPassed, 24.0f);
+    Time = FMath::Fmod(Time + TimeStep, 24.0f);
 
     UpdateSun();
 
@@ -139,7 +136,6 @@ void ATimeOfDayManager::OnSunset()
 
 void ATimeOfDayManager::StartTimer()
 {
-    LocalReceiveTime = GetWorld()->GetRealTimeSeconds();
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
 }
 
