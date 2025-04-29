@@ -19,6 +19,7 @@
 #include "FBuildInfo.h"
 #include "Engine/DataTable.h"
 #include "PlaceBuildActor.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 
 void UVirtual_life_GameInstance::ConnectServer(FString addr)
@@ -361,7 +362,9 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				if (p.is_new == false)
 					SendEnterGamePacket();
 				else
+				{
 					UGameplayStatics::OpenLevel(this, FName("RealTitleMap"));
+				}
 			}
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
