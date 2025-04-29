@@ -83,7 +83,7 @@ public:
 
 	// network
 	UFUNCTION(BlueprintCallable)
-	void ConnectServer();
+	void ConnectServer(FString addr);
 
 	UFUNCTION(BlueprintCallable)
 	void DisconnectServer();

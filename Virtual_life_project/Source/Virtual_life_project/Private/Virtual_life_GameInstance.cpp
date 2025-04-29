@@ -21,14 +21,14 @@
 #include "PlaceBuildActor.h"
 
 
-void UVirtual_life_GameInstance::ConnectServer()
+void UVirtual_life_GameInstance::ConnectServer(FString addr)
 {
 	// 소켓 생성
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("Client Socket"));
 
 	// ip주소 넘겨주기.
 	FIPv4Address Ip;
-	FIPv4Address::Parse(IpAddress, Ip);
+	FIPv4Address::Parse(addr, Ip);
 
 	TSharedRef<FInternetAddr> InternetAddr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateInternetAddr();
 	InternetAddr->SetIp(Ip.Value);
@@ -574,7 +574,7 @@ void UVirtual_life_GameInstance::OnStart()
 	
 	
 
-	ConnectServer();
+	//ConnectServer();
 }
 
 void UVirtual_life_GameInstance::EnterMyRoom()
