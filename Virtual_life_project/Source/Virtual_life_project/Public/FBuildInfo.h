@@ -39,4 +39,7 @@ struct FBuildInfo : public FTableRowBase
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UStaticMesh* Mesh;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsWall = false; // 벽인지 아닌지
 };
