@@ -37,9 +37,6 @@ void UBuildingHUBWidget::BindTabButtons()
     if (DecorTab_BTN)
         DecorTab_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnDecorTabClicked);
 
-    if (StructureTab_BTN)
-        StructureTab_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnStructureTabClicked);
-
     if (Confirm_BTN)
         Confirm_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnConfirmClicked);
 }
@@ -58,7 +55,7 @@ void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
             UBuildingSelectButtonWidget* Button = CreateWidget<UBuildingSelectButtonWidget>(this, ButtonWidgetClass);
             if (Button)
             {
-                Button->SetRowData(BuildingDataTable, RowName);
+                Button->SetRowData(BuildingDataTable, RowName); // 커스텀 함수 필요
                 WrapBox_Buildings->AddChild(Button);
             }
         }
@@ -93,11 +90,6 @@ void UBuildingHUBWidget::OnInteriorDecorTabClicked()
 void UBuildingHUBWidget::OnDecorTabClicked()
 {
     OnCategorySelected(EBuildCategories::Decor);
-}
-
-void UBuildingHUBWidget::OnStructureTabClicked()
-{
-    OnCategorySelected(EBuildCategories::Structure);
 }
 
 void UBuildingHUBWidget::OnConfirmClicked()

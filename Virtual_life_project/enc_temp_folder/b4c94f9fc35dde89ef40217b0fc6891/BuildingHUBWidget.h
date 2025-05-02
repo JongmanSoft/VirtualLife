@@ -60,9 +60,6 @@ protected:
     UButton* DecorTab_BTN;
 
     UPROPERTY(meta = (BindWidget))
-    UButton* StructureTab_BTN;
-
-    UPROPERTY(meta = (BindWidget))
     UButton* Confirm_BTN;
 
     UPROPERTY(meta = (BindWidget))
@@ -88,9 +85,6 @@ private:
 
     UFUNCTION()
     void OnDecorTabClicked();
-
-    UFUNCTION()
-    void OnStructureTabClicked();
 
     UFUNCTION()
     void OnConfirmClicked();
