@@ -14,7 +14,8 @@ enum class EBuildCategories : uint8
     Kitchen,
     Storage,
     InteriorDecor,
-    Decor
+    Decor,
+    Structure
 };
 
 USTRUCT(BlueprintType)
