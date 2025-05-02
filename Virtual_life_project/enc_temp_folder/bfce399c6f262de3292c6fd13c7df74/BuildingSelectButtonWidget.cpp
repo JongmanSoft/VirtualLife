@@ -7,7 +7,6 @@
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "PlacementActor.h"
-#include "WallPlacementActor.h"
 
 void UBuildingSelectButtonWidget::NativePreConstruct()
 {
@@ -71,33 +70,17 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     }
 
     UWorld* World = GetWorld();
-    if (!World) return;
 
-    APlacementActor* Spawned = nullptr;
-
-    // UE_LOG(LogTemp, Warning, TEXT("bIsWall: % s"), Info->bIsWall ? TEXT("true") : TEXT("false"));
-    // UE_LOG(LogTemp, Warning, TEXT("WallPlacementActorClass is valid: %s"), WallPlacementActorClass ? TEXT("true") : TEXT("false"));
-
-    if (Info->bIsWall && WallPlacementActorClass)
+    if (World && PlacementActorClass)
     {
-        AWallPlacementActor* Wall = World->SpawnActor<AWallPlacementActor>(WallPlacementActorClass);
-        if (Wall)
+        APlacementActor* Spawned = World->SpawnActor<APlacementActor>(PlacementActorClass);
+        if (Spawned)
         {
-            // Wall->SetStartPoint(Wall->CachedMousePosition());
-            Spawned = Wall;
-            UE_LOG(LogTemp, Warning, TEXT("WallPlacementActorClass spawned"));
+            Spawned->SetMesh(Info->Mesh);
+            Spawned->SetPrice(Info->Price);
+            Spawned->SetRowID(RowName);
+            UE_LOG(LogTemp, Warning, TEXT("Spawned: %s"), *GetNameSafe(Spawned));
         }
-    }
-    else if (PlacementActorClass)
-    {
-        Spawned = World->SpawnActor<APlacementActor>(PlacementActorClass);
-    }
-
-    if (Spawned)
-    {
-        Spawned->SetMesh(Info->Mesh);
-        Spawned->SetPrice(Info->Price);
-        Spawned->SetRowID(RowName);
     }
 }
 

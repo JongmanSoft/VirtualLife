@@ -11,14 +11,24 @@ void AWallPlacementActor::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PC) return;
+
     if (!bHasStart)
     {
-        StartPoint = MousePosition();
-        SetActorLocation(StartPoint);
+        if (PC->WasInputKeyJustPressed(EKeys::LeftMouseButton))
+        {
+            SetStartPoint(CachedMousePosition());
+            UE_LOG(LogTemp, Warning, TEXT("Start Pos : % s"), *StartPoint.ToString());
+        }
+        else
+        {
+            SetActorLocation(CachedMousePosition());
+        }
         return;
     }
 
-    FVector EndPoint = MousePosition();
+    FVector EndPoint = CachedMousePosition();
     UpdateWallPreview(EndPoint);
 }
 
@@ -30,23 +40,60 @@ void AWallPlacementActor::SetStartPoint(const FVector& InStart)
 
 void AWallPlacementActor::UpdateWallPreview(const FVector& Current)
 {
-    FVector Direction = Current - StartPoint;
-    float Length = Direction.Size();
+    FVector RawDirection = Current - StartPoint;
 
-    FVector MidPoint = StartPoint + Direction * 0.5f;
+    // 거리 계산
+    float Length = RawDirection.Size();
+    if (Length < KINDA_SMALL_NUMBER)
+        return;
+
+    FVector Direction = FVector::ZeroVector;
+    if (FMath::Abs(RawDirection.X) > FMath::Abs(RawDirection.Y))
+    {
+        Direction = FVector(FMath::Sign(RawDirection.X), 0.0f, 0.0f);
+    }
+    else
+    {
+        Direction = FVector(0.0f, FMath::Sign(RawDirection.Y), 0.0f);
+    }
+
+    float SnappedLength = FVector::DotProduct(RawDirection, Direction);
+
     FRotator Rotation = Direction.Rotation();
-
-    SetActorLocation(MidPoint);
+    SetActorLocation(StartPoint);
     SetActorRotation(Rotation);
-    SetActorScale3D(FVector(Length / 100.f, 1.0f, 1.0f));
+
+    float ScaledLength = FMath::Abs(SnappedLength) / 100.f;
+    SetActorScale3D(FVector(ScaledLength, 1.0f, 1.0f));
 }
 
 void AWallPlacementActor::ConfirmWall()
 {
-    PlaceBuild();  // APlacementActor의 PlaceBuild 사용
+    PlaceBuild();
 }
 
 void AWallPlacementActor::CancelWall()
 {
-    Destroy(); // 임시 벽 제거
+    Destroy();
+}
+
+FVector AWallPlacementActor::CachedMousePosition()
+{
+    FVector WorldLoc, WorldDir;
+    APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (!PC) return GetActorLocation();
+
+    PC->DeprojectMousePositionToWorld(WorldLoc, WorldDir);
+    FVector End = WorldLoc + WorldDir * 20000;
+
+    FHitResult Hit;
+    FCollisionQueryParams Params;
+    Params.AddIgnoredActor(this);
+
+    if (GetWorld()->LineTraceSingleByChannel(Hit, WorldLoc, End, ECC_Visibility, Params))
+    {
+        return Hit.Location;
+    }
+
+    return GetActorLocation();
 }

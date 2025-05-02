@@ -9,7 +9,6 @@
 #include "BuildingSelectButtonWidget.generated.h"
 
 class APlacementActor;
-class AWallPlacementActor;
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
@@ -25,9 +24,6 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
     TSubclassOf<APlacementActor> PlacementActorClass;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-    TSubclassOf<AWallPlacementActor> WallPlacementActorClass;
 
 protected:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Data")

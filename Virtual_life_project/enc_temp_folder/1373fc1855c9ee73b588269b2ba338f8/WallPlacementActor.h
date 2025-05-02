@@ -27,7 +27,4 @@ public:
 private:
     FVector StartPoint;
     bool bHasStart = false;
-
-public:
-    FVector CachedMousePosition();
 };
