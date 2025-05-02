@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "PlaceBuildActor.h"
-#include "WallPlacementActor.h"
 #include "Virtual_life_GameInstance.h"
 #include "FloatingTextWidget.h"
 #include "EngineUtils.h"
@@ -120,63 +119,44 @@ void APlacementActor::PlaceBuild()
     FString Text = FString::Printf(TEXT("-%d"), BuildPrice);
     MyGI->ShowFloatingText(Text, FLinearColor::Yellow, GetActorLocation());
 
-    FTransform FinalTransform;
-    FVector FinalLocation;
-    float FinalYaw = 0.f;
-    float FinalScale = CurrentScale;
+    // 실제 배치
+    FVector Loc = GetActorLocation();
+    FRotator Rot(0.f, Rotate, 0.f);
 
-    if (IsA(AWallPlacementActor::StaticClass()))
+    FVector AdjustedLoc = Loc;
+    if (Mesh && Mesh->GetStaticMesh())
     {
-        FVector PreviewScale = GetActorScale3D();
-        float FinalLength = PreviewScale.X;
-
-        FinalTransform = FTransform(GetActorRotation(), GetActorLocation(), FVector(FinalLength, 1.0f, 1.0f));
-        FinalLocation = GetActorLocation();
-        FinalYaw = GetActorRotation().Yaw;
-        FinalScale = GetActorScale3D().X;
-    }
-    else
-    {
-        FVector Loc = GetActorLocation();
-        FRotator Rot(0.f, Rotate, 0.f);
-
-        FVector AdjustedLoc = Loc;
-        if (Mesh && Mesh->GetStaticMesh())
-        {
-            FVector Origin, BoxExtent;
-            Mesh->GetLocalBounds(Origin, BoxExtent);
-            AdjustedLoc.Z -= Origin.Z;
-        }
-
-        FinalTransform = FTransform(Rot, AdjustedLoc, FVector(CurrentScale));
-        FinalLocation = AdjustedLoc;
-        FinalYaw = Rot.Yaw;
-        FinalScale = CurrentScale;
+        FVector Origin, BoxExtent;
+        Mesh->GetLocalBounds(Origin, BoxExtent);
+        AdjustedLoc.Z -= Origin.Z;
     }
 
+    FTransform FinalTransform(Rot, AdjustedLoc, FVector(CurrentScale));
     APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
     if (Placed && Mesh)
     {
         Placed->SetMesh(Mesh->GetStaticMesh());
-        bool bZOnly = IsA(AWallPlacementActor::StaticClass());
-        Placed->SetScale(FinalScale, bZOnly);
+        Placed->SetScale(CurrentScale);
         Placed->SetRowID(RowID);
-
-        uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
-        auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-        if (PC)
+        if (MyGI)
         {
-            FObjectData NewData;
-            NewData.ItemID = ItemID;
-            NewData.Location = FinalLocation;
-            NewData.Yaw = FinalYaw;
-            NewData.Scale = FinalScale;
+            uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
 
-            PC->AddPendingBuild(NewData);
+            // 컨트롤러에 저장
+            auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+            if (PC)
+            {
+                FObjectData NewData;
+                NewData.ItemID = ItemID;
+                NewData.Location = Loc;
+                NewData.Yaw = Rot.Yaw;
+                NewData.Scale = CurrentScale;
+                PC->AddPendingBuild(NewData);
+            }
         }
     }
 
-    Destroy();
+    Destroy(); // 제거
 }
 
 void APlacementActor::AddRotation(float Delta)

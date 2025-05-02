@@ -21,7 +21,10 @@ public:
     void SetStartPoint(const FVector& InStart);
     void UpdateWallPreview(const FVector& Current);
 
+    UFUNCTION(BlueprintCallable)
+
     void ConfirmWall(); // 최종 벽 생성
+
     void CancelWall(); // 임시 벽 삭제
 
 private:

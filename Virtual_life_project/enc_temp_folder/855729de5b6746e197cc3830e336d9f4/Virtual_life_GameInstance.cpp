@@ -690,14 +690,7 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		{
 			Spawned->SetMesh(Info->Mesh);
 			Spawned->SetRowID(FBuildItemRegistry::ItemIDToFName(obj.item_id));
-			if (Info->bIsWall)
-			{
-				Spawned->SetScale(obj.scale, true);
-			}
-			else
-			{
-				Spawned->SetScale(obj.scale);
-			}
+			Spawned->SetScale(obj.scale);
 			SpawnedCount++;
 		}
 		else

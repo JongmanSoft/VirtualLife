@@ -30,6 +30,12 @@ void AWallPlacementActor::Tick(float DeltaTime)
 
     FVector EndPoint = CachedMousePosition();
     UpdateWallPreview(EndPoint);
+
+    if (PC->WasInputKeyJustPressed(EKeys::LeftMouseButton))
+    {
+        CancelWall();
+        return;
+    }
 }
 
 void AWallPlacementActor::SetStartPoint(const FVector& InStart)
@@ -69,7 +75,10 @@ void AWallPlacementActor::UpdateWallPreview(const FVector& Current)
 
 void AWallPlacementActor::ConfirmWall()
 {
-    PlaceBuild();
+    if (bHasStart)
+    {
+        PlaceBuild();
+    }
 }
 
 void AWallPlacementActor::CancelWall()

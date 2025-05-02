@@ -32,14 +32,7 @@ void APlaceBuildActor::SetMesh(UStaticMesh* StaticMesh)
     }
 }
 
-void APlaceBuildActor::SetScale(float InScale, bool bZOnly)
+void APlaceBuildActor::SetScale(float InScale)
 {
-    if (bZOnly)
-    {
-        Mesh->SetWorldScale3D(FVector(InScale, 1.0f, 1.0f));
-    }
-    else
-    {
-        Mesh->SetWorldScale3D(FVector(InScale));
-    }
+    SetActorScale3D(FVector(InScale));
 }
