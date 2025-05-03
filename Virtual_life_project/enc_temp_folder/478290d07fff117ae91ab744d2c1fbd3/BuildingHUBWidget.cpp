@@ -42,30 +42,6 @@ void UBuildingHUBWidget::BindTabButtons()
 
     if (Confirm_BTN)
         Confirm_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnConfirmClicked);
-
-    if(MinjiTheme_BTN)
-        MinjiTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
-
-    if (SeyoungTheme_BTN)
-        SeyoungTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
-
-    if (HaenimTheme_BTN)
-        HaenimTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
-}
-
-void UBuildingHUBWidget::OnMJBTNClicked()
-{
-    // 민지 테마 불러오기
-}
-
-void UBuildingHUBWidget::OnSYBTNClicked()
-{
-    // 세영 테마 불러오기
-}
-
-void UBuildingHUBWidget::OnHNBTNClicked()
-{
-    // 해님 테마 불러오기
 }
 
 void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
