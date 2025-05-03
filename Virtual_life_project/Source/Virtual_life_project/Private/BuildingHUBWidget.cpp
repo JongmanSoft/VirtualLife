@@ -59,16 +59,19 @@ void UBuildingHUBWidget::BindTabButtons()
 void UBuildingHUBWidget::OnMJBTNClicked()
 {
     // 민지 테마 불러오기
+    LoadThemeFromJson(TEXT("MinjiTheme.json"));
 }
 
 void UBuildingHUBWidget::OnSYBTNClicked()
 {
     // 세영 테마 불러오기
+    LoadThemeFromJson(TEXT("SeyoungTheme.json"));
 }
 
 void UBuildingHUBWidget::OnHNBTNClicked()
 {
     // 해님 테마 불러오기
+    LoadThemeFromJson(TEXT("HaenimTheme.json"));
 }
 
 void UBuildingHUBWidget::OnSaveThemeClicked()
@@ -149,6 +152,57 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
     {
         UE_LOG(LogTemp, Error, TEXT("JSON 저장 실패!"));
     }
+}
+
+void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
+{
+    const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes / ");
+    const FString FullPath = Directory + FileName;
+
+    FString JsonRaw;
+    if (!FFileHelper::LoadFileToString(JsonRaw, *FullPath))
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot Load Theme File : %s"), *FullPath);
+        return;
+    }
+
+    TSharedPtr<FJsonObject> RootObject;
+    const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonRaw);
+
+    if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+    {
+        UE_LOG(LogTemp, Error, TEXT("JSON 파싱 실패: %s"), *FullPath);
+        return;
+    }
+
+    const TArray<TSharedPtr<FJsonValue>>* ObjectArray;
+    if (!RootObject->TryGetArrayField(TEXT("BuildObjects"), ObjectArray)) return;
+
+    TArray<FObjectData> LoadedObjects;
+
+    for (const auto& Value : *ObjectArray)
+    {
+        const TSharedPtr<FJsonObject> Obj = Value->AsObject();
+        if (!Obj.IsValid()) continue;
+
+        FObjectData Data;
+        Data.ItemID = Obj->GetIntegerField(TEXT("item_id"));
+        Data.Location.X = Obj->GetNumberField(TEXT("x"));
+        Data.Location.Y = Obj->GetNumberField(TEXT("y"));
+        Data.Location.Z = Obj->GetNumberField(TEXT("z"));
+        Data.Yaw = Obj->GetNumberField(TEXT("yaw"));
+        Data.Scale = Obj->GetNumberField(TEXT("scale"));
+
+        LoadedObjects.Add(Data);
+    }
+
+    // 서버로 전송
+    if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
+    {
+        GI->SendPlaceBuildPacket(LoadedObjects);
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("총 %d개의 오브젝트를 JSON에서 불러왔습니다."), LoadedObjects.Num());
 }
 
 void UBuildingHUBWidget::OnFurnitureTabClicked()

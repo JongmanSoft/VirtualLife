@@ -54,6 +54,7 @@ protected:
     UButton* SaveTheme_BTN;
 
     void ExportCurrentThemeToJson(const FString& FileName);
+    void LoadThemeFromJson(const FString& FileName);
 
     // ¸Þ´º ÅÇµé
     UPROPERTY(meta = (BindWidget))
