@@ -42,6 +42,46 @@ void UBuildingHUBWidget::BindTabButtons()
 
     if (Confirm_BTN)
         Confirm_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnConfirmClicked);
+
+    if(MinjiTheme_BTN)
+        MinjiTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
+
+    if (SeyoungTheme_BTN)
+        SeyoungTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnSYBTNClicked);
+
+    if (HaenimTheme_BTN)
+        HaenimTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnHNBTNClicked);
+
+    if (SaveTheme_BTN)
+        SaveTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnSaveThemeClicked);
+}
+
+void UBuildingHUBWidget::OnMJBTNClicked()
+{
+    // 민지 테마 불러오기
+    LoadThemeFromJson(TEXT("MinjiTheme.json"));
+}
+
+void UBuildingHUBWidget::OnSYBTNClicked()
+{
+    // 세영 테마 불러오기
+    LoadThemeFromJson(TEXT("SeyoungTheme.json"));
+}
+
+void UBuildingHUBWidget::OnHNBTNClicked()
+{
+    // 해님 테마 불러오기
+    LoadThemeFromJson(TEXT("HaenimTheme.json"));
+}
+
+void UBuildingHUBWidget::OnSaveThemeClicked()
+{
+    if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
+    {
+        const FString CharacterName = GI->GetName();
+        const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
+        ExportCurrentThemeToJson(FileName);
+    }
 }
 
 void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
@@ -63,6 +103,106 @@ void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
             }
         }
     }
+}
+
+void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(World, APlaceBuildActor::StaticClass(), FoundActors);
+
+    TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+    for (AActor* Actor : FoundActors)
+    {
+        APlaceBuildActor* Build = Cast<APlaceBuildActor>(Actor);
+        if (!Build) continue;
+
+        TSharedPtr<FJsonObject> JsonObj = MakeShareable(new FJsonObject);
+
+        FName ID = Build->GetRowID();
+        JsonObj->SetStringField("item_id", ID.ToString());
+
+        FVector Loc = Build->GetActorLocation();
+        JsonObj->SetNumberField("x", Loc.X);
+        JsonObj->SetNumberField("y", Loc.Y);
+        JsonObj->SetNumberField("z", Loc.Z);
+
+        JsonObj->SetNumberField("yaw", Build->GetActorRotation().Yaw);
+
+        JsonObj->SetNumberField("scale", Build->GetActorScale3D().X);
+
+        JsonArray.Add(MakeShareable(new FJsonValueObject(JsonObj)));
+    }
+
+    FString OutputString;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+    FJsonSerializer::Serialize(JsonArray, Writer);
+
+    FString SavePath = FPaths::ProjectSavedDir() + "Themes/" + FileName;
+    FPlatformFileManager::Get().GetPlatformFile().CreateDirectoryTree(*FPaths::GetPath(SavePath)); // 폴더 미리 생성
+
+    if (FFileHelper::SaveStringToFile(OutputString, *SavePath))
+    {
+        UE_LOG(LogTemp, Log, TEXT("JSON 저장 완료: %s"), *SavePath);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("JSON 저장 실패!"));
+    }
+}
+
+void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
+{
+    const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes / ");
+    const FString FullPath = Directory + FileName;
+
+    FString JsonRaw;
+    if (!FFileHelper::LoadFileToString(JsonRaw, *FullPath))
+    {
+        UE_LOG(LogTemp, Error, TEXT("Cannot Load Theme File : %s"), *FullPath);
+        return;
+    }
+
+    TSharedPtr<FJsonObject> RootObject;
+    const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonRaw);
+
+    if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+    {
+        UE_LOG(LogTemp, Error, TEXT("JSON 파싱 실패: %s"), *FullPath);
+        return;
+    }
+
+    const TArray<TSharedPtr<FJsonValue>>* ObjectArray;
+    if (!RootObject->TryGetArrayField(TEXT("BuildObjects"), ObjectArray)) return;
+
+    TArray<FObjectData> LoadedObjects;
+
+    for (const auto& Value : *ObjectArray)
+    {
+        const TSharedPtr<FJsonObject> Obj = Value->AsObject();
+        if (!Obj.IsValid()) continue;
+
+        FObjectData Data;
+        Data.ItemID = Obj->GetIntegerField(TEXT("item_id"));
+        Data.Location.X = Obj->GetNumberField(TEXT("x"));
+        Data.Location.Y = Obj->GetNumberField(TEXT("y"));
+        Data.Location.Z = Obj->GetNumberField(TEXT("z"));
+        Data.Yaw = Obj->GetNumberField(TEXT("yaw"));
+        Data.Scale = Obj->GetNumberField(TEXT("scale"));
+
+        LoadedObjects.Add(Data);
+    }
+
+    // 서버로 전송
+    if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
+    {
+        GI->SendPlaceBuildPacket(LoadedObjects);
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("총 %d개의 오브젝트를 JSON에서 불러왔습니다."), LoadedObjects.Num());
 }
 
 void UBuildingHUBWidget::OnFurnitureTabClicked()

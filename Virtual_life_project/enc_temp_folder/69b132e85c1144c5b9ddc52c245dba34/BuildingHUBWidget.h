@@ -40,22 +40,6 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UWrapBox* WrapBox_Buildings;
 
-    // 우리 테마 버튼
-    UPROPERTY(meta = (BindWidget))
-    UButton* MinjiTheme_BTN;
-
-    UPROPERTY(meta = (BindWidget))
-    UButton* SeyoungTheme_BTN;
-
-    UPROPERTY(meta = (BindWidget))
-    UButton* HaenimTheme_BTN;
-
-    UPROPERTY(meta = (BindWidget))
-    UButton* SaveTheme_BTN;
-
-    void ExportCurrentThemeToJson(const FString& FileName);
-    void LoadThemeFromJson(const FString& FileName);
-
     // 메뉴 탭들
     UPROPERTY(meta = (BindWidget))
     UButton* FurnitureTab_BTN;
@@ -86,18 +70,6 @@ protected:
 
 private:
     void BindTabButtons();
-
-    UFUNCTION()
-    void OnMJBTNClicked();
-
-    UFUNCTION()
-    void OnSYBTNClicked();
-
-    UFUNCTION()
-    void OnHNBTNClicked();
-
-    UFUNCTION()
-    void OnSaveThemeClicked();
 
     UFUNCTION()
     void OnFurnitureTabClicked();
