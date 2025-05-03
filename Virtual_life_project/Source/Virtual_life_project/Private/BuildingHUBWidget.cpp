@@ -47,10 +47,13 @@ void UBuildingHUBWidget::BindTabButtons()
         MinjiTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
 
     if (SeyoungTheme_BTN)
-        SeyoungTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
+        SeyoungTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnSYBTNClicked);
 
     if (HaenimTheme_BTN)
-        HaenimTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnMJBTNClicked);
+        HaenimTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnHNBTNClicked);
+
+    if (SaveTheme_BTN)
+        SaveTheme_BTN->OnClicked.AddDynamic(this, &UBuildingHUBWidget::OnSaveThemeClicked);
 }
 
 void UBuildingHUBWidget::OnMJBTNClicked()
@@ -66,6 +69,16 @@ void UBuildingHUBWidget::OnSYBTNClicked()
 void UBuildingHUBWidget::OnHNBTNClicked()
 {
     // 해님 테마 불러오기
+}
+
+void UBuildingHUBWidget::OnSaveThemeClicked()
+{
+    if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
+    {
+        const FString CharacterName = GI->GetName();
+        const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
+        ExportCurrentThemeToJson(FileName);
+    }
 }
 
 void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
@@ -86,6 +99,55 @@ void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
                 WrapBox_Buildings->AddChild(Button);
             }
         }
+    }
+}
+
+void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(World, APlaceBuildActor::StaticClass(), FoundActors);
+
+    TArray<TSharedPtr<FJsonValue>> JsonArray;
+
+    for (AActor* Actor : FoundActors)
+    {
+        APlaceBuildActor* Build = Cast<APlaceBuildActor>(Actor);
+        if (!Build) continue;
+
+        TSharedPtr<FJsonObject> JsonObj = MakeShareable(new FJsonObject);
+
+        FName ID = Build->GetRowID();
+        JsonObj->SetStringField("item_id", ID.ToString());
+
+        FVector Loc = Build->GetActorLocation();
+        JsonObj->SetNumberField("x", Loc.X);
+        JsonObj->SetNumberField("y", Loc.Y);
+        JsonObj->SetNumberField("z", Loc.Z);
+
+        JsonObj->SetNumberField("yaw", Build->GetActorRotation().Yaw);
+
+        JsonObj->SetNumberField("scale", Build->GetActorScale3D().X);
+
+        JsonArray.Add(MakeShareable(new FJsonValueObject(JsonObj)));
+    }
+
+    FString OutputString;
+    TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
+    FJsonSerializer::Serialize(JsonArray, Writer);
+
+    FString SavePath = FPaths::ProjectSavedDir() + "Themes/" + FileName;
+    FPlatformFileManager::Get().GetPlatformFile().CreateDirectoryTree(*FPaths::GetPath(SavePath)); // 폴더 미리 생성
+
+    if (FFileHelper::SaveStringToFile(OutputString, *SavePath))
+    {
+        UE_LOG(LogTemp, Log, TEXT("JSON 저장 완료: %s"), *SavePath);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("JSON 저장 실패!"));
     }
 }
 

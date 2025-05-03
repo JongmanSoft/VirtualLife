@@ -49,6 +49,12 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     UButton* HaenimTheme_BTN;
+
+    UPROPERTY(meta = (BindWidget))
+    UButton* SaveTheme_BTN;
+
+    void ExportCurrentThemeToJson(const FString& FileName);
+
     // ¸Þ´º ÅÇµé
     UPROPERTY(meta = (BindWidget))
     UButton* FurnitureTab_BTN;
@@ -88,6 +94,9 @@ private:
 
     UFUNCTION()
     void OnHNBTNClicked();
+
+    UFUNCTION()
+    void OnSaveThemeClicked();
 
     UFUNCTION()
     void OnFurnitureTabClicked();
