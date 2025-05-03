@@ -254,9 +254,9 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	eye_scale = FMath::RandRange(0.0, 1.0);
 	pupil_scale = FMath::RandRange(0.0, 1.0);
 	hair = FMath::RandRange(0,2);;
-	hair_color_R =  0.0;
-	hair_color_G = 0.0;
-	hair_color_B = 0.0;
+	hair_color_R = FMath::RandRange(0.0, 1.0);
+	hair_color_G = FMath::RandRange(0.0, 1.0);
+	hair_color_B = FMath::RandRange(0.0, 1.0);
 	eye_width = FMath::RandRange(0.0, 1.0);
 	eye_thick = FMath::RandRange(0.0, 1.0);
 	eye_slope = FMath::RandRange(0.0, 1.0);

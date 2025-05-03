@@ -26,7 +26,7 @@ public:
 public:
 	//매핑정보
 	//상의
-	FString torso_str[3] = {"Shirt","Tshirt","Overlap_onepiece"};
+	FString torso_str[3] = {"Shirt","Tshirt","NULL"};
 	//하의
 	FString pants_str[2] = { "short_pants","long_pants" };
 	//신발
@@ -118,6 +118,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "update")
 	void apply_actor_custom();
 	
-
+	UFUNCTION(BlueprintCallable, Category = "update")
+	void random_custom();
 	
 };
