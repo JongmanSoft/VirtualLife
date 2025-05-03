@@ -26,7 +26,7 @@ public:
 public:
 	//매핑정보
 	//상의
-	FString torso_str[2] = {"Shirt","Tshirt"};
+	FString torso_str[3] = {"Shirt","Tshirt","Overlap_onepiece"};
 	//하의
 	FString pants_str[2] = { "short_pants","long_pants" };
 	//신발
