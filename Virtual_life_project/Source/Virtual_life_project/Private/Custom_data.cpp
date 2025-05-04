@@ -32,4 +32,7 @@ UCustom_data::UCustom_data()
 	jaw = 0;
 	heavy = 0;
 	face_width = 0;
+
+	eyebrows = 0;
+	eyelashs = 0;
 }

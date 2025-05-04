@@ -35,6 +35,8 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 	jaw=0;
 	heavy=0;
 	face_width=0;
+	eyebrows = 0;
+	eyelashs = 0;
 
 }
 
@@ -110,7 +112,8 @@ void Um_CustomizableSkeletalComponent::custom_export(UCustom_data* cus)
 	cus->jaw =  jaw;
 	cus->heavy =heavy;
 	cus->face_width = face_width;
-
+	cus->eyebrows = eyebrows;
+	cus->eyelashs = eyelashs;
 }
 
 void Um_CustomizableSkeletalComponent::generated_custom(const UCustom_data* cus)
@@ -141,6 +144,8 @@ void Um_CustomizableSkeletalComponent::generated_custom(const UCustom_data* cus)
 	jaw = cus->jaw;
 	heavy = cus->heavy;
 	face_width = cus->face_width;
+	eyebrows = cus->eyebrows;
+	eyelashs = cus->eyelashs;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
@@ -172,6 +177,9 @@ void Um_CustomizableSkeletalComponent::custom_data_update(const Customizing cus)
 	jaw = cus.jaw;
 	heavy = cus.heavy;
 	face_width = cus.face_width;
+
+	eyebrows = cus.eyebrows;
+	eyelashs = cus.eyelashs;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
@@ -194,24 +202,52 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	// hair change
 	// 오너 액터 가져오기
 	AActor * OwnerActor = GetOwner();
-	UGroomComponent* owner_hair = Cast<UGroomComponent>(OwnerActor->FindComponentByTag(UGroomComponent::StaticClass(), FName("HAIR")));
-	if (owner_hair) {
-		TCHAR groom_asset_file[3][100]
-			= { TEXT("/Game/MetaHumans/woman/FemaleHair/Hair/Hair_M_BobMessy.Hair_M_BobMessy")
-			,TEXT("/Game/MetaHumans/man/FemaleHair/Hair/Hair_S_Pixie.Hair_S_Pixie"),
-			TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual")
-		};
-		TCHAR groom_binding_asset_file[3][100]
-			= { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
-			,TEXT("/Game/MetaHumans/man/FemaleHair/GroomBinding/Hair_S_Pixie_Binding.Hair_S_Pixie_Binding")
-			,TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
-		};
-		
+	//groom seting 구간
+	{
+		UGroomComponent* owner_hair = Cast<UGroomComponent>(OwnerActor->FindComponentByTag(UGroomComponent::StaticClass(), FName("HAIR")));
+		if (owner_hair) {
+			TCHAR groom_asset_file[5][100]
+				= { TEXT("/Game/MetaHumans/woman/FemaleHair/Hair/Hair_M_BobMessy.Hair_M_BobMessy")
+				,TEXT("/Game/MetaHumans/man/FemaleHair/Hair/Hair_S_Pixie.Hair_S_Pixie"),
+				TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual"),
+				TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Hair_M_BobCurly.Hair_M_BobCurly"),
+				TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Hair_M_BobBangs.Hair_M_BobBangs")
+			};
+			TCHAR groom_binding_asset_file[5][150]
+				= { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
+				,TEXT("/Game/MetaHumans/man/FemaleHair/GroomBinding/Hair_S_Pixie_Binding.Hair_S_Pixie_Binding")
+				,TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding"),
+				TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobCurly_Binding.Hair_M_BobCurly_Binding"),
+				TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobBangs_Binding.Hair_M_BobBangs_Binding")
+			
+			};
 
-		auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[hair]);
-		owner_hair->SetGroomAsset(a);
-		owner_hair->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[hair]));
+
+			auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[hair]);
+			owner_hair->SetGroomAsset(a);
+			owner_hair->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[hair]));
+		}
+		UGroomComponent* owner_brows = Cast<UGroomComponent>(OwnerActor->FindComponentByTag(UGroomComponent::StaticClass(), FName("EYEBROW")));
+		if (owner_brows) {
+			TCHAR groom_asset_file[3][100]
+				= { TEXT("/Game/MetaHumans/woman/FemaleHair/Hair/Eyebrows_S_Shaded.Eyebrows_S_Shaded")
+				,TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Eyebrows_L_Shaded.Eyebrows_L_Shaded"),
+				TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/Hair/Eyebrows_S_FlatThin.Eyebrows_S_FlatThin")
+			};
+			TCHAR groom_binding_asset_file[3][150]
+				= { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Eyebrows_S_Shaded_Binding.Eyebrows_S_Shaded_Binding")
+				,TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Eyebrows_L_Shaded_Binding.Eyebrows_L_Shaded_Binding")
+				,TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/GroomBinding/Eyebrows_S_FlatThin_Binding.Eyebrows_S_FlatThin_Binding")
+			};
+
+
+			auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[eyebrows]);
+			owner_brows->SetGroomAsset(a);
+			owner_brows->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[eyebrows]));
+		}
+		
 	}
+
 
 	// hair color change
 	if (MI_hair)
@@ -253,7 +289,7 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	L_eye_color_sat =  FMath::RandRange(0.0, 1.0);
 	eye_scale = FMath::RandRange(0.0, 1.0);
 	pupil_scale = FMath::RandRange(0.0, 1.0);
-	hair = FMath::RandRange(0,2);;
+	hair = FMath::RandRange(0,2);
 	hair_color_R =  0.0;
 	hair_color_G = 0.0;
 	hair_color_B = 0.0;
@@ -269,5 +305,8 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	jaw = FMath::RandRange(0.0, 1.0);
 	heavy = FMath::RandRange(0.0, 1.0);
 	face_width = FMath::RandRange(0.0, 1.0);
+	eyebrows = FMath::RandRange(0, 2);
+	eyelashs = FMath::RandRange(0, 1);
+
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }

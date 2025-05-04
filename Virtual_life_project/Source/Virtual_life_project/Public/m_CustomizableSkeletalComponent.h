@@ -71,6 +71,12 @@ public:
 	UMaterialInstanceDynamic* MI_hair = nullptr;
 
 
+	//ºê·Î¿ì, ¸¶½ºÄ«¶ó
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EYEgroomData")
+	uint8 eyebrows;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EYEgroomData")
+	uint8 eyelashs;
+
 	//¾ó±¼ Ä¿½ºÅÒ
 //´«
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EyeData")
