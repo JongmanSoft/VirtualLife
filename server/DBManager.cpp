@@ -122,6 +122,8 @@ bool DBManager::LoadCustomizing(const std::string& userID, Customizing& outData)
         outData.jaw = static_cast<float>(res->getDouble("JAW"));
         outData.heavy = static_cast<float>(res->getDouble("HEAVY"));
         outData.face_width = static_cast<float>(res->getDouble("FACE_WIDTH"));
+        outData.eyebrows = res->getUInt("EYEBROWS");
+        outData.glasses = res->getUInt("GLASSES");
 
         return true;
     }
@@ -160,6 +162,8 @@ void DBManager::SaveDefCustomizing(const std::string& id)
     c.jaw = 0;
     c.heavy = 0;
     c.face_width = 0;
+    c.eyebrows = 0;
+    c.glasses = 0;
     SaveCustomizing(id, c);
 }
 
@@ -285,8 +289,8 @@ void DBManager::SaveCustomizing(const std::string& userID, const Customizing& da
             EYE_WIDTH, EYE_THICK, EYE_SLOPE,
             NOSE_WIDTH, NOSE_HEIGHT,
             MOUTH_WIDTH, MOUTH_THICK, MOUTH_SLOPE,
-            CHIN, JAW, HEAVY, FACE_WIDTH
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            CHIN, JAW, HEAVY, FACE_WIDTH, EYEBROWS, GLASSES
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
         ON DUPLICATE KEY UPDATE
             SKIN=VALUES(SKIN), SHIRT=VALUES(SHIRT), PANTS=VALUES(PANTS), SHOES=VALUES(SHOES),
             R_EYE_COLOR_HUE=VALUES(R_EYE_COLOR_HUE), R_EYE_COLOR_SAT=VALUES(R_EYE_COLOR_SAT),
@@ -297,7 +301,8 @@ void DBManager::SaveCustomizing(const std::string& userID, const Customizing& da
             EYE_WIDTH=VALUES(EYE_WIDTH), EYE_THICK=VALUES(EYE_THICK), EYE_SLOPE=VALUES(EYE_SLOPE),
             NOSE_WIDTH=VALUES(NOSE_WIDTH), NOSE_HEIGHT=VALUES(NOSE_HEIGHT),
             MOUTH_WIDTH=VALUES(MOUTH_WIDTH), MOUTH_THICK=VALUES(MOUTH_THICK), MOUTH_SLOPE=VALUES(MOUTH_SLOPE),
-            CHIN=VALUES(CHIN), JAW=VALUES(JAW), HEAVY=VALUES(HEAVY), FACE_WIDTH=VALUES(FACE_WIDTH)
+            CHIN=VALUES(CHIN), JAW=VALUES(JAW), HEAVY=VALUES(HEAVY), FACE_WIDTH=VALUES(FACE_WIDTH),
+            EYEBROWS=VALUES(EYEBROWS),GLASSES=VALUES(GLASSES)
     )"));
 
         int i = 1;
@@ -334,6 +339,9 @@ void DBManager::SaveCustomizing(const std::string& userID, const Customizing& da
         stmt->setDouble(i++, data.jaw);
         stmt->setDouble(i++, data.heavy);
         stmt->setDouble(i++, data.face_width);
+
+        stmt->setUInt(i++, data.eyebrows);
+        stmt->setUInt(i++, data.glasses);
 
         stmt->executeUpdate();
     }
