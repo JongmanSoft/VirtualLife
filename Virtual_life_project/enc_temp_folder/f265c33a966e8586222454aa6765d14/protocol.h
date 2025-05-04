@@ -69,7 +69,7 @@ struct Customizing
 	float face_width;
 	//아이브로우,마스카라
 	unsigned short eyebrows;
-	unsigned short glasses;
+	unsigned short eyelashs;
 };
 
 struct Object // 건축 오브젝트

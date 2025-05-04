@@ -293,7 +293,7 @@ void UVirtual_life_GameInstance::custom_data_update(UCustom_data* targer_data, C
 	targer_data->face_width = recv_cus.face_width;
 
 	targer_data->eyebrows = recv_cus.eyebrows;
-	targer_data->eyelashs = recv_cus.eyelashs;
+	targer_data->glasses = recv_cus.glasses;
 }
 
 void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, const UCustom_data* recv_cus)
@@ -327,7 +327,7 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 	targer_data.face_width =  recv_cus->face_width;
 
 	targer_data.eyebrows = recv_cus->eyebrows;
-	targer_data.eyelashs = recv_cus->eyelashs;
+	targer_data.glasses = recv_cus->glasses;
 }
 
 void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)

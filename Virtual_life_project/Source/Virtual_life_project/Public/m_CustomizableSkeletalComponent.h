@@ -75,7 +75,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EYEgroomData")
 	uint8 eyebrows;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EYEgroomData")
-	uint8 eyelashs;
+	uint8 glasses;
 
 	//¾ó±¼ Ä¿½ºÅÒ
 //´«

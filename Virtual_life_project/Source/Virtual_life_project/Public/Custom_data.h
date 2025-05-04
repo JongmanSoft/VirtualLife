@@ -57,5 +57,5 @@ public:
 
 	//아이브로우, 마스카라
 	unsigned short eyebrows;
-	unsigned short eyelashs;
+	unsigned short glasses;
 };

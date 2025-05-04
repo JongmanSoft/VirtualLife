@@ -36,7 +36,7 @@ Um_CustomizableSkeletalComponent::Um_CustomizableSkeletalComponent()
 	heavy=0;
 	face_width=0;
 	eyebrows = 0;
-	eyelashs = 0;
+	glasses = 0;
 
 }
 
@@ -113,7 +113,7 @@ void Um_CustomizableSkeletalComponent::custom_export(UCustom_data* cus)
 	cus->heavy =heavy;
 	cus->face_width = face_width;
 	cus->eyebrows = eyebrows;
-	cus->eyelashs = eyelashs;
+	cus->glasses = glasses;
 }
 
 void Um_CustomizableSkeletalComponent::generated_custom(const UCustom_data* cus)
@@ -145,7 +145,7 @@ void Um_CustomizableSkeletalComponent::generated_custom(const UCustom_data* cus)
 	heavy = cus->heavy;
 	face_width = cus->face_width;
 	eyebrows = cus->eyebrows;
-	eyelashs = cus->eyelashs;
+	glasses = cus->glasses;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
@@ -179,7 +179,7 @@ void Um_CustomizableSkeletalComponent::custom_data_update(const Customizing cus)
 	face_width = cus.face_width;
 
 	eyebrows = cus.eyebrows;
-	eyelashs = cus.eyelashs;
+	glasses = cus.glasses;
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }
 
@@ -249,6 +249,11 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 	}
 
 
+	UStaticMeshComponent* glasses_mesh = Cast<UStaticMeshComponent>(OwnerActor->FindComponentByTag(UStaticMeshComponent::StaticClass(), FName("GLASSES")));
+	if (glasses_mesh) {
+		glasses == 0 ? glasses_mesh->SetVisibility(false, false) : glasses_mesh->SetVisibility(true,false);
+	}
+
 	// hair color change
 	if (MI_hair)
 	{
@@ -280,16 +285,16 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 void Um_CustomizableSkeletalComponent::random_custom()
 {
 	skin = FMath::RandRange(0.0, 1.0);
-	shirt = 2;
-	pants = 1;
-	shoes = 0;
+	shirt = FMath::RandRange(0, 1);
+	pants = FMath::RandRange(0, 1);
+	shoes = FMath::RandRange(0, 1);
 	R_eye_color_hue =  FMath::RandRange(0.0, 1.0);
 	R_eye_color_sat =  FMath::RandRange(0.0, 1.0);
 	L_eye_color_hue =  FMath::RandRange(0.0, 1.0);
 	L_eye_color_sat =  FMath::RandRange(0.0, 1.0);
-	eye_scale = FMath::RandRange(0.0, 1.0);
-	pupil_scale = FMath::RandRange(0.0, 1.0);
-	hair = FMath::RandRange(0,2);
+	eye_scale = FMath::RandRange(0.2, 0.5);
+	pupil_scale = FMath::RandRange(0.7, 1.0);
+	hair = FMath::RandRange(0,4);
 	hair_color_R =  0.0;
 	hair_color_G = 0.0;
 	hair_color_B = 0.0;
@@ -303,10 +308,10 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	mouse_slope = FMath::RandRange(0.0, 1.0);
 	chin = FMath::RandRange(0.0, 1.0);
 	jaw = FMath::RandRange(0.0, 1.0);
-	heavy = FMath::RandRange(0.0, 1.0);
+	heavy = FMath::RandRange(0.0, 0.5);
 	face_width = FMath::RandRange(0.0, 1.0);
 	eyebrows = FMath::RandRange(0, 2);
-	eyelashs = FMath::RandRange(0, 1);
+	glasses = FMath::RandRange(0, 1);
 
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }

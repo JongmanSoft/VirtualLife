@@ -34,5 +34,5 @@ UCustom_data::UCustom_data()
 	face_width = 0;
 
 	eyebrows = 0;
-	eyelashs = 0;
+	glasses = 0;
 }
