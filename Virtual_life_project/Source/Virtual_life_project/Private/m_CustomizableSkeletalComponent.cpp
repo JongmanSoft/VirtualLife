@@ -216,7 +216,7 @@ void Um_CustomizableSkeletalComponent::apply_actor_custom()
 			TCHAR groom_binding_asset_file[5][150]
 				= { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
 				,TEXT("/Game/MetaHumans/man/FemaleHair/GroomBinding/Hair_S_Pixie_Binding.Hair_S_Pixie_Binding")
-				,TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding"),
+				,TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/GroomBinding/Hair_S_Casual_Binding.Hair_S_Casual_Binding"),
 				TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobCurly_Binding.Hair_M_BobCurly_Binding"),
 				TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobBangs_Binding.Hair_M_BobBangs_Binding")
 			
@@ -309,7 +309,7 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	chin = FMath::RandRange(0.0, 1.0);
 	jaw = FMath::RandRange(0.0, 1.0);
 	heavy = FMath::RandRange(0.0, 0.5);
-	face_width = FMath::RandRange(0.0, 1.0);
+	face_width = FMath::RandRange(-0.5, 0.5);
 	eyebrows = FMath::RandRange(0, 2);
 	glasses = FMath::RandRange(0, 1);
 

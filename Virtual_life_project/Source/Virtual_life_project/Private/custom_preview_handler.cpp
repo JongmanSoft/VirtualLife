@@ -250,7 +250,7 @@ void Ucustom_preview_handler::m_tick(float delta)
 
     }
     else{
-        _click_stack += 0.1 * delta;
+        _click_stack += 0.3 * delta;
         m_custom->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("Stack_click_time"), _click_stack, -1);
         float x_distance = FMath::Clamp(start_mouse_x - current_mouse_x, -30, 30) / 30.0;
         float y_distance = FMath::Clamp(start_mouse_y - current_mouse_y, -30, 30) / 30.0;
