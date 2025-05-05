@@ -313,8 +313,10 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
-		if(this->name == L"")
+		if (this->name == L"") {
 			this->name = p->name;
+
+		}
 		state = PLAYING;
 		send_enter_game_packet();
 		

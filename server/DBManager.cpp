@@ -180,7 +180,7 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
         std::unique_ptr<sql::PreparedStatement> stmt(
             conn->prepareStatement(R"(
                 INSERT INTO PLAYER_INFO (ID, NAME, POS_X, POS_Y, POS_Z, YAW, LAST_LOGIN, MONEY)
-                VALUES (?, ?, ?, ?, ?, ?, NOW())
+                VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)
                 ON DUPLICATE KEY UPDATE
                     NAME = VALUES(NAME),
                     POS_X = VALUES(POS_X),

@@ -19,6 +19,7 @@ public:
     static void SavePInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata, const std::string& name);
     static void SavePInfo(const std::string& userID, const PlayerInfo& data);
     static bool LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName);
+	static void SavePname(const std::string& userID, const std::wstring& name);
 
     // inventory
     static void SaveItem(const std::string& userID, int itemCode, int itemCount);
@@ -30,6 +31,7 @@ public:
     static bool LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects);
     static void DeleteRoomObject(const std::string& userID, float posX, float posY, float posZ);
 
+    
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;

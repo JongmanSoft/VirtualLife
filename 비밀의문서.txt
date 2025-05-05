@@ -1,9 +1,0 @@
-자꾸 까먹어서 적어놓음
-1. 게임 접속시: 이름 넣고 Login하면 connect to server 함수 호출하여 서버 접속.
-1-1. 클라 -> 서버로 Login Packet 전송.
-1-2. 서버에서 클라로 Login Packet 전송. (isNew 필드: 신규 유저인지 확인, Success 필드: 로그인 성공 여부)
-# todo: Success필드 확인하고 실패 시 안내메시지 등 띄워야 함.
-2. 신규유저라면: 커스터마이징 레벨로 이동
-# todo: 레벨 옮기는거 구현해야 함
-3. 기존유저라면: 클라에서 서버로 enter game packet 전송. 서버에서 클라로 enter game packet 전송하고 받으면 메인 레벨로 이동
-3-1. 여기서 메인 레벨의 레벨 블루프린트 begin play에 반드시!! GameInstance의 spawn어쩌구. 함수를 호출해야함!!!
