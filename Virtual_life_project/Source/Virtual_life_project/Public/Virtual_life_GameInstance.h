@@ -94,6 +94,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnCachedRoomObjects();
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnRoomObjectsFromData(const TArray<FObjectData>& ObjectList);
 
 	// network
 	UFUNCTION(BlueprintCallable)
