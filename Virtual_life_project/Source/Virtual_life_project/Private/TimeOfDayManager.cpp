@@ -42,8 +42,8 @@ void ATimeOfDayManager::IncrementTime()
         if (!bIsDaytime)
         {
             bIsDaytime = true;
-            OnSunrise();
-            NotifyListeners(true);
+            //OnSunrise();
+            //NotifyListeners(true);
         }
     }
     else
@@ -51,14 +51,15 @@ void ATimeOfDayManager::IncrementTime()
         if (bIsDaytime)
         {
             bIsDaytime = false;
-            OnSunset();
-            NotifyListeners(false);
+            //OnSunset();
+            //NotifyListeners(false);
         }
     }
 
     // 시간 계산
     int32 Hours = FMath::FloorToInt(Time);
-    int32 Minutes = FMath::FloorToInt(FMath::Fmod(Time * 60.0f, 60.0f));
+    // int32 Minutes = FMath::FloorToInt(FMath::Fmod(Time * 60.0f, 60.0f));
+    int32 Minutes = 0.0f;
 
     // 플레이어 컨트롤러 → VLController
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
