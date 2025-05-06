@@ -11,7 +11,7 @@ constexpr unsigned short MAX_BUILD_ITEM = 100;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 
-enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED };
+enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME };
 struct PlayerInfo
 {
 	unsigned int id;

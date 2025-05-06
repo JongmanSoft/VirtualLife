@@ -17,7 +17,7 @@ void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
 
 void workerThread(HANDLE iocp_hd)
 {
-    DBManager::Init();
+
 
     while (true)
     {
@@ -132,6 +132,8 @@ void check_evt(HANDLE iocp_hd)
 
 int main()
 {
+    DBManager::Init();
+
     // 서버 초기화
     initialize_server();
 
