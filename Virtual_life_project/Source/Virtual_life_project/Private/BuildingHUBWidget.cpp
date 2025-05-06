@@ -82,6 +82,8 @@ void UBuildingHUBWidget::OnSaveThemeClicked()
     //    const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
     //    ExportCurrentThemeToJson(FileName);
     //}
+    UE_LOG(LogTemp, Log, TEXT("JSON 버튼 클릭"));
+
     const FString FileName = TEXT("Theme.json");
     ExportCurrentThemeToJson(FileName);
 }
