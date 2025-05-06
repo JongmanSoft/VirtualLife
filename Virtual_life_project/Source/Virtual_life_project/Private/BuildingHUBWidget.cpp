@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "BuildingSelectButtonWidget.h"
 #include "Virtual_life_GameInstance.h"
+#include "BuildItemRegistry.h"
 
 
 void UBuildingHUBWidget::NativeConstruct()
@@ -82,7 +83,7 @@ void UBuildingHUBWidget::OnSaveThemeClicked()
     //    const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
     //    ExportCurrentThemeToJson(FileName);
     //}
-    UE_LOG(LogTemp, Log, TEXT("JSON 버튼 클릭"));
+    UE_LOG(LogTemp, Log, TEXT("JSON Button Clicked"));
 
     const FString FileName = TEXT("Theme.json");
     ExportCurrentThemeToJson(FileName);
@@ -112,7 +113,11 @@ void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)
 void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
 {
     UWorld* World = GetWorld();
-    if (!World) return;
+    if (!World) {
+        UE_LOG(LogTemp, Log, TEXT("JSON - No World"));
+
+        return;
+    }
 
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(World, APlaceBuildActor::StaticClass(), FoundActors);
@@ -126,8 +131,8 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
 
         TSharedPtr<FJsonObject> JsonObj = MakeShareable(new FJsonObject);
 
-        FName ID = Build->GetRowID();
-        JsonObj->SetStringField("item_id", ID.ToString());
+        FName RowName = Build->GetRowID();
+        JsonObj->SetStringField("item_id", RowName.ToString());
 
         FVector Loc = Build->GetActorLocation();
         JsonObj->SetNumberField("x", Loc.X);
@@ -150,17 +155,17 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
 
     if (FFileHelper::SaveStringToFile(OutputString, *SavePath))
     {
-        UE_LOG(LogTemp, Log, TEXT("JSON 저장 완료: %s"), *SavePath);
+        UE_LOG(LogTemp, Log, TEXT("JSON Saved Completed: %s"), *SavePath);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("JSON 저장 실패!"));
+        UE_LOG(LogTemp, Error, TEXT("JSON Saved Failed!"));
     }
 }
 
 void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
 {
-    const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes / ");
+    const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes/");
     const FString FullPath = Directory + FileName;
 
     FString JsonRaw;
@@ -170,27 +175,29 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
         return;
     }
 
-    TSharedPtr<FJsonObject> RootObject;
+    TArray<TSharedPtr<FJsonValue>> JsonArray;
     const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonRaw);
 
-    if (!FJsonSerializer::Deserialize(Reader, RootObject) || !RootObject.IsValid())
+    if (!FJsonSerializer::Deserialize(Reader, JsonArray))
     {
-        UE_LOG(LogTemp, Error, TEXT("JSON 파싱 실패: %s"), *FullPath);
+        UE_LOG(LogTemp, Error, TEXT("JSON Failed to parse array: %s"), *FullPath);
         return;
     }
 
-    const TArray<TSharedPtr<FJsonValue>>* ObjectArray;
-    if (!RootObject->TryGetArrayField(TEXT("BuildObjects"), ObjectArray)) return;
-
     TArray<FObjectData> LoadedObjects;
 
-    for (const auto& Value : *ObjectArray)
+    for (const TSharedPtr<FJsonValue>& Value : JsonArray)
     {
         const TSharedPtr<FJsonObject> Obj = Value->AsObject();
         if (!Obj.IsValid()) continue;
 
         FObjectData Data;
-        Data.ItemID = Obj->GetIntegerField(TEXT("item_id"));
+
+        FString RowNameStr = Obj->GetStringField(TEXT("item_id"));
+        FName RowName(*RowNameStr);
+        uint16 ID = FBuildItemRegistry::FNameToItemID(RowName);
+        Data.ItemID = RowName;
+
         Data.Location.X = Obj->GetNumberField(TEXT("x"));
         Data.Location.Y = Obj->GetNumberField(TEXT("y"));
         Data.Location.Z = Obj->GetNumberField(TEXT("z"));
@@ -200,13 +207,15 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
         LoadedObjects.Add(Data);
     }
 
-    // 서버로 전송
+    // 서버 전송 로직은 유지
+    
     if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
     {
         GI->SendPlaceBuildPacket(LoadedObjects);
     }
+    
 
-    UE_LOG(LogTemp, Log, TEXT("총 %d개의 오브젝트를 JSON에서 불러왔습니다."), LoadedObjects.Num());
+    UE_LOG(LogTemp, Log, TEXT("%d Object JSON Loaded."), LoadedObjects.Num());
 }
 
 void UBuildingHUBWidget::OnFurnitureTabClicked()
