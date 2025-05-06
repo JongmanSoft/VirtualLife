@@ -325,14 +325,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
 				players[i].send_spawn_packet(pinfo, custom);
 			}
 		}
 
 		// 나에게 기존유저 스폰
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
 				send_spawn_packet(players[i].pinfo, players[i].custom);
 			}
 		}
@@ -350,7 +350,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 채팅 브로드캐스트
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != id)
+			if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
 				players[i].send_chat_packet(p->name, p->msg);
 		}
         break;
@@ -368,7 +368,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 나간 플레이어 정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != id)
+			if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
 				players[i].send_despawn_packet(id);
 		}
 		
@@ -391,7 +391,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 위치정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and i != id) {
+			if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
 				players[i].send_move_packet(p->pl);
 			}
 		}
@@ -462,7 +462,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		
 		// 모든 플레이어에게 디스폰 보내기
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != pinfo.id)
+			if (players[i].state == PLAYING and i != pinfo.id and players[i].pinfo.st != HOME)
 				players[i].send_despawn_packet(pinfo.id);
 		}
 
@@ -516,14 +516,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
 				players[i].send_spawn_packet(pinfo, custom);
 			}
 		}
 
 		// 나에게 기존유저 스폰
 		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
 				send_spawn_packet(players[i].pinfo, players[i].custom);
 			}
 		}

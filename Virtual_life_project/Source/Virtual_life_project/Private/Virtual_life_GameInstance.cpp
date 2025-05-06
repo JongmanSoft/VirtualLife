@@ -503,6 +503,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
 			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
+			if (FoundPlayer == nullptr) break;
 			ACharacter* PlayerActor = FoundPlayer->character;
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
@@ -628,18 +629,25 @@ void UVirtual_life_GameInstance::OnStart()
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 	}
 	
-	
-
-	//ConnectServer();
 }
 
 void UVirtual_life_GameInstance::EnterMyRoom()
 {
+	// 초기화.
+	for (auto& Pair : OtherPlayers)
+	{
+		if (IsValid(Pair.Value.character))
+		{
+			Pair.Value.character->Destroy();
+		}
+	}
+	OtherPlayers.Empty();
+
+	loaded = false;
+
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);
 	p.type = CS_ROOM_ENTER;
-
-	loaded = false;
 
 	SendEnqueue(&p, p.size);
 
