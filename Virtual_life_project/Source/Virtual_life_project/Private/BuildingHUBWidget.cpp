@@ -76,12 +76,16 @@ void UBuildingHUBWidget::OnHNBTNClicked()
 
 void UBuildingHUBWidget::OnSaveThemeClicked()
 {
-    if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
-    {
-        const FString CharacterName = GI->GetName();
-        const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
-        ExportCurrentThemeToJson(FileName);
-    }
+    //if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
+    //{
+    //    const FString CharacterName = GI->GetName();
+    //    const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
+    //    ExportCurrentThemeToJson(FileName);
+    //}
+    UE_LOG(LogTemp, Log, TEXT("JSON 버튼 클릭"));
+
+    const FString FileName = TEXT("Theme.json");
+    ExportCurrentThemeToJson(FileName);
 }
 
 void UBuildingHUBWidget::OnCategorySelected(EBuildCategories Category)

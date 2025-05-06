@@ -59,7 +59,7 @@ void ATimeOfDayManager::IncrementTime()
     // 시간 계산
     int32 Hours = FMath::FloorToInt(Time);
     // int32 Minutes = FMath::FloorToInt(FMath::Fmod(Time * 60.0f, 60.0f));
-    int32 Minutes = 0.0f;
+    int32 Minutes = 0.0f; // 분 제거
 
     // 플레이어 컨트롤러 → VLController
     APlayerController* PC = GetWorld()->GetFirstPlayerController();

@@ -20,8 +20,8 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* NewStart_BTN; // 새로 시작하기
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
-	class UButton* Start_BTN; // 이어 하기
+	//UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
+	//class UButton* Start_BTN; // 이어 하기
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, Category = "UI")
 	class UButton* Quit_BTN; // 게임 종료
@@ -33,8 +33,8 @@ protected:
 	UFUNCTION()
 	void OnNewStartClicked();
 
-	UFUNCTION()
-	void OnStartClicked();
+	/*UFUNCTION()
+	void OnStartClicked();*/
 
 	UFUNCTION()
 	void OnQuitClicked();
