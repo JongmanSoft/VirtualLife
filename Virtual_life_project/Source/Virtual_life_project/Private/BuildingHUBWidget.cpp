@@ -82,7 +82,7 @@ void UBuildingHUBWidget::OnSaveThemeClicked()
     //    const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
     //    ExportCurrentThemeToJson(FileName);
     //}
-    const FString FileName = CharacterName + TEXT("Theme.json");
+    const FString FileName = TEXT("Theme.json");
     ExportCurrentThemeToJson(FileName);
 }
 
