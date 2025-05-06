@@ -241,6 +241,11 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		Other_actor_m_custom->custom_data_update(Info.cinfo);
 
 		Info.character = Actor;
+
+		auto pl = Cast<AVL_Player>(Info.character);
+		if (pl != nullptr) {
+			pl->set_my_id(Info.pinfo.id);
+		}
 	}
 
 	loaded = true;
@@ -451,6 +456,13 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				// 스폰된 액터 저장
 				OtherPlayers.Add(p.pl.id, ts);
 				OtherPlayers[p.pl.id].character = Actor;
+
+				auto FoundPlayer = OtherPlayers.Find(p.pl.id);
+				ACharacter* PlayerActor = FoundPlayer->character;
+				auto pl = Cast<AVL_Player>(PlayerActor);
+				if (pl != nullptr) {
+					pl->set_my_id(p.pl.id);
+				}
 			}
 			break;
 		}
@@ -477,9 +489,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FString Name = FString(p.name);
 			FString Message = FString(p.msg);
 			FString str = FString::Printf(TEXT("[ %s ]: %s"), *Name, *Message);
+			FString strWithnotName = FString::Printf(TEXT("%s"), *Message);
 
 			OnChatReceived.Broadcast(str);
-
+			OnChatWithID.Broadcast(p.from_id, strWithnotName);
 			break;
 		}
 		case SC_MOVEP:

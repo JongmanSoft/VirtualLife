@@ -267,7 +267,7 @@ struct SC_DESPAWN_PACKET {
 struct SC_CHAT_PACKET {
 	unsigned short size;
 	PACKETID	type;
-
+	unsigned int from_id;
 	wchar_t	name[M_ID_SIZE];
 	wchar_t	msg[CHAT_SIZE];
 };

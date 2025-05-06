@@ -22,10 +22,13 @@
 #include "Virtual_life_GameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChatWithID, const uint32&, from_id, const FString&, chat_msg);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestUpdated);
+
 
 struct SpawnInfo
 {
@@ -64,6 +67,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQuestUpdated OnQusetUpdate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnChatWithID OnChatWithID;
 
 public:
 

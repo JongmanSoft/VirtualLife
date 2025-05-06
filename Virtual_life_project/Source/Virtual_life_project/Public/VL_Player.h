@@ -43,8 +43,12 @@ public:
 
 	bool myPlayer();
 
-protected:
+	UFUNCTION(BlueprintCallable)
+	int32 get_my_id();
 
+	void set_my_id(const unsigned int& new_id);
+protected:
+	unsigned int m_id;
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
 	int state;
