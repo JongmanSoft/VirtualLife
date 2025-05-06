@@ -220,8 +220,6 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 			PlayerPawn->SetActorTickEnabled(true);
 
 			PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
-
-			p->set_my_id(MyPlayerInfo.id);
 		}
 	}
 
