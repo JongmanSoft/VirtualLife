@@ -82,11 +82,12 @@ bool Player::send_move_packet(PlayerInfo pi)
 	return true;
 }
 
-bool Player::send_chat_packet(std::wstring name, std::wstring chat)
+bool Player::send_chat_packet(std::wstring name, std::wstring chat, unsigned int id)
 {
 	SC_CHAT_PACKET p;
 	p.size = sizeof(SC_CHAT_PACKET);
 	p.type = SC_CHAT;
+	p.from_id = id;
 
 	// 안전하게 문자열 복사
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name 복사
@@ -348,10 +349,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// 보낸 채팅 확인용
 		std::wcout << p->name << ": " << p->msg << std::endl;
 
+		
+
 		// 채팅 브로드캐스트
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
-				players[i].send_chat_packet(p->name, p->msg);
+				players[i].send_chat_packet(p->name, p->msg, p->from_id);
 		}
         break;
     }
@@ -389,6 +392,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << std::endl;
 		pinfo = p->pl;
 
+		if (p->pl.st == 68)
+		{
+			auto now = std::chrono::high_resolution_clock::now();
+			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+
+			std::cout << "시간: " << std::fmod(f_time + (elapsed.count() * 0.0001f), 24) << std::endl;
+		}
+
 		// 위치정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
@@ -396,10 +407,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			}
 		}
 		
-		auto now = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+		/*auto now = std::chrono::high_resolution_clock::now();
+		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);*/
 
-		std::cout << "시간: " << std::fmod(f_time + (elapsed.count() * 0.0001f), 24) << std::endl;
 		break;
 	}
 	case CS_GET_ITEM:
