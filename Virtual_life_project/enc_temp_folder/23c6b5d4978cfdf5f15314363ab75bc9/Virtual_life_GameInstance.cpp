@@ -781,8 +781,6 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	p.size = sizeof(CS_CHAT_PACKET);
 	p.type = CS_CHAT;
 
-	p.from_id = MyPlayerInfo.id;
-
 	wcsncpy(p.name, *name, M_ID_SIZE - 1);
 	p.name[M_ID_SIZE - 1] = '\0'; // Null-termination 보장
 
