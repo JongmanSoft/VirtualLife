@@ -15,10 +15,10 @@ void UTitle_Widget::NativeConstruct()
         NewStart_BTN->OnClicked.AddDynamic(this, &UTitle_Widget::OnNewStartClicked);
     }
 
-    if (Start_BTN)
+    /*if (Start_BTN)
     {
         Start_BTN->OnClicked.AddDynamic(this, &UTitle_Widget::OnStartClicked);
-    }
+    }*/
 
     if (Quit_BTN)
     {
@@ -46,9 +46,9 @@ void UTitle_Widget::OnNewStartClicked()
     }
 }
 
-void UTitle_Widget::OnStartClicked()
-{
-}
+//void UTitle_Widget::OnStartClicked()
+//{
+//}
 
 void UTitle_Widget::OnQuitClicked()
 {
