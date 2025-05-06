@@ -4,7 +4,7 @@
 - 시간 동기화 핑 넣어서 수정
 - 위치 동기화 점프할때 이상하게 되는거랑 집 들어갔을때 애가 이상하게 움직이는 것
 	: 집 드갔을때 디스폰 패킷 보내야 할 듯
-- 신규유저 들어오면 : [DB Error - SavePInfo] Column count doesn't match value count at row 1 뜨는거 고쳐야함
+- 신규유저 들어오면 : [DB Error - SavePInfo] Column count doesn't match value count at row 1 뜨는거 고쳐야함 > 5/6 해결
 - 디비에 이름 저장하는거 빼먹음
 
 추가할 기능

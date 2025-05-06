@@ -76,7 +76,6 @@ void UVirtual_life_GameInstance::SendEnterGamePacket()
 
 void UVirtual_life_GameInstance::SendUpadteCustomPacket()
 {
-	// todo: 커마 데이터 어떻게 가져옴?
 	CS_UPDATE_CUSTOM_PACKET	p;
 	p.size = sizeof(CS_UPDATE_CUSTOM_PACKET);
 	p.type = CS_UPDATE_CUSTOM;
@@ -225,9 +224,12 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	}
 
 	// 2. 서버에서 받은 애들 스폰
-	for (auto& i : NeedSpawnPoints) {
-		FVector SpawnLocation(i.first.x, i.first.y, i.first.z);
-		FRotator SpawnRotation(0.f, i.first.yaw, 0.f);
+	for (TPair<int, SpawnInfo>& Pair : OtherPlayers) {
+		int PlayerID = Pair.Key;
+		SpawnInfo& Info = Pair.Value;
+
+		FVector SpawnLocation(Info.pinfo.x, Info.pinfo.y, Info.pinfo.z);
+		FRotator SpawnRotation(0.f, Info.pinfo.yaw, 0.f);
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -236,9 +238,9 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
-		Other_actor_m_custom->custom_data_update(i.second);
+		Other_actor_m_custom->custom_data_update(Info.cinfo);
 
-		SpawnedPlayers.Add(i.first.id, Actor);
+		Info.character = Actor;
 	}
 
 	loaded = true;
@@ -415,12 +417,20 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			if (!loaded) {
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
-				NeedSpawnPoints.Add(std::make_pair(p.pl, p.c));
+				SpawnInfo ts{};
+				ts.character = nullptr;
+				ts.cinfo = p.c;
+				ts.pinfo = p.pl;
+				OtherPlayers.Add(p.pl.id, ts);
 			}
 			else {
 				std::lock_guard<std::mutex> ll{ lock };
 				SC_SPAWN_PACKET p;
 				FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_PACKET));
+
+				SpawnInfo ts{};
+				ts.cinfo = p.c;
+				ts.pinfo = p.pl;
 
 				FVector L(p.pl.x, p.pl.y, p.pl.z);
 				FRotator R(0.f, p.pl.yaw, 0.f);
@@ -437,9 +447,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				//스폰된 액터의 커스텀정보 반영
 				Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 				Other_actor_m_custom->custom_data_update(p.c);
-				// 스폰된 액터 저장
-				SpawnedPlayers.Add(p.pl.id, Actor);
 
+				// 스폰된 액터 저장
+				OtherPlayers.Add(p.pl.id, ts);
+				OtherPlayers[p.pl.id].character = Actor;
 			}
 			break;
 		}
@@ -447,18 +458,17 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		{
 			SC_DESPAWN_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_DESPAWN_PACKET));
-			if (auto FoundPlayer = SpawnedPlayers.Find(p.id))
+			if (auto FoundPlayer = OtherPlayers.Find(p.id))
 			{
-				auto PlayerActor = *FoundPlayer;
-				if (IsValid(PlayerActor))
+				auto PlayerActor = FoundPlayer;
+				if (IsValid(PlayerActor->character))
 				{
-					PlayerActor->Destroy();
-					SpawnedPlayers.Remove(p.id);
+					PlayerActor->character->Destroy();
+					OtherPlayers.Remove(p.id);
 				}
 			}
 			break;
 		}
-
 		case SC_CHAT:
 		{
 			SC_CHAT_PACKET p;
@@ -479,8 +489,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_MOVE_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
-			ACharacter** FoundPlayer = SpawnedPlayers.Find(p.pl.id);
-			ACharacter* PlayerActor = *FoundPlayer;
+			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
+			ACharacter* PlayerActor = FoundPlayer->character;
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
 			FRotator NewRotation(0.f, p.pl.yaw, 0.f);
@@ -615,6 +625,8 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);
 	p.type = CS_ROOM_ENTER;
+
+	loaded = false;
 
 	SendEnqueue(&p, p.size);
 
