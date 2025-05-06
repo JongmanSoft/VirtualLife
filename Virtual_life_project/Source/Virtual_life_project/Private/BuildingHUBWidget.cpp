@@ -196,7 +196,7 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
         FString RowNameStr = Obj->GetStringField(TEXT("item_id"));
         FName RowName(*RowNameStr);
         uint16 ID = FBuildItemRegistry::FNameToItemID(RowName);
-        Data.ItemID = RowName;
+        Data.ItemID = ID;
 
         Data.Location.X = Obj->GetNumberField(TEXT("x"));
         Data.Location.Y = Obj->GetNumberField(TEXT("y"));
@@ -207,11 +207,11 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
         LoadedObjects.Add(Data);
     }
 
-    // 서버 전송 로직은 유지
     
     if (const auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
     {
         GI->SendPlaceBuildPacket(LoadedObjects);
+        GI->SpawnRoomObjectsFromData(LoadedObjects);
     }
     
 

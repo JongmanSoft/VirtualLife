@@ -740,6 +740,43 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 	//UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Spawn complete. Total spawned: %d"), SpawnedCount);
 }
 
+void UVirtual_life_GameInstance::SpawnRoomObjectsFromData(const TArray<FObjectData>& ObjectList)
+{
+	if (!PlaceBuildClass)
+	{
+		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,
+			TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
+
+		if (!PlaceBuildClass) return;
+	}
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	for (const FObjectData& Obj : ObjectList)
+	{
+		FName RowName = FBuildItemRegistry::ItemIDToFName(Obj.ItemID);
+		const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
+
+		if (!Info || !Info->Mesh) continue;
+
+		FVector Loc = Obj.Location;
+		FRotator Rot(0.f, Obj.Yaw, 0.f);
+
+		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
+		if (Spawned)
+		{
+			Spawned->SetMesh(Info->Mesh);
+			Spawned->SetRowID(RowName);
+
+			if (Info->bIsWall)
+				Spawned->SetScale(Obj.Scale, true);
+			else
+				Spawned->SetScale(Obj.Scale);
+		}
+	}
+}
+
 void UVirtual_life_GameInstance::Shutdown()
 {
 	Super::Shutdown();
