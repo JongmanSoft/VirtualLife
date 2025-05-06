@@ -22,10 +22,20 @@
 #include "Virtual_life_GameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChatWithID, const uint32&, from_id, const FString&, chat_msg);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestUpdated);
+
+
+struct SpawnInfo
+{
+	PlayerInfo pinfo;
+	Customizing cinfo;
+	ACharacter* character;
+};
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
@@ -57,6 +67,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnQuestUpdated OnQusetUpdate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnChatWithID OnChatWithID;
 
 public:
 
@@ -154,11 +167,9 @@ public:
 	TQueue<TArray<uint8>> SendPacketQueue;
 
 	std::mutex lock;
-	UPROPERTY()
-	TMap<int, ACharacter*> SpawnedPlayers;
 
-	TArray<std::pair<PlayerInfo, Customizing>> NeedSpawnPoints;
-
+	// 여기 이제 수정해야 함
+	TMap<int, SpawnInfo> OtherPlayers;
 	TArray<FString> chats;
 
 public:
@@ -202,9 +213,9 @@ public:
 	void StopBGM();
 	
 
+	std::atomic_bool loaded = false;
 
 private:
-	std::atomic_bool loaded = false;
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
 	int id;

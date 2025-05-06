@@ -148,6 +148,7 @@ struct CS_LEAVE_PACKET {
 struct CS_CHAT_PACKET {
 	unsigned short size;	
 	PACKETID	type;
+	unsigned int from_id; //보낸넘 아이디
 	wchar_t	name[M_ID_SIZE]; // 대충.. 임시로..
 	wchar_t	msg[CHAT_SIZE];
 };
@@ -266,6 +267,7 @@ struct SC_DESPAWN_PACKET {
 struct SC_CHAT_PACKET {
 	unsigned short size;
 	PACKETID	type;
+	unsigned int from_id;
 	wchar_t	name[M_ID_SIZE];
 	wchar_t	msg[CHAT_SIZE];
 };

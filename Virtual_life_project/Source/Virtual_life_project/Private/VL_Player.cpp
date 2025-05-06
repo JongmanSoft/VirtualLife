@@ -166,3 +166,13 @@ bool AVL_Player::myPlayer()
 	return isMyPlayer;
 }
 
+int32 AVL_Player::get_my_id()
+{
+	return m_id;
+}
+
+void AVL_Player::set_my_id(const unsigned int& new_id)
+{
+	m_id = new_id;
+}
+

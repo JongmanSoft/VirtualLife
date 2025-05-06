@@ -2,8 +2,6 @@
 #include "DBManager.h"
 #include "Player.h"
 
-// todo: 시간!
-
 bool Player::send_login_info_packet(bool res, bool isnew)
 {
 	SC_LOGIN_INFO_PACKET p;
@@ -315,7 +313,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		if (this->name == L"") {
 			this->name = p->name;
-
+			DBManager::SavePname(this->id, this->name);
 		}
 		state = PLAYING;
 		send_enter_game_packet();
@@ -424,7 +422,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		DBManager::SaveCustomizing(this->id, this->custom);
 		break;
 	}
-	case  CS_UPDATE_GOLD:
+	case CS_UPDATE_GOLD:
 	{
 		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
 		this->addinfo.gold += p->gold_offset;
@@ -461,6 +459,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.id = pinfo.id;
 		room.packet_setup(pkt);
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
+		
+		// 모든 플레이어에게 디스폰 보내기
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].state == PLAYING and i != pinfo.id)
+				players[i].send_despawn_packet(pinfo.id);
+		}
+
 		send(&pkt);
 		break;
 	}
@@ -509,6 +514,20 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		auto now = std::chrono::high_resolution_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
+		// 기존유저들에게 스폰요청
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+				players[i].send_spawn_packet(pinfo, custom);
+			}
+		}
+
+		// 나에게 기존유저 스폰
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+				send_spawn_packet(players[i].pinfo, players[i].custom);
+			}
+		}
+
 		send_room_leave_packet();
 		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
 
@@ -538,7 +557,7 @@ void Player::player_setup() // 신규 플레이어 위치 등 셋업
 	player_item[10] = 1;
 	player_item[11] = 1;
 
-	addinfo.gold = 1500; // todo: 돈저장.
+	addinfo.gold = 1500; 
 
 	DBManager::SaveDefPInfo(this->id, pinfo, addinfo);
 	DBManager::SaveDefCustomizing(this->id);
