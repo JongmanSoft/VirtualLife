@@ -495,6 +495,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			OnChatReceived.Broadcast(str);
 			OnChatWithID.Broadcast(p.from_id, strWithnotName);
+
 			break;
 		}
 		case SC_MOVEP:
