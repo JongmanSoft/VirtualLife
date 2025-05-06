@@ -3,12 +3,31 @@
 sql::mysql::MySQL_Driver* DBManager::g_driver = nullptr;
 thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
 
+std::string WStringToUTF8(const std::wstring& wstr)
+{
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
+    std::string result(size_needed - 1, 0); // null 제외
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, result.data(), size_needed, NULL, NULL);
+    return result;
+}
+
+std::wstring UTF8ToWString(const std::string& str)
+{
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
+    std::wstring result(size_needed - 1, 0); // null 제외
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, result.data(), size_needed);
+    return result;
+}
 
 void DBManager::Init() 
 {
-    while (!g_driver)
-    {
+    try {
         g_driver = sql::mysql::get_driver_instance();
+        if (!g_driver)
+            std::cerr << "[DB Init Error] get_driver_instance() returned nullptr" << std::endl;
+    }
+    catch (const sql::SQLException& e) {
+        std::cerr << "[DB Init Exception] " << e.what() << std::endl;
     }
 }
 
@@ -259,7 +278,7 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
 
         // 문자열 변환 (UTF-8 → wstring)
         std::string name_utf8 = res->getString("NAME");
-        outName = std::wstring(name_utf8.begin(), name_utf8.end());
+        outName = UTF8ToWString(name_utf8);
 
         outInfo.x = static_cast<float>(res->getDouble("POS_X"));
         outInfo.y = static_cast<float>(res->getDouble("POS_Y"));
@@ -272,6 +291,27 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
         std::cerr << "[DB Error - LoadPInfo] " << e.what() << std::endl;
         return false;
     }
+}
+
+void DBManager::SavePname(const std::string& userID, const std::wstring& name)
+{
+	try {
+		sql::Connection* conn = GetConnection();
+		std::unique_ptr<sql::PreparedStatement> stmt(
+			conn->prepareStatement(R"(
+                UPDATE PLAYER_INFO
+                SET NAME = ?
+                WHERE ID = ?
+            )"));
+		// wstring을 string으로 변환
+        std::string name_utf8 = WStringToUTF8(name);
+		stmt->setString(1, name_utf8);
+		stmt->setString(2, userID);
+		stmt->executeUpdate();
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "[DB Error - SavePname] " << e.what() << std::endl;
+	}
 }
 
 void DBManager::SaveCustomizing(const std::string& userID, const Customizing& data)
