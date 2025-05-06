@@ -864,6 +864,7 @@ void UVirtual_life_GameInstance::SendChatPacket(FString s)
 	p.msg[CHAT_SIZE - 1] = L'\0'; // Null-termination 보장
 
 	SendEnqueue(&p, p.size);
+	OnChatWithID.Broadcast(p.from_id, s);
 }
 
 void UVirtual_life_GameInstance::SendLeavePacket()
