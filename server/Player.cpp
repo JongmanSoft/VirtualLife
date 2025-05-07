@@ -265,7 +265,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
 		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "에게 " << length << "만큼 받음!" << std::endl;
-		// todo: db 연동해야 함
 
 		bool is_new = false;
 		bool success = true;
@@ -293,9 +292,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				success = false;
 			}
 		}
-
-		/*this->id = p->id;
-		player_setup();*/
 
 		// 2. 접속중인 플레이어인지 확인
 		for (int i = 0; i < players.size(); ++i) {
@@ -379,7 +375,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// db 정리 라인 - 안되면 주석 ㄱㄱ
 		{
 			DBManager::SavePInfo(this->id, this->pinfo);
-			//DBManager::save
 		}
 
 		state = NONE;
@@ -469,6 +464,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.id = pinfo.id;
 		room.packet_setup(pkt);
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
+		pinfo.st = HOME;
 		
 		// 모든 플레이어에게 디스폰 보내기
 		for (int i = 0; i < players.size(); ++i) {
@@ -523,6 +519,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		auto now = std::chrono::high_resolution_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+
+		pinfo.st = IDLE;
 
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {

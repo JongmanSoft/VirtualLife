@@ -229,6 +229,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	for (TPair<int, SpawnInfo>& Pair : OtherPlayers) {
 		int PlayerID = Pair.Key;
 		SpawnInfo& Info = Pair.Value;
+		if (Info.pinfo.st == HOME) continue;
 
 		FVector SpawnLocation(Info.pinfo.x, Info.pinfo.y, Info.pinfo.z);
 		FRotator SpawnRotation(0.f, Info.pinfo.yaw, 0.f);
@@ -438,6 +439,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				SpawnInfo ts{};
 				ts.cinfo = p.c;
 				ts.pinfo = p.pl;
+				ts.character = nullptr;
+				OtherPlayers.Add(p.pl.id, ts);
+
+				if (p.pl.st == HOME) break;
 
 				FVector L(p.pl.x, p.pl.y, p.pl.z);
 				FRotator R(0.f, p.pl.yaw, 0.f);
@@ -456,7 +461,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				Other_actor_m_custom->custom_data_update(p.c);
 
 				// 스폰된 액터 저장
-				OtherPlayers.Add(p.pl.id, ts);
 				OtherPlayers[p.pl.id].character = Actor;
 
 				auto FoundPlayer = OtherPlayers.Find(p.pl.id);
@@ -506,7 +510,12 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
 			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
+<<<<<<< Updated upstream
 			if (FoundPlayer == nullptr) break;
+=======
+			if (FoundPlayer->character == nullptr) 
+				break;
+>>>>>>> Stashed changes
 			ACharacter* PlayerActor = FoundPlayer->character;
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);

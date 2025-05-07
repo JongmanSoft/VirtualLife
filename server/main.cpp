@@ -137,6 +137,8 @@ int main()
     // 서버 초기화
     initialize_server();
 
+    DBManager::Init();
+
     push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
     push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
 
