@@ -60,19 +60,19 @@ void UBuildingHUBWidget::BindTabButtons()
 void UBuildingHUBWidget::OnMJBTNClicked()
 {
     // 민지 테마 불러오기
-    LoadThemeFromJson(TEXT("MinjiTheme.json"));
+    LoadThemeFromJson(TEXT("minjiTheme.json"));
 }
 
 void UBuildingHUBWidget::OnSYBTNClicked()
 {
     // 세영 테마 불러오기
-    LoadThemeFromJson(TEXT("SeyoungTheme.json"));
+    LoadThemeFromJson(TEXT("seyoungTheme.json"));
 }
 
 void UBuildingHUBWidget::OnHNBTNClicked()
 {
     // 해님 테마 불러오기
-    LoadThemeFromJson(TEXT("HaenimTheme.json"));
+    LoadThemeFromJson(TEXT("haenymTheme.json"));
 }
 
 void UBuildingHUBWidget::OnSaveThemeClicked()
@@ -165,6 +165,22 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
 
 void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
 {
+    // 기존 꾸민거 지우기
+    UWorld* World = GetWorld();
+    if (!World)
+    {
+        // UE_LOG(LogTemp, Error, TEXT("No World in LoadThemeFromJson"));
+        return;
+    }
+
+    TArray<AActor*> ExistingActors;
+    UGameplayStatics::GetAllActorsOfClass(World, APlaceBuildActor::StaticClass(), ExistingActors);
+
+    for (AActor* Actor : ExistingActors)
+    {
+        Actor->Destroy();
+    }
+
     const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes/");
     const FString FullPath = Directory + FileName;
 
