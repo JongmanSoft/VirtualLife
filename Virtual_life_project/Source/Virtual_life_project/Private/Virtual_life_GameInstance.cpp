@@ -26,7 +26,7 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 {
 	// 소켓 생성
 	Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->CreateSocket(TEXT("Stream"), TEXT("Client Socket"));
-
+	Socket->SetNoDelay(true);
 	// ip주소 넘겨주기.
 	FIPv4Address Ip;
 	FIPv4Address::Parse(addr, Ip);
@@ -510,12 +510,12 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_MOVE_PACKET));
 
 			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
-<<<<<<< Updated upstream
+
 			if (FoundPlayer == nullptr) break;
-=======
+
 			if (FoundPlayer->character == nullptr) 
 				break;
->>>>>>> Stashed changes
+
 			ACharacter* PlayerActor = FoundPlayer->character;
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
@@ -660,10 +660,10 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);
 	p.type = CS_ROOM_ENTER;
-
+	
 	SendEnqueue(&p, p.size);
 
-	UE_LOG(LogTemp, Warning, TEXT("Ask Enter My Room Send"));
+	UE_LOG(LogTemp, Warning, TEXT("Ask Enter My Room Send type: %d"),p.type);
 }
 
 void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
