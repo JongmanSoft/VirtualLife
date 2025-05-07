@@ -46,7 +46,7 @@
 int setid();
 void server_error(const char* msg);
 
-constexpr int BUFSIZE = 256;
+constexpr int BUFSIZE = 8192;
 constexpr int DB_POS_UPDATE_TIME = 60000; // 여기 수정해서 디비 업데이트 텀 수정 가능
 constexpr int DB_INVENTORY_UPDATE_TIME = 30000;
 

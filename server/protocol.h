@@ -9,7 +9,7 @@ constexpr int PORT_NUM = 7777;
 constexpr int M_ID_SIZE = 20;
 constexpr int CHAT_SIZE = 100; 
 constexpr short MAX_PLAYER = 1000;
-constexpr unsigned short MAX_BUILD_ITEM = 100;
+constexpr unsigned short MAX_BUILD_ITEM = 200;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 
@@ -201,8 +201,7 @@ struct CS_PLACE_BUILD_PACKET {
 	Object build;
 };
 
-struct CS_ROOM_ENTER_PACKET
-{
+struct CS_ROOM_ENTER_PACKET {
 	unsigned short size;
 	PACKETID type;
 };

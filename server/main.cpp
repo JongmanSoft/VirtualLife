@@ -32,6 +32,10 @@ void workerThread(HANDLE iocp_hd)
             }
             continue;
         }
+        if (ret != FALSE && num_bytes > 0)
+        {
+            //printf("RECV: %lu bytes received\n", num_bytes);  // 여기서 출력됨
+        }
 
         int player_id = static_cast<int>(key);
         EXT_OVER* ext_over = reinterpret_cast<EXT_OVER*>(over);

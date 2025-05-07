@@ -387,23 +387,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << std::endl;
 		pinfo = p->pl;
 
-		if (p->pl.st == 68)
-		{
-			auto now = std::chrono::high_resolution_clock::now();
-			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
-
-			std::cout << "시간: " << std::fmod(f_time + (elapsed.count() * 0.0001f), 24) << std::endl;
-		}
-
 		// 위치정보 브로드캐스팅
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
 				players[i].send_move_packet(p->pl);
 			}
 		}
-		
-		/*auto now = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);*/
 
 		break;
 	}
