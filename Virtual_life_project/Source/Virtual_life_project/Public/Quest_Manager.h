@@ -17,8 +17,13 @@ class VIRTUAL_LIFE_PROJECT_API UQuest_Manager : public UObject
 	GENERATED_BODY()
 
 public:
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	TMap <uint8 , UQuest*> Quests; //퀘스트의 각 아이디에 대해서 매핑, 없으면 nullptr
+
+
+	TMap<uint8, TArray<int32>> SubQuests; //키값: 게시판아이디 , 벨류값: 게시판이 가진 퀘스트
 
 public:
 	//서버에서 퀘스트들을 받아 초기화하는 함수
@@ -42,4 +47,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 get_quests_count();
+
+	void  update_Sub_Quests();
+
+	UFUNCTION(BlueprintCallable)
+	TArray<int32> get_subquest_id(uint8 sub_id);
+
 };

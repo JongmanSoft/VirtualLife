@@ -6,6 +6,8 @@
 #include "GameFramework/Pawn.h"
 
 
+
+
 void UQuest_Manager::ADD_QUEST(const uint8& quest_id)
 {
     // NewObject를 사용해 UQuest 객체 생성
@@ -15,6 +17,7 @@ void UQuest_Manager::ADD_QUEST(const uint8& quest_id)
     {
         Quests.Add(quest_id, NewQuest);
     }
+    update_Sub_Quests();
 }
 
 bool UQuest_Manager::Quest_complete(const uint8& quest_id)
@@ -26,6 +29,7 @@ bool UQuest_Manager::Quest_complete(const uint8& quest_id)
 void UQuest_Manager::Delete_Quest(const uint8& quest_id)
 {
     Quests.Remove(quest_id);
+    update_Sub_Quests();
 }
 
 void UQuest_Manager::finish_Quest(const uint8& quest_id)
@@ -81,4 +85,28 @@ void UQuest_Manager::Done_Process(const uint8& quest_id)
 int32 UQuest_Manager::get_quests_count()
 {
     return Quests.Num();
+}
+
+void UQuest_Manager::update_Sub_Quests()
+{
+
+    //0번 게시판
+    SubQuests[0].Empty();
+    if (!Quests.Contains(4))  SubQuests[0].Add(4);
+    if (!Quests.Contains(5))  SubQuests[0].Add(5);
+    //1번 게시판
+    SubQuests[1].Empty();
+    if (!Quests.Contains(6))  SubQuests[1].Add(6);
+    if (!Quests.Contains(7))  SubQuests[1].Add(7);
+    if (!Quests.Contains(8))  SubQuests[1].Add(8);
+    //2번게시판
+    SubQuests[2].Empty();
+    if (!Quests.Contains(9))  SubQuests[2].Add(9);
+    if (!Quests.Contains(10))  SubQuests[2].Add(10);
+    if (!Quests.Contains(11))  SubQuests[2].Add(11);
+}
+
+TArray<int32> UQuest_Manager::get_subquest_id(uint8 sub_id)
+{
+    return SubQuests[sub_id];
 }
