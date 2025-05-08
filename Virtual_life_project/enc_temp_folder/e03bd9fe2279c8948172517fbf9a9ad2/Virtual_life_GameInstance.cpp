@@ -131,7 +131,7 @@ void UVirtual_life_GameInstance::SendPlaceBuildPacket(const TArray<FObjectData>&
 		SendEnqueue(&p, p.size);
 	}
 
-	// UE_LOG(LogTemp, Log, TEXT("총 %d개의 건물을 서버로 전송했습니다."), Objects.Num());
+	UE_LOG(LogTemp, Log, TEXT("총 %d개의 건물을 서버로 전송했습니다."), Objects.Num());
 }
 
 void UVirtual_life_GameInstance::SendRemoveBuildPacket(const FVector& Location)
@@ -690,28 +690,53 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 
 		if (!PlaceBuildClass)
+		{
+			// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] Still NULL after reload attempt"));
 			return;
+		}
+
+		// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] PlaceBuildClass reloaded manually."));
 	}
 
 	UWorld* World = GetWorld();
 	if (!World)
-		return;
-
-	for (const Object& obj : CachedRoomObjects)
 	{
+		// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] World is invalid!"));
+		return;
+	}
+
+	// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Starting spawn... Total objects: %d"), CachedRoomObjects.Num());
+
+	int32 SpawnedCount = 0;
+
+	for (int32 i = 0; i < CachedRoomObjects.Num(); ++i)
+	{
+		const Object& obj = CachedRoomObjects[i];
 		FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
 
-		if (RowName.IsNone()) continue;
+		if (RowName.IsNone())
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Failed to find RowName for item_id: %d"), obj.item_id);
+			continue;
+		}
 
 		const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
-		if (!Info) continue;
+		if (!Info)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] No FBuildInfo found for RowName: %s"), *RowName.ToString());
+			continue;
+		}
 
-		if (!Info->Mesh) continue;
+		if (!Info->Mesh)
+		{
+			// UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Mesh is null for item_id: %d"), obj.item_id);
+			continue;
+		}
 
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
-		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
 
+		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
 		if (Spawned)
 		{
 			Spawned->SetMesh(Info->Mesh);
@@ -724,8 +749,15 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 			{
 				Spawned->SetScale(obj.scale);
 			}
+			SpawnedCount++;
+		}
+		else
+		{
+			// UE_LOG(LogTemp, Error, TEXT("[SpawnCachedRoomObjects] Failed to spawn actor for item_id: %d"), obj.item_id);
 		}
 	}
+
+	//UE_LOG(LogTemp, Warning, TEXT("[SpawnCachedRoomObjects] Spawn complete. Total spawned: %d"), SpawnedCount);
 }
 
 void UVirtual_life_GameInstance::SpawnRoomObjectsFromData(const TArray<FObjectData>& ObjectList)
