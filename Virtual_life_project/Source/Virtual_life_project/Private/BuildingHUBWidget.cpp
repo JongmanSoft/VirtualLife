@@ -176,13 +176,20 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
     TArray<AActor*> ExistingActors;
     UGameplayStatics::GetAllActorsOfClass(World, APlaceBuildActor::StaticClass(), ExistingActors);
 
-    for (AActor* Actor : ExistingActors)
+    if (auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
     {
-        Actor->Destroy();
+        for (AActor* Actor : ExistingActors)
+        {
+            FVector Location = Actor->GetActorLocation();
+
+            GI->SendRemoveBuildPacket(Location);
+
+            Actor->Destroy();
+        }
     }
 
-    const FString Directory = FPaths::ProjectSavedDir() + TEXT("Themes/");
-    const FString FullPath = Directory + FileName;
+    const FString Directory = FPaths::Combine(FPaths::LaunchDir(), TEXT("Themes/"));
+    const FString FullPath = FPaths::Combine(Directory, FileName);
 
     FString JsonRaw;
     if (!FFileHelper::LoadFileToString(JsonRaw, *FullPath))
