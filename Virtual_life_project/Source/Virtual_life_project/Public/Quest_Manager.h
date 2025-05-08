@@ -39,4 +39,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Done_Process(const uint8& quest_id); // 퀘스트가 완료된 후의 처리
+
+	UFUNCTION(BlueprintCallable)
+	int32 get_quests_count();
 };

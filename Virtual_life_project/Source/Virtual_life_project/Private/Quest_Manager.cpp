@@ -77,3 +77,8 @@ void UQuest_Manager::Done_Process(const uint8& quest_id)
     game_inst->SendRemoveQuestPacket(0, quest_id);
     
 }
+
+int32 UQuest_Manager::get_quests_count()
+{
+    return Quests.Num();
+}
