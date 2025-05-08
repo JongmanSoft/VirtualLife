@@ -34,7 +34,10 @@ protected:
 
 	// 시간 관리
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float Time = 0.0f;
+	float ServerTime = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
+	float ClientTime = 15.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float TimeStep = 0.1f;
@@ -42,17 +45,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float  LocalReceiveTime = 0.0f;
 
-	// 현재 낮인지 밤인지
 	bool bIsDaytime = true;
 
 	void IncrementTime();
-	void UpdateSun();
+	void SeverUpdateSun();
+	void ClientUpdateSun();
 	void NotifyListeners(bool bDaytime);
 
-	// Sunrise/Sunset 처리
 	void OnSunrise();
 	void OnSunset();
 
 	UFUNCTION(BlueprintCallable)
 	void StartTimer();
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsTimerRunning = true;
 };

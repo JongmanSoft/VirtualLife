@@ -23,27 +23,23 @@ void ATimeOfDayManager::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//SGetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
 }
 
 void ATimeOfDayManager::IncrementTime()
 {
-    //float Now = GetWorld()->GetRealTimeSeconds();
-    //float Elapsed = Now - LocalReceiveTime;
-    //float GameMinutesPassed = Elapsed * 0.1f; // 배속
-    Time = FMath::Fmod(Time + 0.01f, 24.0f);
-    //LocalReceiveTime = Now;
+    ServerTime = FMath::Fmod(ServerTime + 0.01f, 24.0f);
 
-    UpdateSun();
+    if (bIsTimerRunning)
+        SeverUpdateSun();
+    else
+        ClientUpdateSun();
 
     // 낮/밤 전환 체크
-    if (Time >= 6.0f && Time < 18.0f)
+    if (ServerTime >= 6.0f && ServerTime < 18.0f)
     {
         if (!bIsDaytime)
         {
             bIsDaytime = true;
-            //OnSunrise();
-            //NotifyListeners(true);
         }
     }
     else
@@ -51,46 +47,56 @@ void ATimeOfDayManager::IncrementTime()
         if (bIsDaytime)
         {
             bIsDaytime = false;
-            //OnSunset();
-            //NotifyListeners(false);
         }
     }
 
-    // 시간 계산
-    int32 Hours = FMath::FloorToInt(Time);
-    // int32 Minutes = FMath::FloorToInt(FMath::Fmod(Time * 60.0f, 60.0f));
-    int32 Minutes = 0.0f; // 분 제거
+    int32 SeverHours = FMath::FloorToInt(ServerTime);
+    int32 ClientHours = FMath::FloorToInt(ClientTime);
 
-    // 플레이어 컨트롤러 → VLController
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
     AVirtualLifeController* VLController = Cast<AVirtualLifeController>(PC);
     if (!VLController) return;
 
-    // CurrentUI → GamePlayMainWidget 캐스팅
     UGamePlayMainWidget* MainUI = Cast<UGamePlayMainWidget>(VLController->CurrentUI);
     if (!MainUI) return;
 
-    // Clock_W 위젯 가져오기
     UClockWidget* ClockWidget = MainUI->GetClockWidget();
     if (ClockWidget)
     {
-        ClockWidget->SetTimeText(Hours, Minutes);
+        if (bIsTimerRunning) {
+            ClockWidget->SetTimeText(SeverHours, 0.0f);
+        }
+        else {
+            ClockWidget->SetTimeText(ClientHours, 0.0f);
+        }
     }
 }
 
-void ATimeOfDayManager::UpdateSun()
+void ATimeOfDayManager::SeverUpdateSun()
 {
     if (!SunLight || !MoonLight) {
-        UE_LOG(LogTemp, Log, TEXT("No Light"));
         return;
     }
 
-    float BaseAngle = (Time > 18.0f) ? 90.0f : -270.0f;
-    float SunPitch = (Time / 24.0f) * 360.0f + BaseAngle;
+    float BaseAngle = (ServerTime > 18.0f) ? 90.0f : -270.0f;
+    float SunPitch = (ServerTime / 24.0f) * 360.0f + BaseAngle;
     SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
 
     MoonLight->GetLightComponent()->SetVisibility(!bIsDaytime);
     SunLight->GetLightComponent()->SetVisibility(bIsDaytime);
+}
+
+void ATimeOfDayManager::ClientUpdateSun()
+{
+    if (!SunLight || !MoonLight) {
+        return;
+    }
+
+    float BaseAngle = (ClientTime > 18.0f) ? 90.0f : -270.0f;
+    float SunPitch = (ClientTime / 24.0f) * 360.0f + BaseAngle;
+    SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
+
+    SunLight->GetLightComponent()->SetVisibility(true);
 }
 
 void ATimeOfDayManager::NotifyListeners(bool bDaytime)
@@ -144,4 +150,3 @@ void ATimeOfDayManager::StartTimer()
     LocalReceiveTime = GetWorld()->GetRealTimeSeconds();
     GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ATimeOfDayManager::IncrementTime, 0.1, true);
 }
-
