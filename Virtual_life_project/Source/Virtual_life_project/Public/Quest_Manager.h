@@ -29,6 +29,8 @@ public:
 	//서버에서 퀘스트들을 받아 초기화하는 함수
 	//void Load_Quest();
 	
+	UFUNCTION(BlueprintCallable)
+	bool has_quest(const uint8& quest_id);
 	//퀘스트를 추가
 	UFUNCTION(BlueprintCallable)
 	void ADD_QUEST(const uint8& quest_id);

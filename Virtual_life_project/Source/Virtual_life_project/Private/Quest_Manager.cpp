@@ -8,6 +8,11 @@
 
 
 
+bool UQuest_Manager::has_quest(const uint8& quest_id)
+{
+    return Quests.Contains(quest_id);
+}
+
 void UQuest_Manager::ADD_QUEST(const uint8& quest_id)
 {
     // NewObject를 사용해 UQuest 객체 생성
