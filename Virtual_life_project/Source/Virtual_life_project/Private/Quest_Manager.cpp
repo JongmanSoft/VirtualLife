@@ -90,6 +90,11 @@ int32 UQuest_Manager::get_quests_count()
 void UQuest_Manager::update_Sub_Quests()
 {
 
+    if (SubQuests.Num() < 3)
+    {
+        SubQuests.SetNum(3);
+    }
+
     //0번 게시판
     SubQuests[0].Empty();
     if (!Quests.Contains(4))  SubQuests[0].Add(4);
@@ -108,5 +113,11 @@ void UQuest_Manager::update_Sub_Quests()
 
 TArray<int32> UQuest_Manager::get_subquest_id(uint8 sub_id)
 {
-    return SubQuests[sub_id];
+    update_Sub_Quests();
+    if (SubQuests.IsValidIndex(sub_id))
+    {
+        return SubQuests[sub_id];
+    }
+
+    return TArray<int32>();
 }

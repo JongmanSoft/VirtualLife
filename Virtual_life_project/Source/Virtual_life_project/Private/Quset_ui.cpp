@@ -5,6 +5,8 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
+
+
 void UQuset_ui::InitializeWithQuestID(uint8 QuestID)
 {
 
@@ -22,6 +24,7 @@ void UQuset_ui::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    Item_Datatable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item_system/ITEM_DATA_Table.ITEM_DATA_Table"));
 
     if (UVirtual_life_GameInstance* GameInstance = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
     {
@@ -69,9 +72,8 @@ void UQuset_ui::UpdateQuestDisplay()
             return;
         }
 
-        static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("/Game/Item_system/ITEM_DATA_Table.ITEM_DATA_Table"));
-        UDataTable* Item_Datatable = nullptr;
-        if (DataTableFinder.Succeeded())Item_Datatable = DataTableFinder.Object;
+       
+   
         for (const requir& Goal : QuestRef->Goals)
         {
             

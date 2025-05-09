@@ -30,7 +30,14 @@ void UQuest::init_quest(const uint8& Quest_ID)
                 //게임인스턴스에서 인벤토리를 가져옴
                 UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
                 for (const auto& r : Quest_info.RequirValues) {
-                    Goals.Add(requir(r.Item_ID,r.RequirNum, &game_inst->m_inventory->Owned_Items[r.Item_ID]));
+                    if (game_inst->m_inventory->Owned_Items.Contains(r.Item_ID))
+                    {
+                        Goals.Add(requir(r.Item_ID, r.RequirNum, &game_inst->m_inventory->Owned_Items[r.Item_ID]));
+                        continue;
+                    }
+                
+                        game_inst->m_inventory->Owned_Items.Add(r.Item_ID,0);
+                        Goals.Add(requir(r.Item_ID, r.RequirNum, &game_inst->m_inventory->Owned_Items[r.Item_ID]));
                 }
             }
 
