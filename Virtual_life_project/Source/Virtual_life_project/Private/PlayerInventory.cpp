@@ -7,7 +7,7 @@ UPlayerInventory::UPlayerInventory()
     Ownerd_Equip.SetNum(5);
 }
 
-void UPlayerInventory::Add_Item(uint8 Add_ID, uint8 Add_num)
+void UPlayerInventory::Add_Item(uint8 Add_ID, int Add_num)
 {
     if (Owned_Items.Contains(Add_ID))
     {
@@ -19,22 +19,21 @@ void UPlayerInventory::Add_Item(uint8 Add_ID, uint8 Add_num)
     }
 }
 
-bool UPlayerInventory::Delete_Item(uint8 Add_ID, uint8 Add_num)
+bool UPlayerInventory::Delete_Item(uint8 Add_ID, int Add_num)
 {
     if (!Owned_Items.Contains(Add_ID) || Owned_Items[Add_ID] < Add_num)return false;
     else {
         Owned_Items[Add_ID] -= Add_num;
-        if (Owned_Items[Add_ID] <= 0) Owned_Items.Remove(Add_ID);
         return true;
     }
 }
 
-void UPlayerInventory::road_Item(TMap<uint8, uint8> New_Items)
+void UPlayerInventory::road_Item(TMap<uint8, int> New_Items)
 {
     Owned_Items = New_Items;
 }
 
-void UPlayerInventory::get_item(uint8 id, uint8 num) 
+void UPlayerInventory::get_item(uint8 id, int num) 
 {
     UWorld* World = GetWorld();
     if (World)
@@ -46,7 +45,7 @@ void UPlayerInventory::get_item(uint8 id, uint8 num)
     }
 }
 
-void UPlayerInventory::update_item(uint8 id, uint8 num)
+void UPlayerInventory::update_item(uint8 id, int num)
 {
     Owned_Items.Add(id,num);
 }
