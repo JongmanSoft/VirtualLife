@@ -2,6 +2,7 @@
 
 sql::mysql::MySQL_Driver* DBManager::g_driver = nullptr;
 thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
+bool DBManager::DB_ON = true;  // 또는 true, 기본값 지정
 
 std::string WStringToUTF8(const std::wstring& wstr)
 {
@@ -64,6 +65,7 @@ sql::Connection* DBManager::GetConnection()
 
 bool DBManager::checkLogin(const std::string& id, const std::string& pw, bool& is_new)
 {
+    if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
 
@@ -98,6 +100,7 @@ bool DBManager::checkLogin(const std::string& id, const std::string& pw, bool& i
 
 bool DBManager::LoadCustomizing(const std::string& userID, Customizing& outData)
 {
+    if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
 
@@ -193,6 +196,7 @@ void DBManager::SaveDefPInfo(const std::string& userID, const PlayerInfo& data, 
 
 void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata ,const std::string& name)
 {
+    if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
 
@@ -230,6 +234,7 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
 
 void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data)
 {
+    if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         std::unique_ptr<sql::PreparedStatement> stmt(
@@ -254,6 +259,7 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data)
 
 bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName)
 {
+    if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) {
@@ -295,6 +301,7 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
 
 void DBManager::SavePname(const std::string& userID, const std::wstring& name)
 {
+    if (DB_ON == false) return;
 	try {
 		sql::Connection* conn = GetConnection();
 		std::unique_ptr<sql::PreparedStatement> stmt(
@@ -316,6 +323,7 @@ void DBManager::SavePname(const std::string& userID, const std::wstring& name)
 
 void DBManager::SaveCustomizing(const std::string& userID, const Customizing& data)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         std::unique_ptr<sql::PreparedStatement> stmt(
@@ -392,6 +400,7 @@ void DBManager::SaveCustomizing(const std::string& userID, const Customizing& da
 
 void DBManager::SaveItem(const std::string& userID, int itemCode, int itemCount)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
 
@@ -426,6 +435,7 @@ void DBManager::SaveItem(const std::string& userID, int itemCode, int itemCount)
 
 bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData)
 {
+	if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) {
@@ -457,6 +467,7 @@ bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned 
 
 void DBManager::SaveRoomObject(const std::string& userID, const Object& object)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;
@@ -490,6 +501,7 @@ void DBManager::UpdateRoomObject(
     float newYaw
 )
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;
@@ -526,6 +538,7 @@ void DBManager::UpdateRoomObject(
 
 bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects)
 {
+	if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return false;
@@ -565,6 +578,7 @@ bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& 
 
 void DBManager::DeleteRoomObject(const std::string& userID, float posX, float posY, float posZ)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;
@@ -592,6 +606,7 @@ void DBManager::DeleteRoomObject(const std::string& userID, float posX, float po
 
 void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects)
 {
+	if (DB_ON == false) return;
     if (objects.empty()) return;
 
     try {
@@ -629,6 +644,7 @@ void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Obj
 
 void DBManager::DeleteRoomObjects(const std::string& userID)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;
@@ -646,6 +662,7 @@ void DBManager::DeleteRoomObjects(const std::string& userID)
 
 bool DBManager::LoadQuest(const std::string& userID, std::vector<Quest>& outData)
 {
+	if (DB_ON == false) return true;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return false;
@@ -671,6 +688,7 @@ bool DBManager::LoadQuest(const std::string& userID, std::vector<Quest>& outData
 
 void DBManager::SaveQuest(const std::string& userID, Quest& data)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;
@@ -692,6 +710,7 @@ void DBManager::SaveQuest(const std::string& userID, Quest& data)
 
 void DBManager::DeleteQuest(const std::string& userID, Quest& data)
 {
+	if (DB_ON == false) return;
     try {
         sql::Connection* conn = GetConnection();
         if (!conn) return;

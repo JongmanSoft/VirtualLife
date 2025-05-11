@@ -136,15 +136,18 @@ void check_evt(HANDLE iocp_hd)
 
 int main()
 {
-    DBManager::Init();
 
     // 서버 초기화
     initialize_server();
 
-    DBManager::Init();
+    //DBManager::DB_ON = false;
+	if (DBManager::DB_ON == true)
+	{
+        DBManager::Init();
 
-    push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
-    push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
+        push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
+        push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
+	}
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);

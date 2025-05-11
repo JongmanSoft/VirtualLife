@@ -3,6 +3,7 @@
 
 class DBManager {
 public:
+    static bool DB_ON;
     static void Init();
     static sql::Connection* GetConnection();
 
