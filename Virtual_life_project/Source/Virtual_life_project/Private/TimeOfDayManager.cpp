@@ -96,7 +96,8 @@ void ATimeOfDayManager::ClientUpdateSun()
     float SunPitch = (ClientTime / 24.0f) * 360.0f + BaseAngle;
     SunLight->SetActorRotation(FRotator(SunPitch, 0.0f, 0.0f));
 
-    SunLight->GetLightComponent()->SetVisibility(true);
+    MoonLight->GetLightComponent()->SetVisibility(true);
+    SunLight->GetLightComponent()->SetVisibility(false);
 }
 
 void ATimeOfDayManager::NotifyListeners(bool bDaytime)
