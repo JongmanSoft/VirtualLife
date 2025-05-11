@@ -276,9 +276,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				DBManager::LoadPInfo(p->id, pinfo, name);
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
+				DBManager::LoadQuest(p->id, quests);
 				room.LoadFromDB(p->id);
 				this->id = p->id;
-				// todo : Load Quest
 			}
 			else {
 				// 신규 유저
@@ -431,6 +431,10 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		this->quests.emplace_back(p->giver_id, p->num);
+		Quest q{ p->giver_id, p->num };
+		
+		DBManager::SaveQuest(this->id, q);
+
 		send_get_quest_packet(p->giver_id, p->num);
 
 		break;
@@ -439,11 +443,16 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
+
 		for (int i = 0; i < this->quests.size(); ++i) {
 			if (this->quests[i].GetNUM() == p->num) {
+				auto q = this->quests[i].GetQuestInfo();
+				DBManager::DeleteQuest(this->id, q);
 				this->quests.erase(this->quests.begin() + i);
+				break;
 			}
 		}
+
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}

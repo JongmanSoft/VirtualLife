@@ -11,8 +11,8 @@ public:
 
 
 	Quest& GetQuestInfo() { return *this; }
-	unsigned short GetGID() { return giver_id; }
-	unsigned short GetNUM() { return type; }
+	const unsigned short GetGID() { return giver_id; }
+	const unsigned short GetNUM() { return type; }
 
 };
 

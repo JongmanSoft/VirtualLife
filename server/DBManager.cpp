@@ -643,3 +643,67 @@ void DBManager::DeleteRoomObjects(const std::string& userID)
         std::cerr << "[DB Error - DeleteRoomObjectsByUser] " << e.what() << std::endl;
     }
 }
+
+bool DBManager::LoadQuest(const std::string& userID, std::vector<Quest>& outData)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return false;
+
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            conn->prepareStatement("SELECT QUEST_ID FROM player_quest WHERE ID = ?"));
+        pstmt->setString(1, userID);
+
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+
+        while (res->next()) {
+            int quest_id = res->getInt("QUEST_ID");
+            outData.emplace_back(0, quest_id); 
+        }
+
+        return true;
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - LoadQuest] " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void DBManager::SaveQuest(const std::string& userID, Quest& data)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            conn->prepareStatement("INSERT INTO player_quest (ID, QUEST_ID) VALUES (?, ?) "
+                "ON DUPLICATE KEY UPDATE QUEST_ID = VALUES(QUEST_ID)"));
+        pstmt->setString(1, userID);
+        pstmt->setInt(2, data.GetNUM());  // 혹은 적절한 getter 함수 사용
+        
+        pstmt->execute();
+        return;
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SaveQuest] " << e.what() << std::endl;
+        return;
+    }
+}
+
+void DBManager::DeleteQuest(const std::string& userID, Quest& data)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            conn->prepareStatement("DELETE FROM player_quest WHERE ID = ? AND QUEST_ID = ?"));
+        pstmt->setString(1, userID);
+        pstmt->setInt(2, data.GetNUM());  // 적절한 getter 함수 사용
+
+        pstmt->execute();
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - DeleteQuest] " << e.what() << std::endl;
+    }
+}

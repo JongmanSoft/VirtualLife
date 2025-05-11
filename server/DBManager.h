@@ -33,6 +33,11 @@ public:
 	static void SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects); // 전체 저장하는 함수
     static void DeleteRoomObjects(const std::string& userID); // 전체 삭제하는 함수
 
+    // Quest
+	static bool LoadQuest(const std::string& userID, std::vector<Quest>& outData);
+	static void SaveQuest(const std::string& userID, Quest& data);
+    static void DeleteQuest(const std::string& userID, Quest& data);
+
 private:
     static sql::mysql::MySQL_Driver* g_driver;
     static thread_local std::unique_ptr<sql::Connection> t_conn;

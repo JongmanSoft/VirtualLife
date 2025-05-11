@@ -165,7 +165,7 @@ struct CS_GET_ITEM_PACKET { // 아이템 획득 -> 무조건 한개. 로 해도 될까?
 	unsigned short size;
 	PACKETID type;
 	unsigned short id;
-	unsigned short num;
+	short num;
 };
 
 struct CS_UPDATE_CUSTOM_PACKET {
