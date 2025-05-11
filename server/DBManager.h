@@ -26,12 +26,12 @@ public:
     static bool LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData);
 
     // Room
-    static void SaveRoomObjects(const std::string& userID, const Object& objects);
+    static void SaveRoomObject(const std::string& userID, const Object& object);
     static void UpdateRoomObject(const std::string& userID, float oldX, float oldY, float oldZ, float newX, float newY, float newZ, float newYaw);
     static bool LoadRoomObjects(const std::string& userID, std::vector<Object>& outObjects);
     static void DeleteRoomObject(const std::string& userID, float posX, float posY, float posZ);
-
-    
+	static void SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects); // 전체 저장하는 함수
+    static void DeleteRoomObjects(const std::string& userID); // 전체 삭제하는 함수
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;

@@ -17,8 +17,6 @@ void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
 
 void workerThread(HANDLE iocp_hd)
 {
-
-
     while (true)
     {
         DWORD num_bytes;
@@ -32,10 +30,6 @@ void workerThread(HANDLE iocp_hd)
             }
             continue;
         }
-        if (ret != FALSE && num_bytes > 0)
-        {
-            //printf("RECV: %lu bytes received\n", num_bytes);  // 여기서 출력됨
-        }
 
         int player_id = static_cast<int>(key);
         EXT_OVER* ext_over = reinterpret_cast<EXT_OVER*>(over);
@@ -43,7 +37,6 @@ void workerThread(HANDLE iocp_hd)
             player_id = (player_id) * (-1) - 1;
 
         if (ext_over->ov == TASK_TYPE::ACCEPT) {
-            // todo: id 지정해주기, LoginID 받아오기
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
             std::cout << "[ACCEPT] 클라이언트 ID " << client_id << " 연결됨" << std::endl;
@@ -94,14 +87,13 @@ void workerThread(HANDLE iocp_hd)
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         }
-        else if (ext_over->ov == TASK_TYPE::TIME_UPDATE)
+        else if (ext_over->ov == TASK_TYPE::TIME_UPDATE) // todo
         {
             // 모든 아이들에게 현재 시간 전송
             for (Player& player : players) 
             {
                 if (player.get_state() != PLAYING)
                     continue;
-                //player.
             }
         }
     }
@@ -208,7 +200,6 @@ void initialize_server()
 
 void push_evt_queue(int from, int to, TASK_TYPE ev, int time) // time: milisecond 단위.
 {
-    // todo
     EVENT evt;
     evt.setup(ev, time, from, to);
     g_evt_queue.push(evt);

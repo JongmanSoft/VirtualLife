@@ -56,15 +56,14 @@ void Room::UpdateObjectTransform(float old_x, float old_y, float old_z, float ne
 
 void Room::SaveToDB(const std::string& userID)
 {
-    //std::vector<Object> flat_objs;
-    //for (const auto& obj_ptr : objs)
-    //{
-    //    if (obj_ptr) {
-    //        flat_objs.push_back(*obj_ptr);  // 포인터 해제해서 복사
-    //    }
-    //}
+    std::vector<Object> plainObjs;
+    plainObjs.reserve(objs.size());  // 성능 최적화 (optional)
 
-    //DBManager::SaveRoomObjects(userID, flat_objs);
+    for (const auto& ptr : objs) {
+        if (ptr) plainObjs.push_back(*ptr);  // 역참조하여 복사
+    }
+
+    DBManager::SaveRoomObjects(userID, plainObjs);
 }
 
 void Room::LoadFromDB(const std::string& userID)

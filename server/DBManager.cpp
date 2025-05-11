@@ -455,7 +455,7 @@ bool DBManager::LoadItem(const std::string& userID, std::unordered_map<unsigned 
     }
 }
 
-void DBManager::SaveRoomObjects(const std::string& userID, const Object& object)
+void DBManager::SaveRoomObject(const std::string& userID, const Object& object)
 {
     try {
         sql::Connection* conn = GetConnection();
@@ -479,7 +479,7 @@ void DBManager::SaveRoomObjects(const std::string& userID, const Object& object)
         stmt->execute(query.str());
     }
     catch (sql::SQLException& e) {
-        std::cerr << "[DB Error - SaveRoomObjects(Bulk)] " << e.what() << std::endl;
+        std::cerr << "[DB Error - SaveRoomObject(Bulk)] " << e.what() << std::endl;
     }
 }
 
@@ -587,5 +587,59 @@ void DBManager::DeleteRoomObject(const std::string& userID, float posX, float po
     }
     catch (sql::SQLException& e) {
         std::cerr << "[DB Error - DeleteRoomObject] " << e.what() << std::endl;
+    }
+}
+
+void DBManager::SaveRoomObjects(const std::string& userID, const std::vector<Object>& objects)
+{
+    if (objects.empty()) return;
+
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::ostringstream query;
+        query << "INSERT INTO player_room (ID, ITEM_ID, POS_X, POS_Y, POS_Z, SCALE, YAW) VALUES ";
+
+        for (size_t i = 0; i < objects.size(); ++i) {
+            const Object& obj = objects[i];
+            query << "('" << userID << "', "
+                << obj.item_id << ", "
+                << obj.x << ", "
+                << obj.y << ", "
+                << obj.z << ", "
+                << obj.scale << ", "
+                << obj.yaw << ")";
+            if (i != objects.size() - 1) {
+                query << ", ";
+            }
+        }
+
+        query << " ON DUPLICATE KEY UPDATE "
+            << "SCALE=VALUES(SCALE), YAW=VALUES(YAW), "
+            << "POS_X=VALUES(POS_X), POS_Y=VALUES(POS_Y), POS_Z=VALUES(POS_Z)";
+
+        std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+        stmt->execute(query.str());
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SaveRoomObjects(Bulk)] " << e.what() << std::endl;
+    }
+}
+
+void DBManager::DeleteRoomObjects(const std::string& userID)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::ostringstream query;
+        query << "DELETE FROM player_room WHERE ID = '" << userID << "'";
+
+        std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+        stmt->execute(query.str());
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - DeleteRoomObjectsByUser] " << e.what() << std::endl;
     }
 }

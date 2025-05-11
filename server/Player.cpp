@@ -268,29 +268,27 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		bool is_new = false;
 		bool success = true;
-		// 디비 접근 라인 -> 안되면 주석 ㄱㄱ
-		{
-			// 1. 신규유저 확인
-			if (DBManager::checkLogin(p->id, p->pw, is_new)) {
-				if (false == is_new) {
-					// 기존유저
-					DBManager::LoadPInfo(p->id, pinfo, name);
-					DBManager::LoadCustomizing(p->id, this->custom);
-					DBManager::LoadItem(p->id, player_item);
-					room.LoadFromDB(p->id);
-					this->id = p->id;
-					// todo : Load Quest
-				}
-				else {
-					// 신규 유저
-					this->id = p->id;
-					player_setup();
-				}
+		
+		// 1. 신규유저 확인
+		if (DBManager::checkLogin(p->id, p->pw, is_new)) {
+			if (false == is_new) {
+				// 기존유저
+				DBManager::LoadPInfo(p->id, pinfo, name);
+				DBManager::LoadCustomizing(p->id, this->custom);
+				DBManager::LoadItem(p->id, player_item);
+				room.LoadFromDB(p->id);
+				this->id = p->id;
+				// todo : Load Quest
 			}
 			else {
-				// 로그인 실패
-				success = false;
+				// 신규 유저
+				this->id = p->id;
+				player_setup();
 			}
+		}
+		else {
+			// 로그인 실패
+			success = false;
 		}
 
 		// 2. 접속중인 플레이어인지 확인
@@ -319,7 +317,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			send_update_item_packet(a.first, a.second);
 		}
 
-
 		// 기존유저들에게 스폰요청
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
@@ -344,8 +341,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 보낸 채팅 확인용
 		std::wcout << p->name << ": " << p->msg << std::endl;
-
-		
 
 		// 채팅 브로드캐스트
 		for (int i = 0; i < players.size(); ++i) {
@@ -464,10 +459,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		send(&pkt);
 		break;
 	}
-	case CS_PLACE_BUILD:
+	case CS_PLACE_BUILD: // todo: 지금 나갈때만 저장하도록 수정해서 나중에 고쳐야 함
 	{
-		// std::cout << "RECV-CS_PLACE_BUILD: " << pinfo.id << " 건물 건설 요청!" << std::endl;
-
 		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
 		Object obj;
 		obj.item_id = p->build.item_id;
@@ -478,9 +471,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		obj.scale = p->build.scale;
 
 		room.AddObject(obj);
-		DBManager::SaveRoomObjects(id, obj);
-
-		// std::cout << "저장 완료: ID " << obj.item_id << ", Pos(" << obj.x << ", " << obj.y << ", " << obj.z << ")\n";
 		break;
 	}
 	case CS_REMOVE_BUILD:
@@ -489,7 +479,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "건물 삭제 요청 받음! 위치: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
 
 		room.RemoveObjectByPosition(p->x, p->y, p->z);
-		DBManager::DeleteRoomObject(id, p->x, p->y, p->z);
+		//DBManager::DeleteRoomObject(id, p->x, p->y, p->z);
 		break;
 	}
 	case CS_UPDATE_BUILD:
@@ -499,15 +489,16 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
 
 		room.UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
-		DBManager::UpdateRoomObject(id, p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+		//DBManager::UpdateRoomObject(id, p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
 		break;
 	}
 	case CS_ROOM_LEAVE:
 	{
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
 
-		auto now = std::chrono::high_resolution_clock::now();
-		auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+		// 집에서 나갈때 전체 삭제 후 다시 저장
+		DBManager::DeleteRoomObjects(id);
+		room.SaveToDB(id);
 
 		pinfo.st = IDLE;
 
@@ -527,7 +518,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		send_room_leave_packet();
 		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
-
 		break;
 	}
 	case CS_TIME_SYNC:
