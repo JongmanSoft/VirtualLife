@@ -106,6 +106,7 @@ enum PACKETID : char
 	CS_UPDATE_BUILD,
 	CS_ROOM_LEAVE,
 	CS_TIME_SYNC,
+	CS_VOICE_CHAT,
 
 	// server to client
 	SC_LOGININFO,
@@ -123,7 +124,8 @@ enum PACKETID : char
 	SC_NPC_RESPONSE,
 	SC_ROOM_SETUP,
 	SC_ROOM_LEAVE,
-	SC_TIME_SYNC
+	SC_TIME_SYNC,
+	SC_VOICE_CHAT
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -229,6 +231,13 @@ struct CS_TIME_SYNC_PACKET {
 	unsigned short size;
 	PACKETID type;
 	float ping;
+};
+
+struct CS_VOICE_CHAT_PACKET { // TODO: 보이스 채팅
+	unsigned short size;
+	PACKETID	type;
+	char	id[M_ID_SIZE];
+
 };
 
 // server to client //
