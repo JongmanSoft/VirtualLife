@@ -7,7 +7,6 @@ HANDLE g_iocp_handle;
 SOCKET g_server;
 SOCKET g_client;
 
-
 // 그 외 //
 concurrency::concurrent_priority_queue<EVENT> g_evt_queue;
 
@@ -40,8 +39,11 @@ void workerThread(HANDLE iocp_hd)
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
             std::cout << "[ACCEPT] 클라이언트 ID " << client_id << " 연결됨" << std::endl;
-
-            players[client_id].init_player(g_client, client_id);
+            
+            {
+				std::lock_guard<std::mutex> lock(players_mutex);
+                players[client_id].init_player(g_client, client_id);
+            }
             players[client_id].recv(); // 첫 번째 패킷 받기 시작
 
             g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -65,11 +67,14 @@ void workerThread(HANDLE iocp_hd)
         {
             std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장" << std::endl;
 
-            for (Player& player : players)
             {
-                if (player.get_state() != PLAYING)
-                    continue;
-                player.save_db_pinfo();
+                std::lock_guard<std::mutex> lock(players_mutex);
+                for (Player& player : players)
+                {
+                    if (player.get_state() != PLAYING)
+                        continue;
+                    player.save_db_pinfo();
+                }
             }
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME); // 10분 뒤 저장
@@ -78,11 +83,14 @@ void workerThread(HANDLE iocp_hd)
         {
             std::cout << "[EVENT] DB_INVENTORY_UPDATE - 플레이어 인벤토리 저장" << std::endl;
 
-            for (Player& player : players)
             {
-                if (player.get_state() != PLAYING)
-                    continue;
-                player.save_db_pInventory();
+                std::lock_guard<std::mutex> lock(players_mutex);
+                for (Player& player : players)
+                {
+                    if (player.get_state() != PLAYING)
+                        continue;
+                    player.save_db_pInventory();
+                }
             }
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);

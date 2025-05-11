@@ -317,20 +317,22 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			send_update_item_packet(a.first, a.second);
 		}
 
-		// 기존유저들에게 스폰요청
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
-				players[i].send_spawn_packet(pinfo, custom);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			// 기존유저들에게 스폰요청
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+					players[i].send_spawn_packet(pinfo, custom);
+				}
+			}
+
+			// 나에게 기존유저 스폰
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+					send_spawn_packet(players[i].pinfo, players[i].custom);
+				}
 			}
 		}
-
-		// 나에게 기존유저 스폰
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
-				send_spawn_packet(players[i].pinfo, players[i].custom);
-			}
-		}
-
 		break;
 	}
     case CS_CHAT:
@@ -343,9 +345,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::wcout << p->name << ": " << p->msg << std::endl;
 
 		// 채팅 브로드캐스트
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
-				players[i].send_chat_packet(p->name, p->msg, p->from_id);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
+					players[i].send_chat_packet(p->name, p->msg, p->from_id);
+			}
 		}
         break;
     }
@@ -361,16 +366,16 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 
 		// 나간 플레이어 정보 브로드캐스팅
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
-				players[i].send_despawn_packet(id);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
+					players[i].send_despawn_packet(id);
+			}
 		}
 		
 		std::cout << id << "가 종료!" << std::endl;
-		// db 정리 라인 - 안되면 주석 ㄱㄱ
-		{
-			DBManager::SavePInfo(this->id, this->pinfo);
-		}
+		DBManager::SavePInfo(this->id, this->pinfo);
 
 		state = NONE;
         break;
@@ -382,10 +387,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << std::endl;
 		pinfo = p->pl;
 
-		// 위치정보 브로드캐스팅
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
-				players[i].send_move_packet(p->pl);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			// 위치정보 브로드캐스팅
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
+					players[i].send_move_packet(p->pl);
+				}
 			}
 		}
 
@@ -451,9 +459,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pinfo.st = HOME;
 		
 		// 모든 플레이어에게 디스폰 보내기
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].state == PLAYING and i != pinfo.id and players[i].pinfo.st != HOME)
-				players[i].send_despawn_packet(pinfo.id);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].state == PLAYING and i != pinfo.id and players[i].pinfo.st != HOME)
+					players[i].send_despawn_packet(pinfo.id);
+			}
 		}
 
 		send(&pkt);
@@ -502,17 +513,20 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		pinfo.st = IDLE;
 
-		// 기존유저들에게 스폰요청
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
-				players[i].send_spawn_packet(pinfo, custom);
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+			// 기존유저들에게 스폰요청
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+					players[i].send_spawn_packet(pinfo, custom);
+				}
 			}
-		}
 
-		// 나에게 기존유저 스폰
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
-				send_spawn_packet(players[i].pinfo, players[i].custom);
+			// 나에게 기존유저 스폰
+			for (int i = 0; i < players.size(); ++i) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+					send_spawn_packet(players[i].pinfo, players[i].custom);
+				}
 			}
 		}
 
