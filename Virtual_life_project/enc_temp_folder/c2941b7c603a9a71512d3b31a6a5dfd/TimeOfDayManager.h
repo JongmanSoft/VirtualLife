@@ -37,7 +37,7 @@ protected:
 	float ServerTime = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
-	float ClientTime = 0.0f;
+	float ClientTime = 15.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	float TimeStep = 0.1f;
