@@ -311,11 +311,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			DBManager::SavePname(this->id, this->name);
 		}
 		state = PLAYING;
-		send_enter_game_packet();
 		
 		for (auto& a : player_item) {
 			send_update_item_packet(a.first, a.second);
 		}
+
+		send_enter_game_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -406,6 +407,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		if (player_item.contains(p->id)) player_item[p->id] += p->num;
 		else player_item[p->id] = p->num;
+
+		// 인벤토리 세이브
+		save_db_pInventory();
 
 		send_update_item_packet(p->id, player_item[p->id]);
 		break;

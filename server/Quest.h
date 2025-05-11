@@ -1,18 +1,18 @@
 #pragma once
 class Quest
 {
-	unsigned short giver_id;
-	unsigned short type; // 번호
+	short giver_id;
+	short type; // 번호
 
 public:
 	Quest() {};
 	~Quest() {};
-	Quest(unsigned short gid, unsigned short n) : giver_id{ gid }, type{ n } {}
+	Quest(short gid, short n) : giver_id{ gid }, type{ n } {}
 
 
 	Quest& GetQuestInfo() { return *this; }
-	const unsigned short GetGID() { return giver_id; }
-	const unsigned short GetNUM() { return type; }
+	const short GetGID() { return giver_id; }
+	const short GetNUM() { return type; }
 
 };
 

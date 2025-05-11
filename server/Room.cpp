@@ -1,6 +1,20 @@
 #include "Room.h"
 #include "DBManager.h"
 
+void Room::AddPlayer(Player* player)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+	players.push_back(player);
+}
+
+void Room::RemovePlyer(int id)
+{
+	std::lock_guard<std::mutex> lock(mtx);
+	players.erase(std::remove_if(players.begin(), players.end(),
+		[id](Player* player) { return player->Get_id() == id; }),
+		players.end());
+}
+
 void Room::AddObject(const Object& obj)
 {
     if (objs.size() >= MAX_BUILD_ITEM) return;

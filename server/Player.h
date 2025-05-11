@@ -94,5 +94,7 @@ public:
 
 	STATES get_state() const { return state; }
 	void set_state(STATES st) { state = st; }
+
+	int Get_id() { return pinfo.id; }
 };
 

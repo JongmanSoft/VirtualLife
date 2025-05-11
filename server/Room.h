@@ -4,16 +4,24 @@
 #include <memory>
 #include <iostream>
 #include "protocol.h"
+#include <mutex>
+
+class Player;
 
 class Room
 {
 private:
 	// vector<Object*> objs; // 현재 집에 깔린 가구들
 	std::vector<std::shared_ptr<Object>> objs;
+	std::vector<Player*> players; // 방에 있는 플레이어들
+	std::mutex mtx; // 동기화용 mutex
+
 public:
 	Room() {};
 	~Room() {};
 
+	void AddPlayer(Player* player);
+	void RemovePlyer(int id);
 	void AddObject(const Object& obj);
 	void packet_setup(SC_ROOM_SETUP_PACKET& pkt);
 	void RemoveObjectByPosition(float x, float y, float z);
