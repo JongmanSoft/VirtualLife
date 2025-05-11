@@ -292,7 +292,7 @@ struct SC_UPDATE_ITEM_PACKET {
 	unsigned short size;
 	PACKETID type;
 	unsigned short id;
-	unsigned short num;
+	short num;
 };
 
 struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
