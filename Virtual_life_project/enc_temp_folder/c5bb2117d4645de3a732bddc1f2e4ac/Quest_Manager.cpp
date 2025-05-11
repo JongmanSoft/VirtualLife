@@ -82,8 +82,12 @@ void UQuest_Manager::Done_Process(const uint8& quest_id)
 
     UGameplayStatics::PlaySound2D(this, LoadObject<USoundWave>(nullptr, TEXT("/Game/sound/effect_sound/cashier.cashier")));
 
- 
+    // 퀘스트 완료 텍스트
+    player_location.Z += 40;
+    game_inst->ShowFloatingText(FString(TEXT("퀘스트 완료!")), FLinearColor(1.0f, 1.0f, 1.0f, 1.0f), player_location);
+
     // 골드 보상 텍스트
+    player_location.Z -= 40;
     game_inst->ShowFloatingText(FString::Printf(TEXT("+%dG"), Quests[quest_id]->Quest_info.RewardGold), FLinearColor(0.97f, 0.95f, 0.3f, 1.0f), player_location);
 
     game_inst->SendRemoveQuestPacket(0, quest_id);

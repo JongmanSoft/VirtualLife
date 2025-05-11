@@ -13,7 +13,7 @@ struct requir
 {
     uint8 requir_item_ID;
     uint8 requir_num;
-    uint8* have_num;
+    int* have_num;
 };
 
 UCLASS(Blueprintable)

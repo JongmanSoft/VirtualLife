@@ -54,7 +54,7 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 	}
 }
 
-void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, int num)
+void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, uint8 num)
 {
 	CS_GET_ITEM_PACKET p;
 	p.size = sizeof(CS_GET_ITEM_PACKET);

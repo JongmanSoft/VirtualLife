@@ -120,7 +120,7 @@ public:
 	FString GetName() { return name; }
 
 	UFUNCTION(BlueprintCallable)
-	void SendGetItemPacket(uint8 item_id, int num);
+	void SendGetItemPacket(uint8 item_id, uint8 num);
 
 	UFUNCTION(BlueprintCallable)
 	void SendEnterGamePacket();
