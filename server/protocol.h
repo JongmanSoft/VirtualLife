@@ -186,8 +186,8 @@ struct CS_UPDATE_GOLD_PACKET
 struct CS_UPDATE_QUEST_PACKET {
 	unsigned short size;
 	PACKETID type;
-	unsigned short giver_id;
-	unsigned short num; // 퀘스트 번호
+	short giver_id;
+	short num; // 퀘스트 번호
 };
 
 struct CS_NPC_CHAT_PACKET {
@@ -257,8 +257,8 @@ struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	float time; // Todo: 여기 어떻게 해야 함?
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보
 	AdditionalInfo addinfo;
-	unsigned short giver_id[QUEST_MAX];
-	unsigned short num[QUEST_MAX]; // 퀘스트 번호
+	short giver_id[QUEST_MAX];
+	short num[QUEST_MAX]; // 퀘스트 번호
 };
 
 struct SC_SPAWN_PACKET {
@@ -319,8 +319,8 @@ struct SC_UPDATE_GOLD_PACKET {
 struct SC_UPDATE_QUEST_PACKET {
 	unsigned short size;
 	PACKETID type;
-	unsigned short giver_id;
-	unsigned short num; // 퀘스트 번호
+	short giver_id;
+	short num; // 퀘스트 번호
 };
 
 struct SC_NPC_RESPONSE_PACKET {
