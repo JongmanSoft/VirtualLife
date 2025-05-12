@@ -22,6 +22,9 @@ public:
     static bool LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::wstring& outName);
 	static void SavePname(const std::string& userID, const std::wstring& name);
 
+    static void SaveGold(const std::string& userID, const int gold);
+    static int LoadGold(const std::string& userID);
+
     // inventory
     static void SaveItem(const std::string& userID, int itemCode, int itemCount);
     static bool LoadItem(const std::string& userID, std::unordered_map<unsigned short, unsigned short>& outData);

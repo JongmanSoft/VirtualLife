@@ -321,6 +321,51 @@ void DBManager::SavePname(const std::string& userID, const std::wstring& name)
 	}
 }
 
+void DBManager::SaveGold(const std::string& userID, const int gold)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return;
+
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            conn->prepareStatement("UPDATE player_info SET MONEY = ? WHERE ID = ?"));
+        pstmt->setInt(1, gold);
+        pstmt->setString(2, userID);
+
+        pstmt->execute();
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - SaveGold] " << e.what() << std::endl;
+    }
+}
+
+int DBManager::LoadGold(const std::string& userID)
+{
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return 0; 
+
+        std::unique_ptr<sql::PreparedStatement> pstmt(
+            conn->prepareStatement("SELECT MONEY FROM player_info WHERE ID = ?"));
+        pstmt->setString(1, userID);
+
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+
+        if (res->next()) {
+            return res->getInt("MONEY");
+        }
+        else {
+            std::cerr << "[DB Warning - LoadGold] 유저 " << userID << "의 GOLD 정보 없음\n";
+            return 0;
+        }
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "[DB Error - LoadGold] " << e.what() << std::endl;
+        return 0;
+    }
+}
+
+
 void DBManager::SaveCustomizing(const std::string& userID, const Customizing& data)
 {
 	if (DB_ON == false) return;

@@ -21,6 +21,7 @@ bool Player::send_enter_game_packet()
 	p.size = sizeof(SC_ENTER_GAME_PACKET);
 	p.custom = custom;
 	p.player = pinfo;
+	p.addinfo = addinfo; // 여기 추가했는데..
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 	p.type = SC_ENTER_GAME;
 	auto now = std::chrono::high_resolution_clock::now();
@@ -277,6 +278,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
+				addinfo.gold = DBManager::LoadGold(p->id);
 				room.LoadFromDB(p->id);
 				this->id = p->id;
 			}
@@ -427,6 +429,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
 		this->addinfo.gold += p->gold_offset;
+		DBManager::SaveGold(this->id, this->addinfo.gold);
 		send_update_gold(this->addinfo.gold);
 		break;
 	}
