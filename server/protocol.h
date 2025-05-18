@@ -233,11 +233,12 @@ struct CS_TIME_SYNC_PACKET {
 	float ping;
 };
 
-struct CS_VOICE_CHAT_PACKET { // TODO: 보이스 채팅
+struct CS_VOICE_CHAT_PACKET {
 	unsigned short size;
-	PACKETID	type;
-	char	id[M_ID_SIZE];
-
+	PACKETID type; // CS_VOICE_CHAT
+	unsigned int from_id;
+	unsigned short data_len;
+	char data[512]; // Opus 압축 데이터
 };
 
 // server to client //

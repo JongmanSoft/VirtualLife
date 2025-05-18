@@ -149,6 +149,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendRoomLeavePacket();
 
+	//UFUNCTION(BlueprintCallable)
+	void SendVoicePacket(uint8* data, int32 length);
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;
