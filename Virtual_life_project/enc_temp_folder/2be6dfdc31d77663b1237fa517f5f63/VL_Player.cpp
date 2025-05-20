@@ -52,10 +52,6 @@ void AVL_Player::BeginPlay()
 			// 마이크 시작
 			MicCapture->Start();
 
-			MixerDevice = FAudioDeviceManager::GetAudioMixerDeviceFromWorldContext(GetWorld());
-			MixerDevice->StartRecording(nullptr, 0); // 이게 누락되면 StopRecording도 무효
-
-
 			// 20ms 주기로 타이머 등록 (PCM 추출용)
 			GetWorldTimerManager().SetTimer(
 				VoiceCaptureTimer,

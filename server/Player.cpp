@@ -188,6 +188,11 @@ bool Player::send_time_sync_packet()
 	return true;
 }
 
+bool Player::send_voice_chat_packet()
+{
+	SC_VOICE_CHAT_PACKET p;
+}
+
 bool Player::save_db_pinfo()
 {
 	DBManager::SavePInfo(this->id, this->pinfo);
@@ -555,6 +560,19 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_TIME_SYNC_PACKET* p = reinterpret_cast<CS_TIME_SYNC_PACKET*>(packet);
 		
 
+		break;
+	}
+	case CS_VOICE_CHAT:
+	{
+		CS_VOICE_CHAT_PACKET* p = reinterpret_cast<CS_VOICE_CHAT_PACKET*>(packet);
+		SC_VOICE_CHAT_PACKET pkt;
+		memcpy(pkt.data, p->data, p->data_len);
+		pkt.data_len = p->data_len;
+		pkt.from_id = p->from_id;
+		pkt.type = SC_VOICE_CHAT;
+		pkt.size = p->size;
+		
+		send(&pkt);
 		break;
 	}
     default:

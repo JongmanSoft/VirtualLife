@@ -345,4 +345,12 @@ struct SC_TIME_SYNC_PACKET {
 	float time;
 };
 
+struct SC_VOICE_CHAT_PACKET {
+	unsigned short size;
+	PACKETID type; 
+	unsigned int from_id;
+	unsigned short data_len;
+	char data[512]; // Opus 압축 데이터
+};
+
 #pragma pack (pop)

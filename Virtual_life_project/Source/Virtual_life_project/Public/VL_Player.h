@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Virtual_life_GameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AudioCaptureComponent.h"
+#include "AudioDeviceManager.h"
+#include "AudioMixerDevice.h"
 #include "VL_Player.generated.h"
 
 UCLASS()
@@ -21,6 +24,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void CaptureVoiceFrame();
 
 public:	
 	// Called every frame
@@ -54,4 +59,17 @@ protected:
 	int state;
 private:
 	std::mutex m;
+
+	FTimerHandle VoiceCaptureTimer;
+
+	UPROPERTY()
+	UAudioCaptureComponent* MicCapture = nullptr;
+	USoundSubmix* Submix = nullptr;
+	Audio::FMixerDevice* MixerDevice = nullptr;
+
+
+	OpusEncoder* Encoder = nullptr;
+	int32 OpusFrameSize = 960; // 20ms @ 48kHz
+	int32 SampleRate = 48000;
+	int32 Channels = 1;
 };

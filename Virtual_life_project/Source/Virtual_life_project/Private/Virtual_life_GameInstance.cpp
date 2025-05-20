@@ -19,6 +19,9 @@
 #include "FBuildInfo.h"
 #include "Engine/DataTable.h"
 #include "PlaceBuildActor.h"
+#include "AudioCapture.h"     
+#include "AudioCaptureCore.h" 
+#include "AudioCaptureComponent.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
 
@@ -169,6 +172,38 @@ void UVirtual_life_GameInstance::SendRoomLeavePacket()
 	p.type = CS_ROOM_LEAVE;
 
 	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::EncodingTest()
+{
+	int ErrorCode = 0;
+
+	// 48kHz, 1채널, VoIP 설정
+	OpusEncoder* Encoder = opus_encoder_create(48000, 1, OPUS_APPLICATION_VOIP, &ErrorCode);
+
+	if (ErrorCode != OPUS_OK || !Encoder)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Opus 인코더 생성 실패: %d"), ErrorCode);
+		return;
+	}
+
+	// 20ms 분량의 더미 PCM (48000Hz * 20ms = 960 샘플)
+	int16 PCM[960] = { 0 };
+	uint8 Encoded[512] = { 0 };
+
+	// 인코딩 시도
+	int EncodedBytes = opus_encode(Encoder, PCM, 960, Encoded, sizeof(Encoded));
+
+	if (EncodedBytes < 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패: %d"), EncodedBytes);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Opus 인코딩 성공! 압축된 바이트 수: %d"), EncodedBytes);
+	}
+
+	opus_encoder_destroy(Encoder);
 }
 
 void UVirtual_life_GameInstance::SendVoicePacket(uint8* data, int32 length)
@@ -601,8 +636,61 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
 			break;
 		}
+		case SC_VOICE_CHAT:
+		{
+			SC_VOICE_CHAT_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_VOICE_CHAT_PACKET));
+
+			if (!Decoder || !ProceduralSoundWave || !AudioComponent) return;
+
+			// 디코딩
+			int16 DecodedPCM[960 * 2]; // 최대 20ms 프레임, 모노
+			int FrameSize = opus_decode(
+				Decoder,
+				reinterpret_cast<const unsigned char*>(p.data),
+				p.data_len,
+				DecodedPCM,
+				960,
+				0
+			);
+
+			if (FrameSize > 0)
+			{
+				ProceduralSoundWave->QueueAudio((uint8*)DecodedPCM, FrameSize * sizeof(int16));
+				UE_LOG(LogTemp, Log, TEXT(" 재생용 PCM %d samples 수신"), FrameSize);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT(" Opus 디코딩 실패: %d"), FrameSize);
+			}
+		}
 		}
 	}
+}
+
+void UVirtual_life_GameInstance::InitVoicePlayback()
+{
+	int32 Error = 0;
+	Decoder = opus_decoder_create(48000, 1, &Error);
+	if (Error != OPUS_OK)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" Opus 디코더 생성 실패: %d"), Error);
+		return;
+	}
+
+	ProceduralSoundWave = NewObject<USoundWaveProcedural>();
+	ProceduralSoundWave->NumChannels = 1;
+	ProceduralSoundWave->Duration = INDEFINITELY_LOOPING_DURATION;
+	ProceduralSoundWave->SoundGroup = SOUNDGROUP_Voice;
+	ProceduralSoundWave->bLooping = false;
+
+	AudioComponent = NewObject<UAudioComponent>(this);
+	AudioComponent->SetSound(ProceduralSoundWave);
+	AudioComponent->bAutoActivate = false;
+	AudioComponent->RegisterComponent();
+	AudioComponent->Play();
+
+	UE_LOG(LogTemp, Warning, TEXT(" Voice 재생 시스템 초기화 완료"));
 }
 
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()
@@ -611,7 +699,6 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
-
 
 
 }
@@ -649,6 +736,7 @@ void UVirtual_life_GameInstance::OnStart()
 {
 	Super::OnStart();
 	// 블루프린트 클래스 로드 (정확한 경로 사용)
+
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
 
 	UDataTable* BuildTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/BuildingSystem/NewBuildData.NewBuildData'")));
@@ -661,6 +749,7 @@ void UVirtual_life_GameInstance::OnStart()
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 	}
 	
+	//InitVoicePlayback();
 }
 
 void UVirtual_life_GameInstance::EnterMyRoom()

@@ -45,6 +45,7 @@ class Player
 	bool send_room_setup_packet();
 	bool send_room_leave_packet();
 	bool send_time_sync_packet();
+	bool send_voice_chat_packet();
 
 
 public:

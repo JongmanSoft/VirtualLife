@@ -26,6 +26,10 @@
 			]
 		},
 		{
+    			"Name": "AudioCapture",
+    			"Enabled": true
+		},
+		{
 			"Name": "LiveLinkControlRig",
 			"Enabled": true
 		},

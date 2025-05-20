@@ -17,6 +17,11 @@
 #include "Custom_data.h"
 #include "Quest_Manager.h"
 #include "ObjectData.h"
+#include "../ThirdParty/opus.h"
+
+// 사운드 재생용
+#include "Sound/SoundWaveProcedural.h"
+#include "Components/AudioComponent.h"
 
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
@@ -28,7 +33,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, I
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestUpdated);
-
 
 struct SpawnInfo
 {
@@ -149,6 +153,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendRoomLeavePacket();
 
+	UFUNCTION(BlueprintCallable)
+	void EncodingTest();
+
 	//UFUNCTION(BlueprintCallable)
 	void SendVoicePacket(uint8* data, int32 length);
 
@@ -235,4 +242,20 @@ private:
 public :
 	void set_name(FString _name) { name = _name; };
 	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
+
+public: // 음성채팅 관련
+	// Opus
+	//struct OpusDecoder;
+	OpusDecoder* Decoder = nullptr;
+
+	// 재생용
+	UPROPERTY()
+	UAudioComponent* AudioComponent = nullptr;
+
+	UPROPERTY()
+	USoundWaveProcedural* ProceduralSoundWave = nullptr;
+
+	// 함수
+	void InitVoicePlayback(); // BeginPlay 등에서 호출
+
 };
