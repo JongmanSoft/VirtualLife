@@ -9,7 +9,7 @@ public class Virtual_life_project : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Sockets", "Networking", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities", "AudioCapture", "AudioMixer", "AudioMixerCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Sockets", "Networking", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities", "AudioCapture", "AudioMixer", "AudioMixerCore", "AudioCaptureCore" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "AudioCapture" });
 

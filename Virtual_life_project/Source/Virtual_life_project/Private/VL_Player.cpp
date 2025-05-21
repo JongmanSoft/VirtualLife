@@ -31,103 +31,119 @@ void AVL_Player::BeginPlay()
 
 	if (IsLocallyControlled())
 	{
-		MicCapture = NewObject<UAudioCaptureComponent>(this);
-		if (MicCapture)
-		{
-			MicCapture->RegisterComponent();
-			MicCapture->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-			// Submix 객체 생성
-			Submix = NewObject<USoundSubmix>(this);
-			MicCapture->SoundSubmix = Submix;
-
-			// 오디오 믹서 장치 가져오기
-			MixerDevice = FAudioDeviceManager::GetAudioMixerDeviceFromWorldContext(GetWorld());
-			if (MixerDevice)
-			{
-				MixerDevice->RegisterSoundSubmix(Submix);
-				MixerDevice->StartRecording(Submix, 0); // 0 = 기본 길이 제한 없음
-			}
-
-			// 마이크 시작
-			MicCapture->Start();
-
-			MixerDevice = FAudioDeviceManager::GetAudioMixerDeviceFromWorldContext(GetWorld());
-			MixerDevice->StartRecording(nullptr, 0); // 이게 누락되면 StopRecording도 무효
-
-
-			// 20ms 주기로 타이머 등록 (PCM 추출용)
-			GetWorldTimerManager().SetTimer(
-				VoiceCaptureTimer,
-				this,
-				&AVL_Player::CaptureVoiceFrame,
-				0.02f, // 20ms
-				true   // 반복
-			);
-
-			UE_LOG(LogTemp, Warning, TEXT("Mic started + Submix recording"));
-		}
-
-		// 인코더
-		
-
+		// Opus 인코더 초기화
 		int32 Error = 0;
 		Encoder = opus_encoder_create(SampleRate, Channels, OPUS_APPLICATION_VOIP, &Error);
 		if (Error != OPUS_OK)
 		{
 			UE_LOG(LogTemp, Error, TEXT("Opus encoder 생성 실패: %d"), Error);
+			return;
+		}
+
+		// 오디오 캡처 설정
+		DeviceParams.DeviceIndex = 0; // 기본 장치 사용
+
+		uint32 NumFramesDesired = 960; // 예: 20ms @ 48kHz
+
+		auto OnCapture = [this](const float* AudioData, int32 NumFrames, int32 NumChannels, int32 SampleRate, double StreamTime, bool bOverflow)
+			{
+				if (!Encoder || bOverflow || NumFrames == 0) return;
+
+				// 1. float PCM → int16 PCM
+				TArray<int16> PCM;
+				PCM.SetNumUninitialized(NumFrames);
+				for (int32 i = 0; i < NumFrames; ++i)
+				{
+					PCM[i] = FMath::Clamp(AudioData[i] * 32767.0f, -32768.f, 32767.f);
+				}
+
+				// 2. Opus 인코딩
+				uint8 CompressedData[4000]; // 넉넉하게
+				int32 CompressedBytes = opus_encode(
+					Encoder,
+					PCM.GetData(),
+					NumFrames,            // frame_size: float으로 받은 수치 그대로
+					CompressedData,
+					sizeof(CompressedData)
+				);
+
+				if (CompressedBytes <= 0)
+				{
+					UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패 (%d)"), CompressedBytes);
+					return;
+				}
+
+				// 3. GameInstance 통해 서버로 전송
+				if (UGameInstance* GI = GetGameInstance())
+				{
+					if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GI))
+					{
+						MyGI->SendVoicePacket(CompressedData, CompressedBytes);
+						//UE_LOG(LogTemp, Log, TEXT("Opus %d bytes 전송됨"), CompressedBytes);
+					}
+				}
+			};
+
+		bool bOpened = AudioCapture.OpenCaptureStream(DeviceParams, OnCapture, NumFramesDesired);
+		if (bOpened)
+		{
+			AudioCapture.StartStream();
+		}
+		else
+		{
+			//UE_LOG(LogTemp, Error, TEXT("오디오 캡처 스트림 열기 실패"));
 		}
 	}
 }
 
 void AVL_Player::CaptureVoiceFrame()
 {
-	if (!MixerDevice || !Encoder) return;
+	//if (!Encoder) return;
 
-	float CapturedChannels = 0.0f;
-	float CapturedSampleRate = 0.0f;
+	//float CapturedChannels = 0.0f;
+	//float CapturedSampleRate = 0.0f;
 
-	Audio::FAlignedFloatBuffer PCMBuffer = MixerDevice->StopRecording(nullptr, CapturedChannels, CapturedSampleRate);
+	//Audio::FAlignedFloatBuffer PCMBuffer = MixerDevice->StopRecording(nullptr, CapturedChannels, CapturedSampleRate);
 
-	if (PCMBuffer.Num() == 0) return;
+	//if (PCMBuffer.Num() == 0) return;
 
-	const float* PCMData = PCMBuffer.GetData();
+	//const float* PCMData = PCMBuffer.GetData();
 
-	// PCM(float) → int16 변환
-	TArray<int16> Int16PCM;
-	Int16PCM.SetNumUninitialized(PCMBuffer.Num());
+	//// PCM(float) → int16 변환
+	//TArray<int16> Int16PCM;
+	//Int16PCM.SetNumUninitialized(PCMBuffer.Num());
 
-	for (int32 i = 0; i < PCMBuffer.Num(); ++i)
-	{
-		Int16PCM[i] = FMath::Clamp<int32>(PCMData[i] * 32767.0f, -32768, 32767);
-	}
+	//for (int32 i = 0; i < PCMBuffer.Num(); ++i)
+	//{
+	//	Int16PCM[i] = FMath::Clamp<int32>(PCMData[i] * 32767.0f, -32768, 32767);
+	//}
 
-	// Opus 인코딩
-	uint8 CompressedData[4000]; // 넉넉하게
-	int32 CompressedBytes = opus_encode(
-		Encoder,
-		Int16PCM.GetData(),
-		OpusFrameSize, // 예: 960 (20ms @ 48kHz)
-		CompressedData,
-		sizeof(CompressedData)
-	);
+	//// Opus 인코딩
+	//uint8 CompressedData[4000]; // 넉넉하게
+	//int32 CompressedBytes = opus_encode(
+	//	Encoder,
+	//	Int16PCM.GetData(),
+	//	OpusFrameSize, // 예: 960 (20ms @ 48kHz)
+	//	CompressedData,
+	//	sizeof(CompressedData)
+	//);
 
-	if (CompressedBytes < 0)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패: %d"), CompressedBytes);
-		return;
-	}
+	//if (CompressedBytes < 0)
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패: %d"), CompressedBytes);
+	//	return;
+	//}
 
-	// GameInstance를 통해 전송
-	UGameInstance* GI = GetGameInstance();
-	if (GI)
-	{
-		UVirtual_life_GameInstance* MyGI = Cast<UVirtual_life_GameInstance>(GI);
-		if (MyGI)
-		{
-			MyGI->SendVoicePacket(CompressedData, CompressedBytes);
-		}
-	}
+	//// GameInstance를 통해 전송
+	//UGameInstance* GI = GetGameInstance();
+	//if (GI)
+	//{
+	//	UVirtual_life_GameInstance* MyGI = Cast<UVirtual_life_GameInstance>(GI);
+	//	if (MyGI)
+	//	{
+	//		MyGI->SendVoicePacket(CompressedData, CompressedBytes);
+	//	}
+	//}
 }
 
 // Called every frame

@@ -7,8 +7,9 @@
 #include "Virtual_life_GameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AudioCaptureComponent.h"
-#include "AudioDeviceManager.h"
-#include "AudioMixerDevice.h"
+#include "AudioCaptureCore.h"
+#include "AudioCapture.h"
+//#include "AudioCaptureTypes.h"
 #include "VL_Player.generated.h"
 
 UCLASS()
@@ -60,16 +61,17 @@ protected:
 private:
 	std::mutex m;
 
+
+	// ¿Àµð¿À
 	FTimerHandle VoiceCaptureTimer;
 
-	UPROPERTY()
-	UAudioCaptureComponent* MicCapture = nullptr;
-	USoundSubmix* Submix = nullptr;
-	Audio::FMixerDevice* MixerDevice = nullptr;
-
+	
+	Audio::FAudioCapture AudioCapture;
+	Audio::FAudioCaptureDeviceParams DeviceParams;
 
 	OpusEncoder* Encoder = nullptr;
-	int32 OpusFrameSize = 960; // 20ms @ 48kHz
+
 	int32 SampleRate = 48000;
 	int32 Channels = 1;
+	int32 OpusFrameSize = 960; // 20ms @ 48kHz
 };
