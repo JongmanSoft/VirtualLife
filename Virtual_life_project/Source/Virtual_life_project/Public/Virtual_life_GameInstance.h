@@ -164,6 +164,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual bool IsTickable() const override { return true; }
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UVirtual_life_GameInstance, STATGROUP_Tickables); }
+	
+	UFUNCTION(BlueprintCallable)
 	virtual void Shutdown() override;  // 게임 종료 시 실행될 함수
 
 	UFUNCTION(BlueprintCallable)
