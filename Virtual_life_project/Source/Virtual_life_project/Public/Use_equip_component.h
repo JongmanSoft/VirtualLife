@@ -28,6 +28,7 @@ public:
 
     virtual void SetupInputComponent(class UInputComponent* PlayerInputComponent);
 
+
     UFUNCTION(BlueprintCallable, Category = "Input")
     void ChangeBindingFunc(uint8 index, uint8 tool_ID);
 

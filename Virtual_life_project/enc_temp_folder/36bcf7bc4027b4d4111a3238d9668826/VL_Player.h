@@ -58,10 +58,8 @@ protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
 	int state;
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+private:
 	UCapsuleComponent* cap;//의존성주입해야함
-
 	void interact_action();
 private:
 	std::mutex m;

@@ -3,7 +3,7 @@
 #include "Components/InputComponent.h"
 #include "Animation/AnimInstance.h"
 #include "Components/SkeletalMeshComponent.h"
-
+#include "Components/ActorComponent.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
@@ -14,7 +14,10 @@
 
 #include "Kismet/GameplayStatics.h"
 
-
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
+#include "../interface/CPI_interface.h"
 #include "../interface/plant_able_cpp_interface.h"
 #include "../interface/fishing_cpp_interface.h"
 #include "../interface/mining_cpp_interface.h"
@@ -62,6 +65,9 @@ void UUse_equip_component::BeginPlay()
     ActionFunctions[2] = &UUse_equip_component::USE_tomato_seed;
     ActionFunctions[3] = &UUse_equip_component::USE_fishing_rod;
     ActionFunctions[4] = &UUse_equip_component::USE_pickaxe;
+
+
+    
 }
 
 // Called every frame
@@ -78,6 +84,8 @@ void UUse_equip_component::SetupInputComponent(UInputComponent* PlayerInputCompo
     PlayerInputComponent->BindAction("Key4", IE_Pressed, this, &UUse_equip_component::USE_None);
     PlayerInputComponent->BindAction("Key5", IE_Pressed, this, &UUse_equip_component::USE_None);
 }
+
+
 
 void UUse_equip_component::ChangeBindingFunc(uint8 index, uint8 tool_ID)
 {
