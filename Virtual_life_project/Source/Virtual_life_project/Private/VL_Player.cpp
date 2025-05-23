@@ -349,7 +349,7 @@ void AVL_Player::interact_action()
 	{
 		if (Actor && Actor != this) // 자기 자신 제외
 		{
-			ICPI_interface::Execute_Interact(Actor);
+			if (Actor->GetClass()->ImplementsInterface(UCPI_interface::StaticClass()))ICPI_interface::Execute_Interact(Actor);
 		}
 	}
 }
