@@ -24,6 +24,7 @@ AVL_Player::~AVL_Player()
 {
 }
 
+
 // Called when the game starts or when spawned
 void AVL_Player::BeginPlay()
 {
@@ -74,14 +75,17 @@ void AVL_Player::BeginPlay()
 				}
 
 				// 3. GameInstance 통해 서버로 전송
-				if (UGameInstance* GI = GetGameInstance())
-				{
-					if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GI))
+				if (GetWorld() && GetGameInstance()) {
+					if (UGameInstance* GI = GetGameInstance())
 					{
-						MyGI->SendVoicePacket(CompressedData, CompressedBytes);
-						//UE_LOG(LogTemp, Log, TEXT("Opus %d bytes 전송됨"), CompressedBytes);
+						if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GI))
+						{
+							MyGI->SendVoicePacket(CompressedData, CompressedBytes);
+							//UE_LOG(LogTemp, Log, TEXT("Opus %d bytes 전송됨"), CompressedBytes);
+						}
 					}
 				}
+			
 			};
 
 		bool bOpened = AudioCapture.OpenCaptureStream(DeviceParams, OnCapture, NumFramesDesired);
