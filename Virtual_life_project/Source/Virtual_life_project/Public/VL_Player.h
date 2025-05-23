@@ -58,6 +58,8 @@ protected:
 	PlayerInfo destInfo; // ¸ñÀûÁö
 	int state;
 private:
+	void interact_action();
+private:
 	std::mutex m;
 
 

@@ -7,6 +7,9 @@
 #include "AudioMixerDevice.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+#include "InputMappingContext.h"
 
 #include "opus.h"
 
@@ -29,6 +32,33 @@ AVL_Player::~AVL_Player()
 void AVL_Player::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//인풋 컴포넌트 설정
+	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(FindComponentByClass<UInputComponent>());
+	UInputMappingContext* MappingContext = LoadObject<UInputMappingContext>(nullptr, TEXT("/Game/VirtualLife_Character/Input/IMC_VirtualLife.IMC_VirtualLife"));
+	if (MappingContext)
+	{
+		// PlayerController 가져오기
+		APlayerController* PlayerController = GetController<APlayerController>();
+		if (PlayerController)
+		{
+			// LocalPlayerSubsystem을 통해 매핑 컨텍스트 추가
+			if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
+			{
+				if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+				{
+					Subsystem->AddMappingContext(MappingContext, 0); // 우선순위 0
+				}
+			}
+		}
+	}
+
+	// Input Action Asset로 바인딩
+	UInputAction* InteractAction = LoadObject<UInputAction>(nullptr, TEXT("/Game/VirtualLife_Character/Input/IA_Door.IA_Door"));
+	if (InteractAction)
+	{
+		Input->BindAction(InteractAction, ETriggerEvent::Completed, this, &AVL_Player::interact_action);
+	}
 
 	if (IsLocallyControlled())
 	{
@@ -304,5 +334,10 @@ int32 AVL_Player::get_my_id()
 void AVL_Player::set_my_id(const unsigned int& new_id)
 {
 	m_id = new_id;
+}
+
+void AVL_Player::interact_action()
+{
+	UE_LOG(LogTemp, Log, TEXT("DOOR키누름"));
 }
 
