@@ -12,11 +12,11 @@
 #include "Components/AudioComponent.h" 
 #include "Sound/SoundCue.h"       
 #include "Virtual_life_project/Virtual_life_projectCharacter.h"
-#include "Player_data.h"
-#include "PlayerInventory.h"
-#include "Custom_data.h"
-#include "Quest_Manager.h"
-#include "ObjectData.h"
+#include "../Player_Data/Player_data.h"
+#include "../Player_Data/PlayerInventory.h"
+#include "../Custom/Custom_data.h"
+#include "../Player_Data/Quest_Manager.h"
+#include "../Building/ObjectData.h"
 #include "../ThirdParty/opus.h"
 
 // 사운드 재생용

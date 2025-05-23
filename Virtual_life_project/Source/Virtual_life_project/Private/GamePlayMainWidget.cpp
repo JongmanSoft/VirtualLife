@@ -2,9 +2,9 @@
 
 
 #include "GamePlayMainWidget.h"
-#include "ClockWidget.h"
-#include "WeatherWidget.h"
-#include "DateWidget.h"
+#include "../Time/ClockWidget.h"
+#include "../Time/WeatherWidget.h"
+#include "../Time/DateWidget.h"
 #include "MyProfileWidget.h"
 #include "Components/Button.h"
 #include "Virtual_life_GameInstance.h"

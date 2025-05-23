@@ -5,7 +5,7 @@
 #include "Virtual_life_GameInstance.h"
 #include "Sockets.h"
 #include <Common/TcpSocketBuilder.h>
-#include "m_CustomizableSkeletalComponent.h"
+#include "../Custom/m_CustomizableSkeletalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include <Serialization/ArrayWriter.h>
 #include "Networking.h"
@@ -15,10 +15,10 @@
 #include "VL_AnimInstance.h"
 #include "VL_Player.h"
 #include "FloatingTextWidget.h"
-#include "BuildItemRegistry.h"
-#include "FBuildInfo.h"
+#include "../building/BuildItemRegistry.h"
+#include "../building/FBuildInfo.h"
+#include "../building/PlaceBuildActor.h"
 #include "Engine/DataTable.h"
-#include "PlaceBuildActor.h"
 #include "AudioCapture.h"     
 #include "AudioCaptureCore.h" 
 #include "AudioCaptureComponent.h"
