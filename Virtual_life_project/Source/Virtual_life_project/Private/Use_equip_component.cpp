@@ -15,9 +15,9 @@
 #include "Kismet/GameplayStatics.h"
 
 
-#include "plant_able_cpp_interface.h"
-#include "fishing_cpp_interface.h"
-#include "mining_cpp_interface.h"
+#include "../interface/plant_able_cpp_interface.h"
+#include "../interface/fishing_cpp_interface.h"
+#include "../interface/mining_cpp_interface.h"
 
 #include "Virtual_life_GameInstance.h"
 
