@@ -25,6 +25,9 @@ protected:
     // 프로그레스바
     UPROPERTY(meta = (BindWidget))
     class USlider* Genetic_ratio_slider;
+    
+    UPROPERTY(meta = (BindWidget))
+    class UVerticalBox* Genetic_ratio_box;
 
     //보간 자동으로 할지말쥐
     UPROPERTY(meta = (BindWidget))

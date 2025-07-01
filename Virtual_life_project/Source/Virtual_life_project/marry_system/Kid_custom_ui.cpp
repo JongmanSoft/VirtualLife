@@ -1,5 +1,6 @@
 #include "Kid_custom_ui.h"
 #include "Components/Slider.h" 
+#include "Components/VerticalBox.h" 
 #include "Components/CheckBox.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
@@ -59,11 +60,11 @@ void UKid_custom_ui::random_gentic_cheak(bool bIsChecked)
 {
     if (bIsChecked)
     {
-        if (Genetic_ratio_slider) Genetic_ratio_slider->SetVisibility(ESlateVisibility::Collapsed); 
+        if (Genetic_ratio_box) Genetic_ratio_box->SetVisibility(ESlateVisibility::Collapsed);
     }
     else
     {
-        if (Genetic_ratio_slider) Genetic_ratio_slider->SetVisibility(ESlateVisibility::Visible);
+        if (Genetic_ratio_box) Genetic_ratio_box->SetVisibility(ESlateVisibility::Visible);
     }
 }
 
