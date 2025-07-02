@@ -20,6 +20,9 @@
     <ClCompile Include="DBManager.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="Party.cpp">
+      <Filter>Games</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -51,6 +54,9 @@
     </ClInclude>
     <ClInclude Include="DBManager.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Party.h">
+      <Filter>Games</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

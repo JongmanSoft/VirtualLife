@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClCompile Include="DBManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Party.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quest.cpp" />
     <ClCompile Include="Room.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="DB.h" />
     <ClInclude Include="DBManager.h" />
+    <ClInclude Include="Party.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="protocol.h" />
     <ClInclude Include="Quest.h" />

@@ -206,6 +206,16 @@ void UVirtual_life_GameInstance::EncodingTest()
 	opus_encoder_destroy(Encoder);
 }
 
+void UVirtual_life_GameInstance::SendPartyUpdatePacket(const FString& Id_str)
+{
+	CS_UPDATE_PARTY_PACKET p;
+	p.size = sizeof(CS_UPDATE_PARTY_PACKET);
+	p.type = CS_UPDATE_PARTY;
+	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE;
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*Id_str));
+	SendEnqueue(&p, p.size);
+}
+
 void UVirtual_life_GameInstance::SendVoicePacket(uint8* data, int32 length)
 {
 	while (length > 0)

@@ -2,6 +2,7 @@
 
 #include "Quest.h"
 #include "Room.h"
+#include "Party.h"
 
 // todo: 락 혹은 concurrency로 모두모두 변경해야 함
 // none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
@@ -31,6 +32,9 @@ class Player
 	// 동기화 관련
 	std::mutex m;
 
+	// ㅠ파티
+	Party* party = nullptr; // 파티 정보
+
 	// 패킷 send 함수
 	bool send_login_info_packet(bool res, bool isnew);
 	bool send_enter_game_packet();
@@ -46,7 +50,11 @@ class Player
 	bool send_room_leave_packet();
 	bool send_time_sync_packet();
 	bool send_voice_chat_packet();
-
+	bool send_update_party_packet();
+	bool send_invite_call_packet(char* id);
+	
+	// 핸들러 함수
+	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);
 
 public:
 

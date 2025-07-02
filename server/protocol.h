@@ -14,6 +14,15 @@ constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 constexpr int MAX_PARTY_MEMBER = 10; // 파티 최대 인원 수
 
+// 파티 관련 패킷 응답
+enum PARTY_REQUEST : char
+{
+	PARTY_REQUEST_INVITE = 0,
+	PARTY_REQUEST_INVITE_REJECT,
+	PARTY_REQUEST_INVITE_ACCEPT,
+	PARTY_UPDATE
+};
+
 enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME };
 struct PlayerInfo
 {
@@ -128,7 +137,8 @@ enum PACKETID : char
 	SC_ROOM_LEAVE,
 	SC_TIME_SYNC,
 	SC_VOICE_CHAT,
-	SC_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
+	SC_UPDATE_PARTY, 
+	SC_RESULT_PARTY
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -328,16 +338,23 @@ struct SC_ROOM_LEAVE_PACKET {
 struct CS_UPDATE_PARTY_PACKET {
 	unsigned short size;
 	PACKETID type; // CS_UPDATE_PARTY
-	unsigned char act_type; // 0: JOIN, 1: LEAVE, 2: CREATE
-	unsigned int target_id; // JOIN할 파티 ID
+	PARTY_REQUEST act_type; 
+	char id[M_ID_SIZE]; // 입장할 파티의 유저 아이디
 };
 
 struct SC_UPDATE_PARTY_PACKET {
 	unsigned short size;
 	PACKETID type; // SC_UPDATE_PARTY
-	unsigned char act_type; // JOIN_SUCCESS(0), JOIN_FAIL(1), CREATE_SUCCESS(2), CREATE_FAIL(3)
-	unsigned int membersID[MAX_PARTY_MEMBER];
+	PARTY_REQUEST act_type; // JOIN_SUCCESS(0), JOIN_FAIL(1), CREATE_SUCCESS(2), CREATE_FAIL(3), INVITE(4), KICK(5), MEMBER_UPDATE(6)
 	unsigned char member_count;
+	unsigned int membersID[MAX_PARTY_MEMBER];
+};
+
+struct SC_RESULT_PARTY_PACKET {
+	unsigned short size;
+	PACKETID type; // CS_UPDATE_PARTY
+	PARTY_REQUEST act_type;
+	char id[M_ID_SIZE]; // 누가 초대를 보냈는가 OR 거절했는지, 수락했는지
 };
 
 // 미완 ------------------------------

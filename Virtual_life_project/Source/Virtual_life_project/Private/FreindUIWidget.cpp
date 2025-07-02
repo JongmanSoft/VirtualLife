@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
 #include "Components/Button.h"
+#include "Virtual_life_GameInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 void UFreindUIWidget::NativeConstruct()
@@ -30,7 +31,11 @@ void UFreindUIWidget::OnInviteClicked()
 
         if (!EnteredID.IsEmpty())
         {
-            // 친구 초대 여기에서
+            UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+            if (my_instance)
+            {
+				my_instance->SendPartyUpdatePacket(EnteredID);
+            }
         }
     }
 }

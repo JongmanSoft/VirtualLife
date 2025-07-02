@@ -156,6 +156,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EncodingTest();
 
+	UFUNCTION(BlueprintCallable)
+	void SendPartyUpdatePacket(const FString& Id_str);
+
 	//UFUNCTION(BlueprintCallable)
 	void SendVoicePacket(uint8* data, int32 length);
 

@@ -190,7 +190,57 @@ bool Player::send_time_sync_packet()
 
 bool Player::send_voice_chat_packet()
 {
-	SC_VOICE_CHAT_PACKET p;
+	//SC_VOICE_CHAT_PACKET p;
+}
+
+bool Player::send_update_party_packet()
+{
+	return true;
+}
+
+bool Player::send_invite_call_packet(char* id)
+{
+	SC_RESULT_PARTY_PACKET p;
+	p.type = SC_RESULT_PARTY;
+	strcpy_s(p.id, M_ID_SIZE, id);
+	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE;
+	p.size = sizeof(SC_RESULT_PARTY_PACKET);
+
+	send(&p);
+	return true;
+}
+
+void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
+{
+	switch (pkt.act_type)
+	{
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE: // 초대
+	{
+		if (party == nullptr) {
+			// 파티 생성 로직
+			party = new Party();
+			party->add_member(this);
+		}
+		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; // 초대불가 패킷 전송
+
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
+				players[i].send_invite_call_packet(pkt.id);
+			}
+		}
+		break;
+	}
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT:
+	{
+		// string id로 플레이어를 찾기라..
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
+				party->add_member(&players[i]);
+			}
+		}
+		break;
+	}
+	}
 }
 
 bool Player::save_db_pinfo()
@@ -553,6 +603,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		send_room_leave_packet();
 		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
+		break;
+	}
+	case CS_UPDATE_PARTY:
+	{
+		CS_UPDATE_PARTY_PACKET* p = reinterpret_cast<CS_UPDATE_PARTY_PACKET*>(packet);
+
+		handle_party_packet(*p);
 		break;
 	}
 	case CS_TIME_SYNC:
