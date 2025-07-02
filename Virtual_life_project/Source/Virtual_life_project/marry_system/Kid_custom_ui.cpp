@@ -75,6 +75,7 @@ void UKid_custom_ui::_cheak1(bool bIsChecked)
         all_uncheak();
         if (Personality_Check1) Personality_Check1->SetIsChecked(true);
     }
+    else  Personality_Check1->SetIsChecked(true);
 }
 
 void UKid_custom_ui::_cheak2(bool bIsChecked)
@@ -84,6 +85,7 @@ void UKid_custom_ui::_cheak2(bool bIsChecked)
         all_uncheak();
         if (Personality_Check2) Personality_Check2->SetIsChecked(true);
     }
+    else Personality_Check2->SetIsChecked(true);
 }
 
 void UKid_custom_ui::_cheak3(bool bIsChecked)
@@ -93,6 +95,7 @@ void UKid_custom_ui::_cheak3(bool bIsChecked)
         all_uncheak();
         if (Personality_Check3) Personality_Check3->SetIsChecked(true);
     }
+    else Personality_Check3->SetIsChecked(true);
 }
 
 void UKid_custom_ui::_cheak4(bool bIsChecked)
@@ -102,12 +105,13 @@ void UKid_custom_ui::_cheak4(bool bIsChecked)
         all_uncheak();
         if (Personality_Check4) Personality_Check4->SetIsChecked(true);
     }
+    else Personality_Check4->SetIsChecked(true);
 }
 
 void UKid_custom_ui::on_ok_btn()
 {
     float ProgressValue = Genetic_ratio_slider && (!random_genetic || !random_genetic->IsChecked()) ? Genetic_ratio_slider->GetValue() : 0.5f;
-    uint8 Personality = 0; // 기본값
+    uint8 Personality = FMath::RandRange(0, 2);  // 기본값
     FString InputText = hello_etb ? hello_etb->GetText().ToString() : TEXT("");
 
     // 선택된 체크박스에 따라 Personality 값 설정

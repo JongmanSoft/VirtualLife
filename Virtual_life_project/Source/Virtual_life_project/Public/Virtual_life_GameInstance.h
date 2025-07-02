@@ -16,6 +16,7 @@
 #include "../Player_Data/PlayerInventory.h"
 #include "../Custom/Custom_data.h"
 #include "../Player_Data/Quest_Manager.h"
+#include "../marry_system/marry_manager.h"
 #include "../Building/ObjectData.h"
 #include "../ThirdParty/opus.h"
 
@@ -215,6 +216,10 @@ public:
 	//퀘스트들을 관리하는 퀘스트매니저클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")
 	UQuest_Manager* m_quest;
+public:
+	//결혼정보를 관리하는 결혼매니저클래스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marry")
+	Umarry_manager* m_marry;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "time")

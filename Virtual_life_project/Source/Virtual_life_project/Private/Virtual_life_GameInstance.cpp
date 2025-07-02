@@ -743,7 +743,7 @@ UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 	m_inventory = CreateDefaultSubobject<UPlayerInventory>(TEXT("PlayerInventory"));
 	m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 	m_quest = CreateDefaultSubobject<UQuest_Manager>(TEXT("Quest_Manager"));
-
+	m_marry = CreateDefaultSubobject<Umarry_manager>(TEXT("Marry_Manager"));
 
 }
 
