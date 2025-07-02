@@ -34,102 +34,91 @@ AVL_Player::~AVL_Player()
 void AVL_Player::BeginPlay()
 {
 	Super::BeginPlay();
-	//인풋 컴포넌트 설정
-	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(FindComponentByClass<UInputComponent>());
+
 	UInputMappingContext* MappingContext = LoadObject<UInputMappingContext>(nullptr, TEXT("/Game/VirtualLife_Character/Input/IMC_VirtualLife.IMC_VirtualLife"));
 	if (MappingContext)
 	{
-		// PlayerController 가져오기
-		APlayerController* PlayerController = GetController<APlayerController>();
-		if (PlayerController)
+		if (APlayerController* PlayerController = GetController<APlayerController>())
 		{
-			// LocalPlayerSubsystem을 통해 매핑 컨텍스트 추가
 			if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
 			{
 				if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
 				{
-					Subsystem->AddMappingContext(MappingContext, 0); // 우선순위 0
+					Subsystem->AddMappingContext(MappingContext, 0);
 				}
 			}
 		}
 	}
-
-	// Input Action Asset로 바인딩
-	UInputAction* InteractAction = LoadObject<UInputAction>(nullptr, TEXT("/Game/VirtualLife_Character/Input/IA_Door.IA_Door"));
-	if (InteractAction)
-	{
-		Input->BindAction(InteractAction, ETriggerEvent::Completed, this, &AVL_Player::interact_action);
-	}
 	
-	if (false)
-	if (IsLocallyControlled())
-	{
-		// Opus 인코더 초기화
-		int32 Error = 0;
-		Encoder = opus_encoder_create(SampleRate, Channels, OPUS_APPLICATION_VOIP, &Error);
-		if (Error != OPUS_OK)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Opus encoder 생성 실패: %d"), Error);
-			return;
-		}
+	//if (false)
+	//if (IsLocallyControlled())
+	//{
+	//	// Opus 인코더 초기화
+	//	int32 Error = 0;
+	//	Encoder = opus_encoder_create(SampleRate, Channels, OPUS_APPLICATION_VOIP, &Error);
+	//	if (Error != OPUS_OK)
+	//	{
+	//		UE_LOG(LogTemp, Error, TEXT("Opus encoder 생성 실패: %d"), Error);
+	//		return;
+	//	}
 
-		// 오디오 캡처 설정
-		DeviceParams.DeviceIndex = 0; // 기본 장치 사용
+	//	// 오디오 캡처 설정
+	//	DeviceParams.DeviceIndex = 0; // 기본 장치 사용
 
-		uint32 NumFramesDesired = 960; // 예: 20ms @ 48kHz
+	//	uint32 NumFramesDesired = 960; // 예: 20ms @ 48kHz
 
-		auto OnCapture = [this](const float* AudioData, int32 NumFrames, int32 NumChannels, int32 SampleRate, double StreamTime, bool bOverflow)
-			{
-				if (!Encoder || bOverflow || NumFrames == 0) return;
+	//	auto OnCapture = [this](const float* AudioData, int32 NumFrames, int32 NumChannels, int32 SampleRate, double StreamTime, bool bOverflow)
+	//		{
+	//			if (!Encoder || bOverflow || NumFrames == 0) return;
 
-				// 1. float PCM → int16 PCM
-				TArray<int16> PCM;
-				PCM.SetNumUninitialized(NumFrames);
-				for (int32 i = 0; i < NumFrames; ++i)
-				{
-					PCM[i] = FMath::Clamp(AudioData[i] * 32767.0f, -32768.f, 32767.f);
-				}
+	//			// 1. float PCM → int16 PCM
+	//			TArray<int16> PCM;
+	//			PCM.SetNumUninitialized(NumFrames);
+	//			for (int32 i = 0; i < NumFrames; ++i)
+	//			{
+	//				PCM[i] = FMath::Clamp(AudioData[i] * 32767.0f, -32768.f, 32767.f);
+	//			}
 
-				// 2. Opus 인코딩
-				uint8 CompressedData[4000]; // 넉넉하게
-				int32 CompressedBytes = opus_encode(
-					Encoder,
-					PCM.GetData(),
-					NumFrames,            // frame_size: float으로 받은 수치 그대로
-					CompressedData,
-					sizeof(CompressedData)
-				);
+	//			// 2. Opus 인코딩
+	//			uint8 CompressedData[4000]; // 넉넉하게
+	//			int32 CompressedBytes = opus_encode(
+	//				Encoder,
+	//				PCM.GetData(),
+	//				NumFrames,            // frame_size: float으로 받은 수치 그대로
+	//				CompressedData,
+	//				sizeof(CompressedData)
+	//			);
 
-				if (CompressedBytes <= 0)
-				{
-					UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패 (%d)"), CompressedBytes);
-					return;
-				}
+	//			if (CompressedBytes <= 0)
+	//			{
+	//				UE_LOG(LogTemp, Error, TEXT("Opus 인코딩 실패 (%d)"), CompressedBytes);
+	//				return;
+	//			}
 
-				// 3. GameInstance 통해 서버로 전송
-				if (GetWorld() && GetGameInstance()) {
-					if (UGameInstance* GI = GetGameInstance())
-					{
-						if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GI))
-						{
-							MyGI->SendVoicePacket(CompressedData, CompressedBytes);
-							//UE_LOG(LogTemp, Log, TEXT("Opus %d bytes 전송됨"), CompressedBytes);
-						}
-					}
-				}
-			
-			};
+	//			// 3. GameInstance 통해 서버로 전송
+	//			if (GetWorld() && GetGameInstance()) {
+	//				if (UGameInstance* GI = GetGameInstance())
+	//				{
+	//					if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GI))
+	//					{
+	//						MyGI->SendVoicePacket(CompressedData, CompressedBytes);
+	//						//UE_LOG(LogTemp, Log, TEXT("Opus %d bytes 전송됨"), CompressedBytes);
+	//					}
+	//				}
+	//			}
+	//		
+	//		};
 
-		bool bOpened = AudioCapture.OpenCaptureStream(DeviceParams, OnCapture, NumFramesDesired);
-		if (bOpened)
-		{
-			AudioCapture.StartStream();
-		}
-		else
-		{
-			//UE_LOG(LogTemp, Error, TEXT("오디오 캡처 스트림 열기 실패"));
-		}
-	}
+	//	bool bOpened = AudioCapture.OpenCaptureStream(DeviceParams, OnCapture, NumFramesDesired);
+	//	if (bOpened)
+	//	{
+	//		AudioCapture.StartStream();
+	//	}
+	//	else
+	//	{
+	//		//UE_LOG(LogTemp, Error, TEXT("오디오 캡처 스트림 열기 실패"));
+	//	}
+	//}
 }
 
 void AVL_Player::CaptureVoiceFrame()
@@ -263,6 +252,14 @@ void AVL_Player::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		UInputAction* InteractAction = LoadObject<UInputAction>(nullptr, TEXT("/Game/VirtualLife_Character/Input/IA_Door.IA_Door"));
+		if (InteractAction)
+		{
+			Input->BindAction(InteractAction, ETriggerEvent::Completed, this, &AVL_Player::interact_action);
+		}
+	}
 }
 
 void AVL_Player::Landed(const FHitResult& Hit)
