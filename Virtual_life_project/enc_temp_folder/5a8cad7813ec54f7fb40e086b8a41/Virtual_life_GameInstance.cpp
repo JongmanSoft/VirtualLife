@@ -783,9 +783,6 @@ void UVirtual_life_GameInstance::OnStart()
 
 	PlayerClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/VL_metahuman.VL_metahuman_C'"));
 
-	// 위젯 클래스 로드
-	NoticeWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("Blueprint'/Game/UI/Friend_UI/NoticeFriend_UI.NoticeFriend_UI_C'"));
-
 	UDataTable* BuildTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/BuildingSystem/NewBuildData.NewBuildData'")));
 
 	if (BuildTable)
@@ -795,8 +792,7 @@ void UVirtual_life_GameInstance::OnStart()
 
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr,TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
 	}
-
-
+	
 	//InitVoicePlayback();
 }
 

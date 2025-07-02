@@ -200,12 +200,14 @@ bool Player::send_update_party_packet()
 
 bool Player::send_invite_call_packet(char* id)
 {
+
 	SC_RESULT_PARTY_PACKET p;
 	p.type = SC_RESULT_PARTY;
 	strcpy_s(p.id, M_ID_SIZE, id);
 	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE;
 	p.size = sizeof(SC_RESULT_PARTY_PACKET);
 
+	std::cout << "[DEBUG] send_invite_call_packet called for id: " << id << std::endl;
 	send(&p);
 	return true;
 }
