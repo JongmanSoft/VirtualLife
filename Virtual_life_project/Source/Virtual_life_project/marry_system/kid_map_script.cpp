@@ -3,6 +3,7 @@
 
 #include "kid_map_script.h"
 #include "Blueprint/UserWidget.h"
+
 #include "GameFramework/PlayerController.h"
 
 void Akid_map_script::BeginPlay()
@@ -16,8 +17,7 @@ void Akid_map_script::BeginPlay()
         TSubclassOf<UUserWidget> WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/UI/MyKid_custom_ui.MyKid_custom_ui_C"));
         if (WidgetClass)
         {
-            // 위젯 생성 및 뷰포트에 추가
-            UUserWidget* WidgetInstance = CreateWidget<UUserWidget>(PlayerController, WidgetClass);
+            WidgetInstance = CreateWidget<UUserWidget>(PlayerController, WidgetClass);
             if (WidgetInstance)
             {
                 WidgetInstance->AddToViewport();
@@ -27,25 +27,22 @@ void Akid_map_script::BeginPlay()
             {
                 UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance!"));
             }
-
-            // 인풋 모드를 UI Only로 설정
             FInputModeUIOnly InputMode;
-            InputMode.SetWidgetToFocus(WidgetInstance->TakeWidget());
             PlayerController->SetInputMode(InputMode);
-
-            // 마우스 커서 표시
             PlayerController->bShowMouseCursor = true;
             UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI Only and cursor enabled!"));
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Failed to load widget class!"));
-        }
+       
     }
-    else
+   //커스텀 종료시 후 이벤트 바인딩
+
+    UKid_custom_ui* CustomUI = Cast<UKid_custom_ui>(WidgetInstance);
+    if (CustomUI)
     {
-        UE_LOG(LogTemp, Error, TEXT("PlayerController not found!"));
+        CustomUI->OnKidSetting.AddDynamic(this, &Akid_map_script::custom_finish);
+        UE_LOG(LogTemp, Warning, TEXT("CustomUI event binding successful!"));
     }
+	
     
 }
 
@@ -55,4 +52,21 @@ void Akid_map_script::Tick(float DeltaSeconds)
     UE_LOG(LogTemp, Warning, TEXT("Level Tick triggered! DeltaTime: %f"), DeltaSeconds);
 
 
+}
+
+void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hello)
+{
+    
+    UE_LOG(LogTemp, Warning, TEXT("hello"));
+        if (WidgetInstance)
+        {
+            UKid_custom_ui* CustomUI = Cast<UKid_custom_ui>(WidgetInstance->GetWidgetFromName(TEXT("KidCustomUI")));
+            if (CustomUI)
+            {
+                CustomUI->NativeDestruct();
+            }
+            WidgetInstance->RemoveFromViewport();
+            WidgetInstance = nullptr;
+        }
+    
 }

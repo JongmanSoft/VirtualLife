@@ -12,7 +12,7 @@ class VIRTUAL_LIFE_PROJECT_API UKid_custom_ui : public UUserWidget
 {
     GENERATED_BODY()
 
-protected:
+public:
     virtual void NativeConstruct() override;
     virtual void NativeDestruct() override;
 

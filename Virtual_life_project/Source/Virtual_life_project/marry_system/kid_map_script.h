@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/LevelScriptActor.h"
+#include "Kid_custom_ui.h"
 #include "kid_map_script.generated.h"
 
 /**
@@ -18,4 +19,10 @@ public:
     virtual void BeginPlay() override;
 
     virtual void Tick(float DeltaSeconds) override;
+
+    UUserWidget* WidgetInstance;
+
+	UFUNCTION()
+	void custom_finish(float g_value, uint8 per_value, FString hello);
+	
 };
