@@ -12,6 +12,7 @@ constexpr short MAX_PLAYER = 1000;
 constexpr unsigned short MAX_BUILD_ITEM = 200;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
+constexpr int MAX_PARTY_MEMBER = 10; // 파티 최대 인원 수
 
 enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME };
 struct PlayerInfo
@@ -107,6 +108,7 @@ enum PACKETID : char
 	CS_ROOM_LEAVE,
 	CS_TIME_SYNC,
 	CS_VOICE_CHAT,
+	CS_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
 
 	// server to client
 	SC_LOGININFO,
@@ -125,128 +127,33 @@ enum PACKETID : char
 	SC_ROOM_SETUP,
 	SC_ROOM_LEAVE,
 	SC_TIME_SYNC,
-	SC_VOICE_CHAT
+	SC_VOICE_CHAT,
+	SC_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
 // client to server
 
-struct CS_LOGIN_PACKET { // 로그인 요청.
+// 로그인 -------------------------------
+struct CS_LOGIN_PACKET { // 로그인 요청
 	unsigned short size;
 	PACKETID	type;
 	char	id[M_ID_SIZE];
 	char	pw[M_ID_SIZE];
 };
 
-struct CS_ENTER_GAME_PACKET { // 게임 접속
-	unsigned short size;
-	PACKETID	type;
-	wchar_t name[M_ID_SIZE];
-};
-
-struct CS_LEAVE_PACKET {
-	unsigned short size;
-	PACKETID	type;
-};
-
-struct CS_CHAT_PACKET {
-	unsigned short size;	
-	PACKETID	type;
-	unsigned int from_id; //보낸넘 아이디
-	wchar_t	name[M_ID_SIZE]; // 대충.. 임시로..
-	wchar_t	msg[CHAT_SIZE];
-};
-
-struct CS_MOVE_PACKET {
-	unsigned short size;
-	PACKETID type;
-	PlayerInfo pl;
-};
-
-struct CS_GET_ITEM_PACKET { // 아이템 획득 -> 무조건 한개. 로 해도 될까?
-	unsigned short size;
-	PACKETID type;
-	unsigned short id;
-	short num;
-};
-
-struct CS_UPDATE_CUSTOM_PACKET {
-	unsigned short size;
-	PACKETID type;
-	Customizing c;
-};
-
-struct CS_UPDATE_GOLD_PACKET
-{
-	unsigned short size;
-	PACKETID type;
-	int gold_offset; //증감수치, 500원 썼으면 -500. 500원받았으면 +500
-};
-
-struct CS_UPDATE_QUEST_PACKET {
-	unsigned short size;
-	PACKETID type;
-	short giver_id;
-	short num; // 퀘스트 번호
-};
-
-struct CS_NPC_CHAT_PACKET {
-	unsigned short size;
-	PACKETID type;
-	unsigned short npc_id;
-	wchar_t	msg[CHAT_SIZE];
-};
-
-struct CS_PLACE_BUILD_PACKET {
-	unsigned short size;
-	PACKETID type;
-	Object build;
-};
-
-struct CS_ROOM_ENTER_PACKET {
-	unsigned short size;
-	PACKETID type;
-};
-
-struct CS_REMOVE_BUILD_PACKET {
-	unsigned short size;
-	PACKETID type;
-    float x, y, z;
-};
-
-struct CS_UPDATE_BUILD_PACKET {
-	unsigned short size;
-	PACKETID type;
-	float old_x, old_y, old_z;
-	float new_x, new_y, new_z;
-	float new_yaw;
-};
-
-struct CS_ROOM_LEAVE_PACKET {
-	unsigned short size;
-	PACKETID type;
-};
-
-struct CS_TIME_SYNC_PACKET {
-	unsigned short size;
-	PACKETID type;
-	float ping;
-};
-
-struct CS_VOICE_CHAT_PACKET {
-	unsigned short size;
-	PACKETID type; // CS_VOICE_CHAT
-	unsigned int from_id;
-	unsigned short data_len;
-	char data[512]; // Opus 압축 데이터
-};
-
-// server to client //
 struct SC_LOGIN_INFO_PACKET {
 	unsigned short size;
 	PACKETID type;
 	bool success;
 	bool is_new;
+};
+
+// 게임 접속 ------------------------------
+struct CS_ENTER_GAME_PACKET { // 게임 접속
+	unsigned short size;
+	PACKETID	type;
+	wchar_t name[M_ID_SIZE];
 };
 
 struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
@@ -255,7 +162,7 @@ struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	wchar_t name[M_ID_SIZE]; // 내이름
 	PlayerInfo player;
 	unsigned short items[ITEM_SIZE];
-	float time; // Todo: 여기 어떻게 해야 함?
+	float time; 
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보
 	AdditionalInfo addinfo;
 	short giver_id[QUEST_MAX];
@@ -275,6 +182,21 @@ struct SC_DESPAWN_PACKET {
 	unsigned int id;
 };
 
+// 게임 종료 ---------------------------
+struct CS_LEAVE_PACKET {
+	unsigned short size;
+	PACKETID	type;
+};
+
+// 채팅 --------------------------------
+struct CS_CHAT_PACKET {
+	unsigned short size;	
+	PACKETID	type;
+	unsigned int from_id; //보낸넘 아이디
+	wchar_t	name[M_ID_SIZE]; // 대충.. 임시로..
+	wchar_t	msg[CHAT_SIZE];
+};
+
 struct SC_CHAT_PACKET {
 	unsigned short size;
 	PACKETID	type;
@@ -283,10 +205,25 @@ struct SC_CHAT_PACKET {
 	wchar_t	msg[CHAT_SIZE];
 };
 
+// 이동 ---------------------------------
+struct CS_MOVE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	PlayerInfo pl;
+};
+
 struct SC_MOVE_PACKET {
 	unsigned short size;
 	PACKETID type;
 	PlayerInfo pl;
+};
+
+// 아이템 관련 ---------------------------
+struct CS_GET_ITEM_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short id;
+	short num;
 };
 
 struct SC_UPDATE_ITEM_PACKET {
@@ -296,11 +233,79 @@ struct SC_UPDATE_ITEM_PACKET {
 	short num;
 };
 
+// 커스터마이징 값 관련 -----------------
+struct CS_UPDATE_CUSTOM_PACKET {
+	unsigned short size;
+	PACKETID type;
+	Customizing c;
+};
+
 struct SC_UPDATE_CUSTOM_PACKET { // 이미 전송한 플레이어의 커스터마이징 업뎃
 	unsigned short size;
 	PACKETID type;
 	unsigned short id;
 	Customizing c;
+};
+
+// 골드 관련 ----------------------------
+struct CS_UPDATE_GOLD_PACKET
+{
+	unsigned short size;
+	PACKETID type;
+	int gold_offset; //증감수치, 500원 썼으면 -500. 500원받았으면 +500
+};
+
+struct SC_UPDATE_GOLD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	int gold; //클라가 준 증감수치를 더한 최종골드
+};
+
+// 퀘스트 관련 --------------------------
+struct CS_UPDATE_QUEST_PACKET {
+	unsigned short size;
+	PACKETID type;
+	short giver_id;
+	short num; // 퀘스트 번호
+};
+
+struct SC_UPDATE_QUEST_PACKET {
+	unsigned short size;
+	PACKETID type;
+	short giver_id;
+	short num; // 퀘스트 번호
+};
+
+// 건축 관련 ----------------------------
+struct CS_PLACE_BUILD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	Object build;
+};
+
+struct CS_REMOVE_BUILD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float x, y, z;
+};
+
+struct CS_UPDATE_BUILD_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float old_x, old_y, old_z;
+	float new_x, new_y, new_z;
+	float new_yaw;
+};
+
+// 집 입장 -----------------------------
+struct CS_ROOM_ENTER_PACKET {
+	unsigned short size;
+	PACKETID type;
+};
+
+struct CS_ROOM_LEAVE_PACKET {
+	unsigned short size;
+	PACKETID type;
 };
 
 struct SC_ROOM_SETUP_PACKET {
@@ -311,31 +316,50 @@ struct SC_ROOM_SETUP_PACKET {
 	Object objs[MAX_BUILD_ITEM]; // 오브젝트들
 };
 
-struct SC_UPDATE_GOLD_PACKET {
+struct SC_ROOM_LEAVE_PACKET {
 	unsigned short size;
 	PACKETID type;
-	int gold; //클라가 준 증감수치를 더한 최종골드
+	float x, y, z;
+	float time;
 };
 
-struct SC_UPDATE_QUEST_PACKET {
+// 파티 관련 --------------------------- ( 하는중 )
+
+struct CS_UPDATE_PARTY_PACKET {
 	unsigned short size;
-	PACKETID type;
-	short giver_id;
-	short num; // 퀘스트 번호
+	PACKETID type; // CS_UPDATE_PARTY
+	unsigned char act_type; // 0: JOIN, 1: LEAVE, 2: CREATE
+	unsigned int target_id; // JOIN할 파티 ID
 };
 
-struct SC_NPC_RESPONSE_PACKET {
+struct SC_UPDATE_PARTY_PACKET {
+	unsigned short size;
+	PACKETID type; // SC_UPDATE_PARTY
+	unsigned char act_type; // JOIN_SUCCESS(0), JOIN_FAIL(1), CREATE_SUCCESS(2), CREATE_FAIL(3)
+	unsigned int membersID[MAX_PARTY_MEMBER];
+	unsigned char member_count;
+};
+
+// 미완 ------------------------------
+struct CS_NPC_CHAT_PACKET {
 	unsigned short size;
 	PACKETID type;
 	unsigned short npc_id;
 	wchar_t	msg[CHAT_SIZE];
 };
 
-struct SC_ROOM_LEAVE_PACKET {
+struct CS_TIME_SYNC_PACKET {
 	unsigned short size;
 	PACKETID type;
-	float x, y, z;
-	float time;
+	float ping;
+};
+
+struct CS_VOICE_CHAT_PACKET {
+	unsigned short size;
+	PACKETID type; // CS_VOICE_CHAT
+	unsigned int from_id;
+	unsigned short data_len;
+	char data[512]; // Opus 압축 데이터
 };
 
 struct SC_TIME_SYNC_PACKET {
@@ -347,10 +371,17 @@ struct SC_TIME_SYNC_PACKET {
 
 struct SC_VOICE_CHAT_PACKET {
 	unsigned short size;
-	PACKETID type; 
+	PACKETID type;
 	unsigned int from_id;
 	unsigned short data_len;
 	char data[512]; // Opus 압축 데이터
+};
+
+struct SC_NPC_RESPONSE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short npc_id;
+	wchar_t	msg[CHAT_SIZE];
 };
 
 #pragma pack (pop)
