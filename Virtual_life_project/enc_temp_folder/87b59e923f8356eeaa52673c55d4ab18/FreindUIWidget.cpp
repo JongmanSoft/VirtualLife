@@ -16,6 +16,11 @@ void UFreindUIWidget::NativeConstruct()
     {
         Invite_BTN->OnClicked.AddDynamic(this, &UFreindUIWidget::OnInviteClicked);
     }
+
+    if (Close_BTN)
+    {
+        Close_BTN->OnClicked.AddDynamic(this, &UFreindUIWidget::OnCloseClicked);
+    }
 }
 
 void UFreindUIWidget::OnInviteClicked()
@@ -33,4 +38,9 @@ void UFreindUIWidget::OnInviteClicked()
             }
         }
     }
+}
+
+void UFreindUIWidget::OnCloseClicked()
+{
+    OnCloseRequested();
 }

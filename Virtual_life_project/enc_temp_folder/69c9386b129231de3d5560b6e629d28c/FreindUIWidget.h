@@ -29,6 +29,15 @@ public:
     UPROPERTY(meta = (BindWidget))
     UButton* Invite_BTN;
 
+    UPROPERTY(meta = (BindWidget))
+    UButton* Close_BTN;
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void OnCloseRequested();
+
+    UFUNCTION(BlueprintCallable)
+    void OnCloseClicked();
+
 private:
     // 버튼 콜백 함수
     UFUNCTION()
