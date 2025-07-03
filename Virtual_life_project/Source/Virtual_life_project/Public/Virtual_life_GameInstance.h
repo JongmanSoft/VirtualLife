@@ -163,6 +163,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendPartyUpdatePacket(const FString& Id_str);
 
+	UFUNCTION(BlueprintCallable)
+	void SendPartyJoinPacket(const FString& Id_str);
+
+	UFUNCTION(BlueprintCallable)
+	void SendPartyRejectPacket(const FString& Id_str);
+
 	//UFUNCTION(BlueprintCallable)
 	void SendVoicePacket(uint8* data, int32 length);
 

@@ -51,8 +51,9 @@ class Player
 	bool send_time_sync_packet();
 	bool send_voice_chat_packet();
 	bool send_update_party_packet();
-	bool send_invite_call_packet(char* id);
-	
+	bool send_invite_call_packet(std::string& id, std::wstring& name);
+	bool send_reject_call_packet(std::string& id);
+
 	// 핸들러 함수
 	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);
 

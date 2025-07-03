@@ -334,7 +334,6 @@ struct SC_ROOM_LEAVE_PACKET {
 };
 
 // 파티 관련 --------------------------- ( 하는중 )
-
 struct CS_UPDATE_PARTY_PACKET {
 	unsigned short size;
 	PACKETID type; // CS_UPDATE_PARTY
@@ -355,6 +354,7 @@ struct SC_RESULT_PARTY_PACKET {
 	PACKETID type; // CS_UPDATE_PARTY
 	PARTY_REQUEST act_type;
 	char id[M_ID_SIZE]; // 누가 초대를 보냈는가 OR 거절했는지, 수락했는지
+	wchar_t	name[M_ID_SIZE];
 };
 
 // 미완 ------------------------------

@@ -28,10 +28,17 @@ public:
     UPROPERTY(meta = (BindWidget))
     UButton* NoBTN;
 
+	FString FriendID; // 친구 ID를 저장할 변수
+
+    UFUNCTION()
+    void SetText(FString str);
+
 private:
     UFUNCTION()
     void OnYesClicked();
 
     UFUNCTION()
     void OnNoClicked();
+
+
 };

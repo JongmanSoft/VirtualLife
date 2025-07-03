@@ -195,22 +195,51 @@ bool Player::send_voice_chat_packet()
 
 bool Player::send_update_party_packet()
 {
+	SC_UPDATE_PARTY_PACKET p;
+	p.size = sizeof(SC_UPDATE_PARTY_PACKET);
+	p.type = SC_UPDATE_PARTY; // 파티 멤버 수정
+	p.act_type = PARTY_REQUEST::PARTY_UPDATE;
+	p.member_count = party->get_member_count();
+	for (int i = 0; i < MAX_PARTY_MEMBER; ++i) {
+		if (i < party->get_member_count()) {
+			if (party->get_members()[i] == this) continue;
+			p.membersID[i] = party->get_members()[i]->pinfo.id;
+		}
+		else {
+			p.membersID[i] = 0; 
+		}
+	}
+
+	send(&p);
 	return true;
 }
 
-bool Player::send_invite_call_packet(char* id)
+bool Player::send_invite_call_packet(std::string& id, std::wstring& name)
 {
-
 	SC_RESULT_PARTY_PACKET p;
 	p.type = SC_RESULT_PARTY;
-	strcpy_s(p.id, M_ID_SIZE, id);
+	strcpy_s(p.id, M_ID_SIZE, id.c_str());
 	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE;
 	p.size = sizeof(SC_RESULT_PARTY_PACKET);
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 
 	std::cout << "[DEBUG] send_invite_call_packet called for id: " << id << std::endl;
 	send(&p);
 	return true;
 }
+
+bool Player::send_reject_call_packet(std::string& id)
+{
+	SC_RESULT_PARTY_PACKET p;
+	p.type = SC_RESULT_PARTY;
+	strcpy_s(p.id, M_ID_SIZE, id.c_str());
+	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT;
+	p.size = sizeof(SC_RESULT_PARTY_PACKET);
+
+	send(&p);
+	return true;
+}
+
 
 void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 {
@@ -227,7 +256,8 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
-				players[i].send_invite_call_packet(pkt.id);
+				players[i].send_invite_call_packet(id, name);
+				break;
 			}
 		}
 		break;
@@ -238,6 +268,23 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				party->add_member(&players[i]);
+				break;
+			}
+		}
+
+		// 파티 추가된 것 업데이트 -> 여기 뮤텍스 달아야 함
+		for (auto& a : party->get_members()) {
+			a->send_update_party_packet();
+		}
+		break;
+	}
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT: // 초대한 플레이어가 거절했다
+	{
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
+				auto s = std::string(pkt.id);
+				players[i].send_reject_call_packet(s);
+				break;
 			}
 		}
 		break;

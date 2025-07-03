@@ -5,6 +5,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Virtual_life_GameInstance.h"
 
 void UNoticeFriendUIWidget::NativeConstruct()
 {
@@ -21,14 +22,31 @@ void UNoticeFriendUIWidget::NativeConstruct()
     }
 }
 
+void UNoticeFriendUIWidget::SetText(FString str)
+{
+    Friend_ID->SetText(FText::FromString(str));
+}
+
 void UNoticeFriendUIWidget::OnYesClicked()
 {
     // 파티 수락
+    UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+    if (my_instance)
+    {
+        my_instance->SendPartyJoinPacket(FriendID);
+    }
+
     RemoveFromParent();
 }
 
 void UNoticeFriendUIWidget::OnNoClicked()
 {
     // 거절
+    UVirtual_life_GameInstance* my_instance = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());
+    if (my_instance)
+    {
+        my_instance->SendPartyRejectPacket(FriendID);
+    }
+
     RemoveFromParent();
 }

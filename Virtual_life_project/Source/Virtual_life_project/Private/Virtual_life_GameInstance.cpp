@@ -217,6 +217,26 @@ void UVirtual_life_GameInstance::SendPartyUpdatePacket(const FString& Id_str)
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendPartyJoinPacket(const FString& Id_str)
+{
+	CS_UPDATE_PARTY_PACKET p;
+	p.size = sizeof(CS_UPDATE_PARTY_PACKET);
+	p.type = CS_UPDATE_PARTY;
+	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT;
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*Id_str));
+	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::SendPartyRejectPacket(const FString& Id_str)
+{
+	CS_UPDATE_PARTY_PACKET p;
+	p.size = sizeof(CS_UPDATE_PARTY_PACKET);
+	p.type = CS_UPDATE_PARTY;
+	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT;
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*Id_str));
+	SendEnqueue(&p, p.size);
+}
+
 void UVirtual_life_GameInstance::SendVoicePacket(uint8* data, int32 length)
 {
 	while (length > 0)
@@ -691,9 +711,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 						UNoticeFriendUIWidget* Widget = CreateWidget<UNoticeFriendUIWidget>(PC, NoticeWidgetClass);
 						if (Widget)
 						{
-							// 필요하다면 초대한 사람 ID를 넘겨줄 수도 있음
-							// 예: Widget->SetInviterName(p.inviter_name);
-
+							Widget->FriendID = FString(p.id);
+							Widget->SetText(FString(p.name));
 							Widget->AddToViewport();
 						}
 					}
@@ -701,11 +720,13 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			}
 			else if (p.act_type == PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT) // 상대방이 초대 거절
 			{
-
+				// todo: 여기 알림 메시지 추가
+				int k = 0;
 			}
 			else if (p.act_type == PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT) // 상대방이 파티에 참여
 			{
-
+				// todo: 여기 알림 메시지 추가
+				int k = 0;
 			}
 		}
 		}
