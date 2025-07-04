@@ -681,19 +681,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		send(&pkt);
 		break;
 	}
-	case CS_INTERACT_STATE_CHANGE:
-	{
-		CS_INTERACT_STATE_CHANGE_PACKET* p = reinterpret_cast<CS_INTERACT_STATE_CHANGE_PACKET*>(packet);
-		STATE requestedState = static_cast<STATE>(p->new_state);
-
-		if (this->pinfo.st == requestedState)
-		{
-			break;
-		}
-
-		this->pinfo.st = requestedState;
-		break;
-	}
     default:
         break;
     }

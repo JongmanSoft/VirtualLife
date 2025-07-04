@@ -257,18 +257,6 @@ void UVirtual_life_GameInstance::SendVoicePacket(uint8* data, int32 length)
 	}
 }
 
-void UVirtual_life_GameInstance::SendInteractStateChange(uint8 StateValue)
-{
-	CS_INTERACT_STATE_CHANGE_PACKET pkt;
-	pkt.size = sizeof(pkt);
-	pkt.type = CS_INTERACT_STATE_CHANGE;
-	pkt.new_state = StateValue;
-
-	SendEnqueue(&pkt, sizeof(pkt));
-
-	MyPlayerInfo.st = static_cast<STATE>(StateValue);
-}
-
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;

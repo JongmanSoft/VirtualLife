@@ -10,9 +10,17 @@ UCLASS()
 class AInteractableActor : public AActor
 {
 	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	AInteractableActor();
 
-public:
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable)
-	void SendStateToServer(uint8 StateValue);
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 };
