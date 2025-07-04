@@ -113,3 +113,5 @@ server/.vs/*
 #server/x64/*
 server/server/*
 server/x64/Release/*
+server/x64/Release/server.pdb
+server/x64/Release/server.exe
