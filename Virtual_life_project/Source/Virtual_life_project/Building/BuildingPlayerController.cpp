@@ -40,14 +40,17 @@ void ABuildingPlayerController::ConfirmBuildPlacement()
 void ABuildingPlayerController::TrySelectBuildActor()
 {
     FHitResult Hit;
+
     if (GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_Visibility), true, Hit))
     {
-        APlaceBuildActor* HitActor = Cast<APlaceBuildActor>(Hit.GetActor());
-        if (HitActor)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("클릭된 액터: %s"), *HitActor->GetName());
+        AActor* HitActor = Cast<AActor>(Hit.GetActor());
+        if (!HitActor) return;
 
+        if (HitActor->IsA(APlaceBuildActor::StaticClass()) || HitActor->IsA(AInteractableActor::StaticClass()))
+        {
             SelectedBuildActor = HitActor;
+
+            UE_LOG(LogTemp, Warning, TEXT("클릭된 액터: %s"), *HitActor->GetName());
 
             if (InteractionWidgetClass)
             {

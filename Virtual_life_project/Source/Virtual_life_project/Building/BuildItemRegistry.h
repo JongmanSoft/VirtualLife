@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FBuildInfo.h"
+
 
 /**
  * 
@@ -15,7 +17,10 @@ public:
     static uint16 FNameToItemID(const FName& Name);
     static FName ItemIDToFName(uint16 ID);
 
+    static const FBuildInfo* FindBuildInfo(FName RowID);
+
 private:
     static TMap<FName, uint16> NameToIDMap;
     static TMap<uint16, FName> IDToNameMap;
 };
+

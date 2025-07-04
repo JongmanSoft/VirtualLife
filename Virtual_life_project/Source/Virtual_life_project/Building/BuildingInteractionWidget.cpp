@@ -6,8 +6,10 @@
 #include "BuildingPlayerController.h"
 #include "PlacementActor.h"
 #include "PlaceBuildActor.h"
+#include "InteractableActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Virtual_life_GameInstance.h"
+#include "BuildItemRegistry.h"
 
 
 void UBuildingInteractionWidget::NativeConstruct()
@@ -28,8 +30,24 @@ void UBuildingInteractionWidget::OnClickModify()
 
     FVector Location = PC->SelectedBuildActor->GetActorLocation();
     FRotator Rotation = PC->SelectedBuildActor->GetActorRotation();
-    UStaticMesh* Mesh = PC->SelectedBuildActor->Mesh->GetStaticMesh();
-    FName RowID = PC->SelectedBuildActor->GetRowID();
+
+    FName RowID;
+
+    if (APlaceBuildActor* PlaceActor = Cast<APlaceBuildActor>(PC->SelectedBuildActor))
+    {
+        RowID = PlaceActor->GetRowID();
+    }
+    else if (AInteractableActor* InteractableActor = Cast<AInteractableActor>(PC->SelectedBuildActor))
+    {
+        RowID = InteractableActor->RowID;
+    }
+    else
+    {
+        return;
+    }
+
+    const FBuildInfo* Info = FBuildItemRegistry::FindBuildInfo(RowID);
+    if (!Info) return;
 
     if (auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
     {
@@ -37,17 +55,22 @@ void UBuildingInteractionWidget::OnClickModify()
     }
 
     PC->RemovePendingBuildAtLocation(Location);
-
     PC->SelectedBuildActor->Destroy();
 
-    APlacementActor* NewPreview = GetWorld()->SpawnActor<APlacementActor>(
-        PC->PlacementActorClass, Location, Rotation);
-
-    if (NewPreview && Mesh)
+    APlacementActor* NewPreview = GetWorld()->SpawnActor<APlacementActor>(PC->PlacementActorClass, Location, Rotation);
+    if (NewPreview)
     {
-        NewPreview->SetMesh(Mesh);
+        if (Info->Mesh)
+        {
+            NewPreview->SetMesh(Info->Mesh);
+        }
+        else if (Info->InteractableActorClass)
+        {
+            NewPreview->SetInteractableActorClass(Info->InteractableActorClass);
+        }
+
         NewPreview->SetRowID(RowID);
-        NewPreview->SetPrice(0);
+        NewPreview->SetPrice(0); // 수정이므로 가격 0으로
     }
 
     RemoveFromParent();

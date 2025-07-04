@@ -18,6 +18,7 @@
 #include "../building/BuildItemRegistry.h"
 #include "../building/FBuildInfo.h"
 #include "../building/PlaceBuildActor.h"
+#include "InteractableActor.h"
 #include "Engine/DataTable.h"
 #include "AudioCapture.h"     
 #include "AudioCaptureCore.h" 
@@ -896,6 +897,11 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 			if (Spawned_1)
 			{
 				Spawned_1->SetActorScale3D(SpawnScale);
+
+				if (AInteractableActor* Interactable = Cast<AInteractableActor>(Spawned_1))
+				{
+					Interactable->SetRowID(RowName);
+				}
 			}
 		}
 		else if (Info->Mesh)
@@ -944,6 +950,11 @@ void UVirtual_life_GameInstance::SpawnRoomObjectsFromData(const TArray<FObjectDa
 			if (Spawned_1)
 			{
 				Spawned_1->SetActorScale3D(SpawnScale);
+
+				if (AInteractableActor* Interactable = Cast<AInteractableActor>(Spawned_1))
+				{
+					Interactable->SetRowID(RowName);
+				}
 			}
 		}
 		else if (Info->Mesh)

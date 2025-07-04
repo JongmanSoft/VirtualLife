@@ -2,7 +2,7 @@
 
 
 #include "BuildItemRegistry.h"
-#include "FBuildInfo.h"
+#include "Virtual_life_GameInstance.h"
 
 TMap<FName, uint16> FBuildItemRegistry::NameToIDMap;
 TMap<uint16, FName> FBuildItemRegistry::IDToNameMap;
@@ -39,4 +39,13 @@ FName FBuildItemRegistry::ItemIDToFName(uint16 ID)
     }
 
     return NAME_None;
+}
+
+const FBuildInfo* FBuildItemRegistry::FindBuildInfo(FName RowID)
+{
+    if (!GWorld) return nullptr;
+    auto GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(GWorld));
+    if (!GI || !GI->BuildingDataTable) return nullptr;
+    return GI->BuildingDataTable->FindRow<FBuildInfo>(RowID, TEXT("FindBuildInfo"));
+
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "PlaceBuildActor.h"
+#include "InteractableActor.h"
 #include "ObjectData.h"
 #include "InputActionValue.h"
 #include "BuildingPlayerController.generated.h"
@@ -22,7 +23,7 @@ protected:
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	APlaceBuildActor* SelectedBuildActor;
+	AActor* SelectedBuildActor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> InteractionWidgetClass;

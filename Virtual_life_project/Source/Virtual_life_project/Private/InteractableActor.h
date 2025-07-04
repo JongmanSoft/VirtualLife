@@ -12,6 +12,14 @@ class AInteractableActor : public AActor
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	FName RowID;
+
+	UFUNCTION(BlueprintCallable)
+	void SetRowID(FName InRowID) { RowID = InRowID; }
+
+	UFUNCTION(BlueprintCallable)
+	FName GetRowID() const { return RowID; }
 
 	UFUNCTION(BlueprintCallable)
 	void SendStateToServer(uint8 StateValue);
