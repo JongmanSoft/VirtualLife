@@ -172,10 +172,6 @@ public:
 	//UFUNCTION(BlueprintCallable)
 	void SendVoicePacket(uint8* data, int32 length);
 
-	// interact
-	UFUNCTION(BlueprintCallable)
-	void SendInteractStateChange(uint8 StateValue);
-
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	virtual void Tick(float DeltaTime) override;

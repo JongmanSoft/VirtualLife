@@ -118,7 +118,6 @@ enum PACKETID : char
 	CS_TIME_SYNC,
 	CS_VOICE_CHAT,
 	CS_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
-	CS_INTERACT_STATE_CHANGE,
 
 	// server to client
 	SC_LOGININFO,
@@ -317,14 +316,6 @@ struct CS_ROOM_ENTER_PACKET {
 struct CS_ROOM_LEAVE_PACKET {
 	unsigned short size;
 	PACKETID type;
-};
-
-// interact ...! -----------------------------
-struct CS_INTERACT_STATE_CHANGE_PACKET
-{
-	unsigned short size;
-	unsigned char type;
-	uint8_t new_state;
 };
 
 struct SC_ROOM_SETUP_PACKET {

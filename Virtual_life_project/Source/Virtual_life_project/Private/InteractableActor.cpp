@@ -9,6 +9,6 @@ void AInteractableActor::SendStateToServer(uint8 StateValue)
 {
 	if (auto* GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))
 	{
-		GI->SendInteractStateChange(StateValue);
+		GI->set_state(StateValue);
 	}
 }
