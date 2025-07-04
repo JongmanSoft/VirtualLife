@@ -105,7 +105,11 @@ Virtual_life_project/Plugins/*/Intermediate/*
 # Cache files for the editor to use
 Virtual_life_project/DerivedDataCache/*
 
+# add 0704
+Virtual_life_project/enc_temp_folder/*
+
 # server
 server/.vs/*
 #server/x64/*
 server/server/*
+server/x64/Release/*
