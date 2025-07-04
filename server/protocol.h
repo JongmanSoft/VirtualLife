@@ -123,6 +123,7 @@ enum PACKETID : char
 	CS_TIME_SYNC,
 	CS_VOICE_CHAT,
 	CS_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
+	CS_ADD_KID, //자식이 생겻져요!
 
 	// server to client
 	SC_LOGININFO,
@@ -404,6 +405,16 @@ struct SC_NPC_RESPONSE_PACKET {
 	PACKETID type;
 	unsigned short npc_id;
 	wchar_t	msg[CHAT_SIZE];
+};
+
+struct CS_ADD_KID_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned int preg_id; // 낳은놈 아이디
+	unsigned int spouse_id; // 배우자 아이디
+	Customizing c; // 자식 커스터마이징 정보
+	char personality; // 자식 성격
+	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
 };
 
 #pragma pack (pop)
