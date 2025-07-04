@@ -21,6 +21,13 @@ public:
 
     FName RowID;
 
+    // Ãß°¡
+    UPROPERTY()
+    TSubclassOf<AActor> InteractableActorClass;
+
+    UFUNCTION()
+    void SetInteractableActorClass(TSubclassOf<AActor> InClass);
+
     UFUNCTION()
     void SetRowID(FName InRowID);
 

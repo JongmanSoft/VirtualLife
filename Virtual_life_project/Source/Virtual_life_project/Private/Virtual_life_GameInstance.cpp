@@ -888,19 +888,27 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
-		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
+		FVector SpawnScale = FVector(obj.scale);
 
-		if (Spawned)
+		if (Info->InteractableActorClass)
 		{
-			Spawned->SetMesh(Info->Mesh);
-			Spawned->SetRowID(FBuildItemRegistry::ItemIDToFName(obj.item_id));
-			if (Info->bIsWall)
+			AActor* Spawned_1 = World->SpawnActor<AActor>(Info->InteractableActorClass, SpawnLoc, SpawnRot);
+			if (Spawned_1)
 			{
-				Spawned->SetScale(obj.scale, true);
+				Spawned_1->SetActorScale3D(SpawnScale);
 			}
-			else
+		}
+		else if (Info->Mesh)
+		{
+			APlaceBuildActor* Spawned_2 = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
+			if (Spawned_2)
 			{
-				Spawned->SetScale(obj.scale);
+				Spawned_2->SetMesh(Info->Mesh);
+				Spawned_2->SetRowID(RowName);
+				if (Info->bIsWall)
+					Spawned_2->SetScale(obj.scale, true);
+				else
+					Spawned_2->SetScale(obj.scale);
 			}
 		}
 	}
@@ -928,17 +936,29 @@ void UVirtual_life_GameInstance::SpawnRoomObjectsFromData(const TArray<FObjectDa
 
 		FVector Loc = Obj.Location;
 		FRotator Rot(0.f, Obj.Yaw, 0.f);
+		FVector SpawnScale = FVector(Obj.Scale);
 
-		APlaceBuildActor* Spawned = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
-		if (Spawned)
+		if (Info->InteractableActorClass)
 		{
-			Spawned->SetMesh(Info->Mesh);
-			Spawned->SetRowID(RowName);
+			AActor* Spawned_1 = World->SpawnActor<AActor>(Info->InteractableActorClass, Loc, Rot);
+			if (Spawned_1)
+			{
+				Spawned_1->SetActorScale3D(SpawnScale);
+			}
+		}
+		else if (Info->Mesh)
+		{
+			APlaceBuildActor* Spawned_2 = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, Loc, Rot);
+			if (Spawned_2)
+			{
+				Spawned_2->SetMesh(Info->Mesh);
+				Spawned_2->SetRowID(RowName);
 
-			if (Info->bIsWall)
-				Spawned->SetScale(Obj.Scale, true);
-			else
-				Spawned->SetScale(Obj.Scale);
+				if (Info->bIsWall)
+					Spawned_2->SetScale(Obj.Scale, true);
+				else
+					Spawned_2->SetScale(Obj.Scale);
+			}
 		}
 	}
 }

@@ -31,6 +31,20 @@ void APlacementActor::BeginPlay()
     Super::BeginPlay();
 }
 
+void APlacementActor::SetInteractableActorClass(TSubclassOf<AActor> InClass)
+{
+    InteractableActorClass = InClass;
+
+    if (OverlayMaterial && Mesh)
+    {
+        DynMaterial = UMaterialInstanceDynamic::Create(OverlayMaterial, this);
+        Mesh->SetMaterial(0, DynMaterial);
+        Mesh->SetRenderCustomDepth(true);
+        Mesh->SetCustomDepthStencilValue(1);
+        UpdateOverlayColor(true);
+    }
+}
+
 void APlacementActor::SetRowID(FName InRowID)
 {
     RowID = InRowID;
@@ -154,18 +168,32 @@ void APlacementActor::PlaceBuild()
         FinalScale = CurrentScale;
     }
 
-    APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
-    if (Placed && Mesh)
-    {
-        Placed->SetMesh(Mesh->GetStaticMesh());
-        bool bZOnly = IsA(AWallPlacementActor::StaticClass());
-        Placed->SetScale(FinalScale, bZOnly);
-        Placed->SetRowID(RowID);
+    AActor* SpawnedActor = nullptr;
 
-        uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
+    if (InteractableActorClass)
+    {
+        SpawnedActor = GetWorld()->SpawnActor<AActor>(InteractableActorClass, FinalTransform);
+    }
+    else if (PlaceBuildClass && Mesh)
+    {
+        APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
+        if (Placed)
+        {
+            Placed->SetMesh(Mesh->GetStaticMesh());
+            bool bZOnly = IsA(AWallPlacementActor::StaticClass());
+            Placed->SetScale(FinalScale, bZOnly);
+            Placed->SetRowID(RowID);
+            SpawnedActor = Placed;
+        }
+    }
+
+    if (SpawnedActor)
+    {
         auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
         if (PC)
         {
+            uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
+
             FObjectData NewData;
             NewData.ItemID = ItemID;
             NewData.Location = FinalLocation;
@@ -174,9 +202,9 @@ void APlacementActor::PlaceBuild()
 
             PC->AddPendingBuild(NewData);
         }
-    }
 
-    Destroy();
+        Destroy();
+    }
 }
 
 void APlacementActor::AddRotation(float Delta)

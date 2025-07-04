@@ -70,6 +70,12 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
         return;
     }
 
+    if (!Info->Mesh && !Info->InteractableActorClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] No Mesh or ActorClass assigned: %s"), *RowName.ToString());
+        return;
+    }
+
     UWorld* World = GetWorld();
     if (!World) return;
 
@@ -95,7 +101,14 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
 
     if (Spawned)
     {
-        Spawned->SetMesh(Info->Mesh);
+        if (Info->Mesh)
+        {
+            Spawned->SetMesh(Info->Mesh);
+        }
+        else if (Info->InteractableActorClass)
+        {
+            Spawned->SetInteractableActorClass(Info->InteractableActorClass);
+        }
         Spawned->SetPrice(Info->Price);
         Spawned->SetRowID(RowName);
     }

@@ -42,5 +42,8 @@ struct FBuildInfo : public FTableRowBase
     UStaticMesh* Mesh;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<AActor> InteractableActorClass;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bIsWall = false; // 벽인지 아닌지
 };
