@@ -192,7 +192,7 @@ bool Player::send_voice_chat_packet()
 {
 	SC_VOICE_CHAT_PACKET p;
 
-
+	return true;
 }
 
 bool Player::send_update_party_packet()
@@ -686,6 +686,13 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			if (a == this) continue; // 나 제외
 			a->send(&p);
 		}
+		break;
+	}
+	case CS_ADD_KID: {
+		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
+		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
+		//DB에 저장해야된느데
+
 		break;
 	}
     default:

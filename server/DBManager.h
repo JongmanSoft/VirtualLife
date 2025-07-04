@@ -42,6 +42,9 @@ public:
 	static void SaveQuest(const std::string& userID, Quest& data);
     static void DeleteQuest(const std::string& userID, Quest& data);
 
+    //Kid
+	static void SaveKid(const std::string& userID, const Kid& data);
+
 private:
     static sql::mysql::MySQL_Driver* g_driver;
     static thread_local std::unique_ptr<sql::Connection> t_conn;

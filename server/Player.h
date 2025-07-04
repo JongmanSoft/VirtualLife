@@ -3,6 +3,7 @@
 #include "Quest.h"
 #include "Room.h"
 #include "Party.h"
+#include "Kid.h"
 
 // todo: 락 혹은 concurrency로 모두모두 변경해야 함
 // none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
