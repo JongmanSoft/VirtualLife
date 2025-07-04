@@ -5,6 +5,9 @@
 #include "Blueprint/UserWidget.h"
 #include "../Public/Virtual_life_GameInstance.h"
 #include "GameFramework/PlayerController.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/Pawn.h"
+#include "Kismet/GameplayStatics.h"
 
 void Akid_map_script::BeginPlay()
 {
@@ -43,7 +46,43 @@ void Akid_map_script::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("CustomUI event binding successful!"));
     }
 	
-    //부모 그리기
+
+    //각도조정
+    // 현재 플레이어 컨트롤러 가져오기
+    PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+    if (PlayerController)
+    {
+        // 현재 Pawn 가져오기
+        APawn* CurrentPawn = PlayerController->GetPawn();
+        if (CurrentPawn)
+        {
+            // SpringArm 컴포넌트 찾기
+            USpringArmComponent* SpringArm = CurrentPawn->FindComponentByClass<USpringArmComponent>();
+            if (SpringArm)
+            {
+                // SpringArm의 상대 위치를 (0, 0, 52)로 설정
+                SpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, 52.0f));
+                // Target Arm Length를 100으로 설정
+                SpringArm->TargetArmLength = 100.0f;
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("SpringArm 컴포넌트를 찾을 수 없습니다."));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Pawn을 찾을 수 없습니다."));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PlayerController를 찾을 수 없습니다."));
+    }
+
+
+
+    //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 }
 
@@ -61,12 +100,12 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
     UE_LOG(LogTemp, Warning, TEXT("hello"));
         if (WidgetInstance)
         {
-            UKid_custom_ui* CustomUI = Cast<UKid_custom_ui>(WidgetInstance->GetWidgetFromName(TEXT("KidCustomUI")));
+            UKid_custom_ui* CustomUI = Cast<UKid_custom_ui>(WidgetInstance);
             if (CustomUI)
             {
                 CustomUI->NativeDestruct();
             }
-            WidgetInstance->RemoveFromViewport();
+            WidgetInstance->RemoveFromParent();
             WidgetInstance = nullptr;
         }
     
