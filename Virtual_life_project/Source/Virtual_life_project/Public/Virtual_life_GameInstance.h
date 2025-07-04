@@ -227,6 +227,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marry")
 	Umarry_manager* m_marry;
 
+	UFUNCTION()
+	void draw_one_player(int draw_id);
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "time")
 	float enter_time =0.0f;

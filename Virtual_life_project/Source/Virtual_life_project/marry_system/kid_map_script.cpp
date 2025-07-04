@@ -3,7 +3,7 @@
 
 #include "kid_map_script.h"
 #include "Blueprint/UserWidget.h"
-
+#include "../Public/Virtual_life_GameInstance.h"
 #include "GameFramework/PlayerController.h"
 
 void Akid_map_script::BeginPlay()
@@ -43,7 +43,8 @@ void Akid_map_script::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("CustomUI event binding successful!"));
     }
 	
-    
+    //부모 그리기
+    auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 }
 
 void Akid_map_script::Tick(float DeltaSeconds)

@@ -427,6 +427,33 @@ void UVirtual_life_GameInstance::custom_packet_setup(Customizing& targer_data, c
 	targer_data.glasses = recv_cus->glasses;
 }
 
+void UVirtual_life_GameInstance::draw_one_player(int draw_id)
+{
+	
+	int PlayerID = draw_id;
+	SpawnInfo& Info = OtherPlayers[PlayerID];
+
+	FVector SpawnLocation(0, -240, 92);
+	FRotator SpawnRotation(0.f, 0.f, -180.0f);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	UWorld* World = GetWorld();
+	ACharacter* Actor = World->SpawnActor<ACharacter>(
+		PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+	Other_actor_m_custom->custom_data_update(Info.cinfo);
+
+	Info.character = Actor;
+
+	auto pl = Cast<AVL_Player>(Info.character);
+	if (pl != nullptr) {
+		pl->set_my_id(Info.pinfo.id);
+	}
+}
+
 void UVirtual_life_GameInstance::PlayBGM(USoundCue* BGMSoundCue)
 {
 	if (nullptr != BGMaudio)BGMaudio = UGameplayStatics::SpawnSound2D(GetWorld(), BGMSoundCue,1,1,0.0,NULL,true,false);
