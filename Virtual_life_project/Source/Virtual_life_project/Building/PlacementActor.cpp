@@ -7,6 +7,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "PlaceBuildActor.h"
 #include "WallPlacementActor.h"
+#include "InteractableActor.h"
 #include "Virtual_life_GameInstance.h"
 #include "FloatingTextWidget.h"
 #include "EngineUtils.h"
