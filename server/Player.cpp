@@ -190,7 +190,9 @@ bool Player::send_time_sync_packet()
 
 bool Player::send_voice_chat_packet()
 {
-	//SC_VOICE_CHAT_PACKET p;
+	SC_VOICE_CHAT_PACKET p;
+
+
 }
 
 bool Player::send_update_party_packet()
@@ -267,7 +269,8 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		// string id로 플레이어를 찾기라..
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
-				party->add_member(&players[i]);
+				players[i].party->add_member(this);
+				party = players[i].party;
 				break;
 			}
 		}
@@ -670,6 +673,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_VOICE_CHAT:
 	{
+		if (party == nullptr) return;
 		CS_VOICE_CHAT_PACKET* p = reinterpret_cast<CS_VOICE_CHAT_PACKET*>(packet);
 		SC_VOICE_CHAT_PACKET pkt;
 		memcpy(pkt.data, p->data, p->data_len);
@@ -678,7 +682,10 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.type = SC_VOICE_CHAT;
 		pkt.size = p->size;
 		
-		send(&pkt);
+		for (auto& a : party->get_members()) {
+			if (a == this) continue; // 나 제외
+			a->send(&p);
+		}
 		break;
 	}
     default:
