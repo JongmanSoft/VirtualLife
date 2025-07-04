@@ -23,7 +23,12 @@ enum PARTY_REQUEST : char
 	PARTY_UPDATE
 };
 
-enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME , SITTING, LYING};
+enum STATE : char { IDLE = 0, WALK = 1, RUN = 2, JUMP = 3, MINE = 4, FISH = 5, SEED = 6, HOME = 7, 
+	SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
+
+// sitting1 : 그냥 앉음 lying : 누움 sitting2 : 머리에 손 올리고 앉음
+// sitting3 : 앉아서 말함 sitting4 : 머리에 손 올리고 눕다싶이 누움
+
 struct PlayerInfo
 {
 	unsigned int id;
