@@ -771,3 +771,4 @@ void DBManager::DeleteQuest(const std::string& userID, Quest& data)
         std::cerr << "[DB Error - DeleteQuest] " << e.what() << std::endl;
     }
 }
+

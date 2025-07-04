@@ -692,7 +692,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		//DB에 저장해야된느데
-
+		Kid temp_kid(*p);
+		
 		break;
 	}
     default:

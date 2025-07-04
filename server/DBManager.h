@@ -43,7 +43,7 @@ public:
     static void DeleteQuest(const std::string& userID, Quest& data);
 
     //Kid
-	static void SaveKid(const std::string& userID, const Kid& data);
+	
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;

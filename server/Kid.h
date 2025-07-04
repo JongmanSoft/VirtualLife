@@ -14,6 +14,7 @@ public:
 
 
 	Kid(unsigned int id, unsigned int preg_id, unsigned int spouse_id, const Customizing& cus, char personality, const wchar_t* msg);
+	Kid(const CS_ADD_KID_PACKET& pkt);
 	Kid() : id(0), preg_id(0), spouse_id(0), personality(0) {
 		hello_msg[0] = L'\0'; // √ ±‚»≠
 	}
