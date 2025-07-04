@@ -23,7 +23,7 @@ enum PARTY_REQUEST : char
 	PARTY_UPDATE
 };
 
-enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME , SITTING};
+enum STATE : char { IDLE, WALK, RUN, JUMP, MINE, FISH, SEED, HOME , SITTING, LYING};
 struct PlayerInfo
 {
 	unsigned int id;
