@@ -84,10 +84,6 @@
 		{
 			"Name": "HairStrands",
 			"Enabled": true
-		},
-		{
-			"Name": "EOSVoiceChat",
-			"Enabled": true
 		}
 	]
 }

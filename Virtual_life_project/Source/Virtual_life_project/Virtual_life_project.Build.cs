@@ -9,13 +9,7 @@ public class Virtual_life_project : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Sockets", "Networking", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities", "AudioCapture", "AudioMixer", "AudioMixerCore", "AudioCaptureCore", "AudioExtensions" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Sockets", "Networking", "UMG", "Slate", "SlateCore", "Json", "JsonUtilities" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "AudioCapture" });
-
-        string OpusPath = Path.Combine(ModuleDirectory, "ThirdParty/");
-
-        PublicIncludePaths.Add(OpusPath);
-        PublicAdditionalLibraries.Add(Path.Combine(OpusPath, "opus.lib"));
     }
 }

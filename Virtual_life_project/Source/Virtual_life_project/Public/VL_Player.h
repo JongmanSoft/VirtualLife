@@ -6,12 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Virtual_life_GameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "AudioCaptureComponent.h"
-#include "AudioCaptureCore.h"
-#include "AudioCapture.h"
 #include "Components/CapsuleComponent.h"
-//#include "../Voice_Chat/VoiceWave.h"
-//#include "AudioCaptureTypes.h"
 #include "VL_Player.generated.h"
 
 UCLASS()
@@ -55,12 +50,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 get_my_id();
 
-	UFUNCTION(BlueprintCallable)
-	void Start_Audio_Capture();
-
-	UFUNCTION(BlueprintCallable)
-	void Stop_Audio_Capture();
-
 	void set_my_id(const unsigned int& new_id);
 protected:
 	unsigned int m_id;
@@ -74,31 +63,6 @@ public:
 	void interact_action();
 private:
 	std::mutex m;
-
-
-	// 오디오
-	FTimerHandle VoiceCaptureTimer;
-
-	
-	Audio::FAudioCapture AudioCapture;
-	Audio::FAudioCaptureDeviceParams DeviceParams;
-
-	OpusEncoder* Encoder = nullptr;
-
-	int32 SampleRate = 48000;
-	int32 Channels = 1;
-	int32 OpusFrameSize = 960; // 20ms @ 48kHz
-
-	// 오디오 재생
-	USoundWaveProcedural* ProceduralSoundWave = nullptr;
-	UAudioComponent* AudioComponent = nullptr;
-
-	TFunction<void(const float*, int32, int32, int32, double, bool)> OnCapture;
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool Mic_On = false;
-	void HandleVoicePacket(const SC_VOICE_CHAT_PACKET& p);
 
-	OpusDecoder* Decoder = nullptr;
-	TArray<float> AudioBuffer; // 누적된 float PCM
 };

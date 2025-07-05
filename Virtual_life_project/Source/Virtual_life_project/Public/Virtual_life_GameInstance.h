@@ -18,11 +18,6 @@
 #include "../Player_Data/Quest_Manager.h"
 #include "../marry_system/marry_manager.h"
 #include "../Building/ObjectData.h"
-#include "../ThirdParty/opus.h"
-
-// 사운드 재생용
-#include "Sound/SoundWaveProcedural.h"
-#include "Components/AudioComponent.h"
 
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
@@ -158,9 +153,6 @@ public:
 	void SendRoomLeavePacket();
 
 	UFUNCTION(BlueprintCallable)
-	void EncodingTest();
-
-	UFUNCTION(BlueprintCallable)
 	void SendPartyUpdatePacket(const FString& Id_str);
 
 	UFUNCTION(BlueprintCallable)
@@ -264,20 +256,8 @@ private:
 public :
 	void set_name(FString _name) { name = _name; };
 	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
+	virtual void Init() override;
 
-public: // 음성채팅 관련
-	// Opus
-	//struct OpusDecoder;
-
-
-	// 재생용
-	UPROPERTY()
-	UAudioComponent* AudioComponent = nullptr;
-
-	UPROPERTY()
-	USoundWaveProcedural* ProceduralSoundWave = nullptr;
-
-	// 함수
-	void InitVoicePlayback(); // BeginPlay 등에서 호출
-
+// 음성 채팅
+	public: 
 };
