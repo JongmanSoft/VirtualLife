@@ -700,28 +700,12 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_VOICE_CHAT_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_VOICE_CHAT_PACKET));
 
-			if (!Decoder || !ProceduralSoundWave || !AudioComponent) return;
-
-			// 디코딩
-			int16 DecodedPCM[960 * 2]; // 최대 20ms 프레임, 모노
-			int FrameSize = opus_decode(
-				Decoder,
-				reinterpret_cast<const unsigned char*>(p.data),
-				p.data_len,
-				DecodedPCM,
-				960,
-				0
-			);
-
-			if (FrameSize > 0)
+			AVL_Player* TargetPlayer = dynamic_cast<AVL_Player*>(OtherPlayers[p.from_id].character);
+			if (TargetPlayer)
 			{
-				ProceduralSoundWave->QueueAudio((uint8*)DecodedPCM, FrameSize * sizeof(int16));
-				UE_LOG(LogTemp, Log, TEXT(" 재생용 PCM %d samples 수신"), FrameSize);
+				TargetPlayer->HandleVoicePacket(p);
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT(" Opus 디코딩 실패: %d"), FrameSize);
-			}
+			break;
 		}
 		case SC_RESULT_PARTY:
 		{
@@ -763,27 +747,27 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 void UVirtual_life_GameInstance::InitVoicePlayback()
 {
-	int32 Error = 0;
-	Decoder = opus_decoder_create(48000, 1, &Error);
-	if (Error != OPUS_OK)
-	{
-		UE_LOG(LogTemp, Error, TEXT(" Opus 디코더 생성 실패: %d"), Error);
-		return;
-	}
+	//int32 Error = 0;
+	//Decoder = opus_decoder_create(48000, 1, &Error);
+	//if (Error != OPUS_OK)
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT(" Opus 디코더 생성 실패: %d"), Error);
+	//	return;
+	//}
 
-	ProceduralSoundWave = NewObject<USoundWaveProcedural>();
-	ProceduralSoundWave->NumChannels = 1;
-	ProceduralSoundWave->Duration = INDEFINITELY_LOOPING_DURATION;
-	ProceduralSoundWave->SoundGroup = SOUNDGROUP_Voice;
-	ProceduralSoundWave->bLooping = false;
+	//ProceduralSoundWave = NewObject<USoundWaveProcedural>();
+	//ProceduralSoundWave->NumChannels = 1;
+	//ProceduralSoundWave->Duration = INDEFINITELY_LOOPING_DURATION;
+	//ProceduralSoundWave->SoundGroup = SOUNDGROUP_Voice;
+	//ProceduralSoundWave->bLooping = false;
 
-	AudioComponent = NewObject<UAudioComponent>(this);
-	AudioComponent->SetSound(ProceduralSoundWave);
-	AudioComponent->bAutoActivate = false;
-	AudioComponent->RegisterComponent();
-	AudioComponent->Play();
+	//AudioComponent = NewObject<UAudioComponent>(this);
+	//AudioComponent->SetSound(ProceduralSoundWave);
+	//AudioComponent->bAutoActivate = false;
+	//AudioComponent->RegisterComponent();
+	//AudioComponent->Play();
 
-	UE_LOG(LogTemp, Warning, TEXT(" Voice 재생 시스템 초기화 완료"));
+	//UE_LOG(LogTemp, Warning, TEXT(" Voice 재생 시스템 초기화 완료"));
 }
 
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()

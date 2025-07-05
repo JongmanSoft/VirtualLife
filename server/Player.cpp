@@ -283,13 +283,6 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT: // 초대한 플레이어가 거절했다
 	{
-		for (int i = 0; i < players.size(); ++i) {
-			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
-				auto s = std::string(pkt.id);
-				players[i].send_reject_call_packet(s);
-				break;
-			}
-		}
 		break;
 	}
 	}
@@ -684,7 +677,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		
 		for (auto& a : party->get_members()) {
 			if (a == this) continue; // 나 제외
-			a->send(&p);
+			a->send(&pkt);
 		}
 		break;
 	}

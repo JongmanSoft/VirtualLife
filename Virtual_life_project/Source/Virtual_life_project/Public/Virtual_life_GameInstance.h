@@ -268,7 +268,7 @@ public :
 public: // 음성채팅 관련
 	// Opus
 	//struct OpusDecoder;
-	OpusDecoder* Decoder = nullptr;
+
 
 	// 재생용
 	UPROPERTY()
