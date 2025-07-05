@@ -34,6 +34,7 @@ void ULogin_Widget::OnLoginClicked()
         // 로그인 요청
         auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
         if (GameInstance) { 
+            GameInstance->StrID = ID;
             GameInstance->ConnectServer(Password); // 임시로 패스워드에 ip 입력하게 함
             GameInstance->SendLoginInfoPacket(ID, "0000");
         }

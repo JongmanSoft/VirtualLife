@@ -18,7 +18,8 @@
 #include "../Player_Data/Quest_Manager.h"
 #include "../marry_system/marry_manager.h"
 #include "../Building/ObjectData.h"
-
+#include "VivoxCoreCommon.h"
+#include "VivoxCore.h"
 #include <mutex>
 #include "Virtual_life_GameInstance.generated.h"
 
@@ -246,6 +247,7 @@ private:
 	class SendManager* SendThread = nullptr;
 	int id;
 	FString name = TEXT("김겜공");
+
 	// todo: 이거 옮길지 고민
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
 	AdditionalInfo AddInfo;
@@ -259,5 +261,35 @@ public :
 	virtual void Init() override;
 
 // 음성 채팅
-	public: 
+public: 
+	FString StrID;
+
+	UFUNCTION(BlueprintCallable, Category = "Voice")
+	void StartVoiceChat()
+	{
+		LoginToVivox();
+	}
+
+	void LoginToVivox();
+	void BindLoginSessionHandlers(bool DoBind, ILoginSession& LoginSession);
+	void OnLoginSessionStateChanged(LoginState State);
+
+	// VivoxCoreModule 포인터
+	FVivoxCoreModule* VivoxCore;
+
+	// Vivox 세션 관련
+	IClient* VivoxClient = nullptr;
+	TSharedPtr<ILoginSession> VivoxLoginSession;
+	TSharedPtr<IChannelSession> VivoxChannelSession;
+
+	// Vivox 계정 및 채널 정보
+	FString VivoxIssuer = TEXT("your_issuer_here"); // Vivox 콘솔에서 발급받은 값
+	FString VivoxDomain = TEXT("mt1s.vivox.com");
+	FString VivoxServer = TEXT("https://mt1s.www.vivox.com/api2");
+	FString VivoxUserName = TEXT("User_") + FString::FromInt(id); // 로그인 시 동적으로 지정
+	FString VivoxChannelName = TEXT("MainChannel");
+	FString VivoxTokenKey = TEXT("your_token_key_here"); // JWT 토큰에 쓰이는 키
+
+
+	bool bLoggedIn = false;
 };

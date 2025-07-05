@@ -54,6 +54,9 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 	else {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Failed")));
 	}
+
+	// 음성채팅 서버 연결
+	LoginToVivox();
 }
 
 void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, int num)
@@ -706,12 +709,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 	}
 }
 
-void UVirtual_life_GameInstance::Init()
-{
-	Super::Init();
-
-}
-
 UVirtual_life_GameInstance::UVirtual_life_GameInstance()
 {
 
@@ -1010,4 +1007,98 @@ void UVirtual_life_GameInstance::SendLeavePacket()
 	p.type = CS_LEAVE;
 
 	SendEnqueue(&p, p.size);
+}
+
+
+// -------------------------
+
+// todo: 여기 키 다시 받아야 함.
+#define VIVOX_VOICE_KEY TEXT("EuohA4cqIZGjCcaVHDX9T5qqZhfNeTkX")
+#define VIVOX_VOICE_SERVER TEXT("https://unity.vivox.com/appconfig/14569-1029-42694-udash")
+#define VIVOX_VOICE_DOMAIN TEXT("mtu1xp.vivox.com")
+#define VIVOX_VOICE_ISSUER TEXT("14569-1029-42694-udash")
+
+struct FVivoxToken
+{
+	static void GenerateClientLoginToken(const ILoginSession& LoginSession, FString& OutToken);
+	static void GenerateClientJoinToken(const IChannelSession& ChannelSession, FString& OutToken);
+};
+
+void FVivoxToken::GenerateClientLoginToken(const ILoginSession& LoginSession, FString& OutToken)
+{
+	FTimespan TokenExpiration = FTimespan::FromSeconds(90);
+
+	OutToken = LoginSession.GetLoginToken(VIVOX_VOICE_KEY, TokenExpiration);
+}
+
+void FVivoxToken::GenerateClientJoinToken(const IChannelSession& ChannelSession, FString& OutToken)
+{
+	FTimespan TokenExpiration = FTimespan::FromSeconds(90);
+
+	OutToken = ChannelSession.GetConnectToken(VIVOX_VOICE_KEY, TokenExpiration);
+}
+
+void UVirtual_life_GameInstance::Init()
+{
+	Super::Init();
+
+}
+
+void UVirtual_life_GameInstance::LoginToVivox()
+{
+	VivoxCore = &FModuleManager::LoadModuleChecked<FVivoxCoreModule>("VivoxCore");
+	VivoxClient = &static_cast<FVivoxCoreModule*>(&FModuleManager::Get().LoadModuleChecked(TEXT("VivoxCore")))->VoiceClient();
+	VivoxClient->Initialize();
+
+	auto LoggedInAccountID = AccountId(VIVOX_VOICE_ISSUER, StrID, VIVOX_VOICE_DOMAIN);
+	ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+
+	FString LoginToken;
+	FVivoxToken::GenerateClientLoginToken(LoginSession, LoginToken);
+
+	ILoginSession::FOnBeginLoginCompletedDelegate OnBeginLoginCompleteCallback;
+	OnBeginLoginCompleteCallback.BindLambda([this, &LoginSession](VivoxCoreError Status) // 로그인 결과가 나오면 호출되는 콜백 함수
+		{
+			if (VxErrorSuccess != Status)
+			{
+				BindLoginSessionHandlers(false, LoginSession); 
+			}
+			else
+			{
+				bLoggedIn = true;
+			}
+		});
+	BindLoginSessionHandlers(true, LoginSession);
+	LoginSession.BeginLogin(VIVOX_VOICE_SERVER, LoginToken, OnBeginLoginCompleteCallback);
+}
+
+void UVirtual_life_GameInstance::BindLoginSessionHandlers(bool DoBind, ILoginSession& LoginSession)
+{
+	if (DoBind)
+	{
+		LoginSession.EventStateChanged.AddUObject(this, &UVirtual_life_GameInstance::OnLoginSessionStateChanged);
+	}
+	else
+	{
+		LoginSession.EventStateChanged.RemoveAll(this);
+	}
+}
+
+void UVirtual_life_GameInstance::OnLoginSessionStateChanged(LoginState State)
+{
+	switch (State)
+	{
+	case LoginState::LoggedIn:
+		UE_LOG(LogTemp, Log, TEXT("User has successfully logged in."));
+		break;
+	case LoginState::LoggingIn:
+		UE_LOG(LogTemp, Log, TEXT("User is logging in..."));
+		break;
+	case LoginState::LoggedOut:
+		UE_LOG(LogTemp, Log, TEXT("User has logged out."));
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("Unknown login state."));
+		break;
+	}
 }
