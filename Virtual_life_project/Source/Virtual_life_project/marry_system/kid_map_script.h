@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/LevelScriptActor.h"
 #include "Kid_custom_ui.h"
+#include "VL_Player.h"
 #include "kid_map_script.generated.h"
 
 /**
@@ -24,5 +25,8 @@ public:
 
 	UFUNCTION()
 	void custom_finish(float g_value, uint8 per_value, FString hello);
-	
+public:
+	UPROPERTY(EditAnywhere)
+	AVL_Player* you_character; //상대캐릭터
+
 };

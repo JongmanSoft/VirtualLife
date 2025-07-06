@@ -64,7 +64,8 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 
 
 	this->SetComponentName(FName("Character"));
-
+	
+	
 
 }
 

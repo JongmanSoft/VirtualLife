@@ -83,7 +83,32 @@ void Akid_map_script::BeginPlay()
 
 
     //상대방그리기 (일단 나중에...)
-    auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+    //auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+
+    //너부터 춤춰라...
+    if (you_character) {
+        USkeletalMeshComponent* SkeletalMeshComp = you_character->FindComponentByClass<USkeletalMeshComponent>();
+        if (SkeletalMeshComp) {
+            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+            if (AnimInstance)
+            {
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+            }
+        }
+    
+    }
+    //나도 출게...
+    ACharacter* AOwner = Cast<ACharacter>( PlayerController->GetPawn());
+    if (AOwner) {
+        USkeletalMeshComponent* SkeletalMeshComp = AOwner->FindComponentByClass<USkeletalMeshComponent>();
+        if (SkeletalMeshComp) {
+            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+            if (AnimInstance)
+            {
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+            }
+        }
+    }
 }
 
 void Akid_map_script::Tick(float DeltaSeconds)
