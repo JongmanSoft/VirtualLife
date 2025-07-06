@@ -14,6 +14,13 @@
 /**
  * 
  */
+enum feel_state
+{
+	F_FREE,
+	F_SMILE,
+	F_ANGRY,
+	F_SAD
+};
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VIRTUAL_LIFE_PROJECT_API Um_CustomizableSkeletalComponent : public UCustomizableSkeletalComponent
 {
@@ -126,5 +133,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "update")
 	void random_custom();
-	
+public:
+	void feel_change(feel_state next_feel); //표정바꾸기
+
+	UFUNCTION(BlueprintCallable, Category = "update")
+	void feel_change(uint8 next_feel); //표정바꾸기
 };

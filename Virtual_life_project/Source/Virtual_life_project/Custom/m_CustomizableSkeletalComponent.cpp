@@ -186,6 +186,7 @@ void Um_CustomizableSkeletalComponent::custom_data_update(const Customizing cus)
 
 void Um_CustomizableSkeletalComponent::apply_actor_custom()
 {
+	if (!this->GetCustomizableObjectInstance()) return;
 	// IntParameters
 	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("Pants_enum"), pants_str[pants], -1);
 	this->GetCustomizableObjectInstance()->SetIntParameterSelectedOption(FString("shoes_enum"), shoes_str[shoes], -1);
@@ -314,5 +315,55 @@ void Um_CustomizableSkeletalComponent::random_custom()
 	eyebrows = FMath::RandRange(0, 2);
 	glasses = FMath::RandRange(0, 1);
 
+	apply_actor_custom(); //변경 내용을 액터에 반영
+}
+
+void Um_CustomizableSkeletalComponent::feel_change(feel_state next_feel)
+{
+	switch (next_feel)
+	{
+	case F_FREE:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	case F_SMILE: {
+		auto Instance = this->GetCustomizableObjectInstance();
+		if (Instance) {
+			Instance->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
+		}
+		else {
+			UE_LOG(LogTemp, Error, TEXT("CustomizableObjectInstance is null"));
+		}
+	}
+		break;
+	case F_ANGRY:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	case F_SAD:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	default:
+		break;
+	}
+	apply_actor_custom(); //변경 내용을 액터에 반영
+}
+
+void Um_CustomizableSkeletalComponent::feel_change(uint8 next_feel)
+{
+	switch (next_feel)
+	{
+	case 0:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	case 1: this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
+		break;
+	case 2:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	case 3:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		break;
+	default:
+		break;
+	}
 	apply_actor_custom(); //변경 내용을 액터에 반영
 }

@@ -4,6 +4,7 @@
 #include "kid_map_script.h"
 #include "Blueprint/UserWidget.h"
 #include "../Public/Virtual_life_GameInstance.h"
+#include "../Custom/m_CustomizableSkeletalComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Pawn.h"
@@ -96,7 +97,6 @@ void Akid_map_script::BeginPlay()
                 AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
             }
         }
-    
     }
     //나도 출게...
     ACharacter* AOwner = Cast<ACharacter>( PlayerController->GetPawn());
@@ -110,12 +110,35 @@ void Akid_map_script::BeginPlay()
             }
         }
     }
+
+    PrimaryActorTick.bCanEverTick = true;
 }
 
 void Akid_map_script::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds); // 부모 클래스의 Tick 호출
-    UE_LOG(LogTemp, Warning, TEXT("Level Tick triggered! DeltaTime: %f"), DeltaSeconds);
+ 
+    if (you_character) {
+        Um_CustomizableSkeletalComponent* customizable = you_character->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+        if (customizable) {
+            if (customizable->GetCustomizableObjectInstance()) {
+                customizable->feel_change(F_SMILE);
+
+                ACharacter* AOwner = Cast<ACharacter>((GetWorld()->GetFirstPlayerController())->GetPawn());
+                if (AOwner) {
+                    customizable = AOwner->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+                    if (customizable) {
+                        if (customizable->GetCustomizableObjectInstance()) {
+                            customizable->feel_change(F_SMILE);
+                            PrimaryActorTick.bCanEverTick = false;
+                        }
+                    }
+                }
+           }
+        }
+        
+    }
+    
 
 
 }
