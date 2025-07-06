@@ -83,7 +83,8 @@ void Akid_map_script::BeginPlay()
 
 
     //상대방그리기 (일단 나중에...)
-    //auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+   /* auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);*/
 
     //너부터 춤춰라...
     if (you_character) {

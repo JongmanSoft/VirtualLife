@@ -221,7 +221,7 @@ public:
 	Umarry_manager* m_marry;
 
 	UFUNCTION()
-	void draw_one_player(int draw_id);
+	ACharacter* draw_one_player(int draw_id);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "time")

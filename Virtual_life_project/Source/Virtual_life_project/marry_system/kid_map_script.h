@@ -27,6 +27,6 @@ public:
 	void custom_finish(float g_value, uint8 per_value, FString hello);
 public:
 	UPROPERTY(EditAnywhere)
-	AVL_Player* you_character; //상대캐릭터
+	ACharacter* you_character; //상대캐릭터
 
 };
