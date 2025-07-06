@@ -93,7 +93,7 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
             }
         }
     
@@ -106,7 +106,7 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/HipHopDancing_UE_Montage.HipHopDancing_UE_Montage")), 1.0f);
             }
         }
     }
