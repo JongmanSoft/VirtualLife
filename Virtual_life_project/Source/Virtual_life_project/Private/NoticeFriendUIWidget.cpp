@@ -34,6 +34,7 @@ void UNoticeFriendUIWidget::OnYesClicked()
     if (my_instance)
     {
         my_instance->SendPartyJoinPacket(FriendID);
+        my_instance->JoinChannel(FriendID);
     }
 
     RemoveFromParent();

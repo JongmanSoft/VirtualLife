@@ -20,7 +20,8 @@ enum PARTY_REQUEST : char
 	PARTY_REQUEST_INVITE = 0,
 	PARTY_REQUEST_INVITE_REJECT,
 	PARTY_REQUEST_INVITE_ACCEPT,
-	PARTY_UPDATE
+	PARTY_UPDATE, 
+	PARTY_JOIN_SUCCESS
 };
 
 enum STATE : char { IDLE = 0, WALK = 1, RUN = 2, JUMP = 3, MINE = 4, FISH = 5, SEED = 6, HOME = 7, 
@@ -359,7 +360,8 @@ struct SC_RESULT_PARTY_PACKET {
 	unsigned short size;
 	PACKETID type; // CS_UPDATE_PARTY
 	PARTY_REQUEST act_type;
-	char id[M_ID_SIZE]; // 누가 초대를 보냈는가 OR 거절했는지, 수락했는지
+	char id[M_ID_SIZE]; // 이 패킷 송신자
+	char channel_id[M_ID_SIZE]; // 채널 아이디
 	wchar_t	name[M_ID_SIZE];
 };
 

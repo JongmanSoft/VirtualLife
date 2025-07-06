@@ -273,23 +273,17 @@ public:
 	void LoginToVivox();
 	void BindLoginSessionHandlers(bool DoBind, ILoginSession& LoginSession);
 	void OnLoginSessionStateChanged(LoginState State);
+	void JoinChannel(FString ChannelName);
+	void BindChannelSessionHandlers(bool DoBind, IChannelSession& ChannelSession);
+	void VivoxLogout();
 
 	// VivoxCoreModule 포인터
 	FVivoxCoreModule* VivoxCore;
 
 	// Vivox 세션 관련
 	IClient* VivoxClient = nullptr;
-	TSharedPtr<ILoginSession> VivoxLoginSession;
-	TSharedPtr<IChannelSession> VivoxChannelSession;
-
-	// Vivox 계정 및 채널 정보
-	FString VivoxIssuer = TEXT("your_issuer_here"); // Vivox 콘솔에서 발급받은 값
-	FString VivoxDomain = TEXT("mt1s.vivox.com");
-	FString VivoxServer = TEXT("https://mt1s.www.vivox.com/api2");
-	FString VivoxUserName = TEXT("User_") + FString::FromInt(id); // 로그인 시 동적으로 지정
-	FString VivoxChannelName = TEXT("MainChannel");
-	FString VivoxTokenKey = TEXT("your_token_key_here"); // JWT 토큰에 쓰이는 키
-
+	AccountId LoggedInAccountID;
+	ChannelId LoggedInChannelId;
 
 	bool bLoggedIn = false;
 };

@@ -704,6 +704,11 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				// todo: 여기 알림 메시지 추가
 				int k = 0;
 			}
+			else if (p.act_type == PARTY_REQUEST::PARTY_JOIN_SUCCESS) // 파티 참가 성공 -> 음성채팅 참가
+			{
+				FString str = p.channel_id;
+				JoinChannel(str);
+			}
 		}
 		}
 	}
@@ -925,6 +930,16 @@ void UVirtual_life_GameInstance::Shutdown()
 {
 	Super::Shutdown();
 
+	// 음성채팅 비활
+	if (bLoggedIn && VivoxClient)
+	{
+		ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+		if (LoginSession.State() == LoginState::LoggedIn)
+		{
+			LoginSession.Logout();
+		}
+	}
+
 	SendLeavePacket();
 	//받아라!!!!!!!!! 1초준다
 	float Timeout = 1.0f; // 최대 1초 대기
@@ -1050,26 +1065,35 @@ void UVirtual_life_GameInstance::LoginToVivox()
 	VivoxClient = &static_cast<FVivoxCoreModule*>(&FModuleManager::Get().LoadModuleChecked(TEXT("VivoxCore")))->VoiceClient();
 	VivoxClient->Initialize();
 
-	auto LoggedInAccountID = AccountId(VIVOX_VOICE_ISSUER, StrID, VIVOX_VOICE_DOMAIN);
+	LoggedInAccountID = AccountId(VIVOX_VOICE_ISSUER, StrID, VIVOX_VOICE_DOMAIN);
 	ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
 
 	FString LoginToken;
 	FVivoxToken::GenerateClientLoginToken(LoginSession, LoginToken);
 
 	ILoginSession::FOnBeginLoginCompletedDelegate OnBeginLoginCompleteCallback;
-	OnBeginLoginCompleteCallback.BindLambda([this, &LoginSession](VivoxCoreError Status) // 로그인 결과가 나오면 호출되는 콜백 함수
+	OnBeginLoginCompleteCallback.BindLambda([this, &LoginSession](VivoxCoreError Status)
 		{
-			if (VxErrorSuccess != Status)
+			if (Status == VxErrorSuccess)
 			{
-				BindLoginSessionHandlers(false, LoginSession); 
+				UE_LOG(LogTemp, Log, TEXT("Vivox login successful"));
+				bLoggedIn = true;
+			}
+			else if (Status == VxErrorInvalidState) // 1019
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Vivox login failed - already logged in. Attempting logout..."));
+				VivoxLogout();
 			}
 			else
 			{
-				bLoggedIn = true;
+				UE_LOG(LogTemp, Error, TEXT("Login failed: %s"), ANSI_TO_TCHAR(FVivoxCoreModule::ErrorToString(Status)));
+				BindLoginSessionHandlers(false, LoginSession);
 			}
 		});
+
 	BindLoginSessionHandlers(true, LoginSession);
-	LoginSession.BeginLogin(VIVOX_VOICE_SERVER, LoginToken, OnBeginLoginCompleteCallback);
+	VivoxCoreError ret = LoginSession.BeginLogin(VIVOX_VOICE_SERVER, LoginToken, OnBeginLoginCompleteCallback);
+	UE_LOG(LogTemp, Log, TEXT("BeginLogin() called: %s"), ANSI_TO_TCHAR(FVivoxCoreModule::ErrorToString(ret)));
 }
 
 void UVirtual_life_GameInstance::BindLoginSessionHandlers(bool DoBind, ILoginSession& LoginSession)
@@ -1101,4 +1125,72 @@ void UVirtual_life_GameInstance::OnLoginSessionStateChanged(LoginState State)
 		UE_LOG(LogTemp, Warning, TEXT("Unknown login state."));
 		break;
 	}
+}
+
+void UVirtual_life_GameInstance::JoinChannel(FString ChannelName)
+{
+	if (!bLoggedIn || !VivoxClient)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot join channel: not logged in or VivoxClient is null."));
+		return;
+	}
+
+	ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+	// 무조건 비공간 음성으로 세팅
+	LoggedInChannelId = ChannelId(VIVOX_VOICE_ISSUER, ChannelName, VIVOX_VOICE_DOMAIN, ChannelType::NonPositional, Channel3DProperties(8100, 270, 1.0, EAudioFadeModel::InverseByDistance));
+	IChannelSession& ChannelSession = LoginSession.GetChannelSession(LoggedInChannelId);
+
+	FString JoinToken;
+	FVivoxToken::GenerateClientJoinToken(ChannelSession, JoinToken);
+
+	IChannelSession::FOnBeginConnectCompletedDelegate OnBeginConnectCompleteCallback;
+	OnBeginConnectCompleteCallback.BindLambda([this, &LoginSession, &ChannelSession](VivoxCoreError Status)
+		{
+			if (VxErrorSuccess != Status)
+			{
+				BindChannelSessionHandlers(false, ChannelSession); // Unbind handlers if we fail to join
+				LoginSession.DeleteChannelSession(ChannelSession.Channel()); // Disassociate this ChannelSession from the LoginSession
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Successfully joined channel %s"), *ChannelSession.Channel().Name());
+			}
+		});
+	BindChannelSessionHandlers(true, ChannelSession);
+	ChannelSession.BeginConnect(true, true, true, JoinToken, OnBeginConnectCompleteCallback);
+}
+
+void UVirtual_life_GameInstance::BindChannelSessionHandlers(bool DoBind, IChannelSession& ChannelSession)
+{
+	// 없어도 되지 않을까 ?
+	//if (DoBind)
+	//{
+	//	ChannelSession.EventAfterParticipantAdded.AddUObject(this, &UVivoxChatManager::OnChannelParticipantAdded);
+	//	ChannelSession.EventBeforeParticipantRemoved.AddUObject(this, &UVivoxChatManager::OnChannelParticipantRemoved);
+	//	ChannelSession.EventAfterParticipantUpdated.AddUObject(this, &UVivoxChatManager::OnChannelParticipantUpdated);
+	//	ChannelSession.EventTextMessageReceived.AddUObject(this, &UVivoxChatManager::OnTextMessageReceived);
+	//	ChannelSession.EventAudioStateChanged.AddUObject(this, &UVivoxChatManager::OnChannelAudioStateChanged);
+	//}
+	//else
+	//{
+	//	ChannelSession.EventAfterParticipantAdded.RemoveAll(this);
+	//	ChannelSession.EventBeforeParticipantRemoved.RemoveAll(this);
+	//	ChannelSession.EventAfterParticipantUpdated.RemoveAll(this);
+	//	ChannelSession.EventTextMessageReceived.RemoveAll(this);
+	//	ChannelSession.EventAudioStateChanged.RemoveAll(this);
+	//}
+}
+
+void UVirtual_life_GameInstance::VivoxLogout()
+{
+	if (bLoggedIn && VivoxClient)
+	{
+		ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+		if (LoginSession.State() == LoginState::LoggedIn)
+		{
+			LoginSession.Logout();
+		}
+	}
+
+	Super::Shutdown();
 }

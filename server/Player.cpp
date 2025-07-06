@@ -230,6 +230,20 @@ bool Player::send_invite_call_packet(std::string& id, std::wstring& name)
 	return true;
 }
 
+bool Player::send_join_success_packet(std::string& id, std::wstring& name)
+{
+	SC_RESULT_PARTY_PACKET p;
+	p.type = SC_RESULT_PARTY;
+	strcpy_s(p.id, M_ID_SIZE, id.c_str());
+	p.act_type = PARTY_REQUEST::PARTY_JOIN_SUCCESS;
+	p.size = sizeof(SC_RESULT_PARTY_PACKET);
+	strcpy_s(p.channel_id, M_ID_SIZE, party->get_partyID().c_str());
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
+
+	send(&p);
+	return true;
+}
+
 bool Player::send_reject_call_packet(std::string& id)
 {
 	SC_RESULT_PARTY_PACKET p;
@@ -252,7 +266,9 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		if (party == nullptr) {
 			// 파티 생성 로직
 			party = new Party();
+			party->set_partyID(id);
 			party->add_member(this);
+			send_join_success_packet(id, name);
 		}
 		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; // 초대불가 패킷 전송
 
