@@ -324,22 +324,23 @@ void Um_CustomizableSkeletalComponent::feel_change(feel_state next_feel)
 	{
 	case F_FREE:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
-	case F_SMILE: {
-		auto Instance = this->GetCustomizableObjectInstance();
-		if (Instance) {
-			Instance->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
-		}
-		else {
-			UE_LOG(LogTemp, Error, TEXT("CustomizableObjectInstance is null"));
-		}
-	}
+	case F_SMILE: 
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
 	case F_ANGRY:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
 	case F_SAD:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 1.0f, -1);
 		break;
 	default:
 		break;
@@ -353,14 +354,23 @@ void Um_CustomizableSkeletalComponent::feel_change(uint8 next_feel)
 	{
 	case 0:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
-	case 1: this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
+	case 1:
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
 	case 2:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
 	case 3:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 1.0f, -1);
 		break;
 	default:
 		break;
