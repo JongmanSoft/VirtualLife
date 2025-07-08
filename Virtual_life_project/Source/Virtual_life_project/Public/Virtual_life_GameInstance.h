@@ -276,6 +276,10 @@ public:
 	void JoinChannel(FString ChannelName);
 	void BindChannelSessionHandlers(bool DoBind, IChannelSession& ChannelSession);
 	void VivoxLogout();
+	void OnChannelParticipantAdded(const IParticipant& Participant);
+	void OnChannelParticipantRemoved(const IParticipant& Participant);
+	void OnChannelParticipantUpdated(const IParticipant& Participant);
+	void OnChannelAudioStateChanged(const IChannelConnectionState& State);
 
 	// VivoxCoreModule 포인터
 	FVivoxCoreModule* VivoxCore;

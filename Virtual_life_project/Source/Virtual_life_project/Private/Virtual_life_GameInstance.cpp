@@ -441,8 +441,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		FMemory::Memcpy(&PacketSize, PacketData.GetData(), sizeof(uint16));
 		FMemory::Memcpy(&PacketType, PacketData.GetData() + sizeof(uint16), sizeof(uint8));
 
-		UE_LOG(LogTemp, Log, TEXT(" Received Packet - Type: %d, Size: %d"), PacketType, PacketSize);
-
 		// 패킷 종류에 따라 처리
 		switch (PacketType)
 		{
@@ -1109,7 +1107,12 @@ void UVirtual_life_GameInstance::OnLoginSessionStateChanged(LoginState State)
 	switch (State)
 	{
 	case LoginState::LoggedIn:
-		UE_LOG(LogTemp, Log, TEXT("User has successfully logged in."));
+		// 기본 마이크 디바이스 설정
+		VivoxClient->AudioOutputDevices().SetActiveDevice(VivoxClient->AudioOutputDevices().ActiveDevice());
+		VivoxClient->AudioInputDevices().SetActiveDevice(VivoxClient->AudioInputDevices().ActiveDevice());
+		VivoxClient->AudioInputDevices().SetMuted(false);
+
+		UE_LOG(LogTemp, Log, TEXT("Login success. Mic unmuted."));
 		break;
 	case LoginState::LoggingIn:
 		UE_LOG(LogTemp, Log, TEXT("User is logging in..."));
@@ -1150,31 +1153,66 @@ void UVirtual_life_GameInstance::JoinChannel(FString ChannelName)
 			else
 			{
 				UE_LOG(LogTemp, Log, TEXT("Successfully joined channel %s"), *ChannelSession.Channel().Name());
+
+				//LoginSession.SetTransmissionMode(ETransmissionMode::Single, { ChannelSession.Channel() });
 			}
 		});
 	BindChannelSessionHandlers(true, ChannelSession);
-	ChannelSession.BeginConnect(true, true, true, JoinToken, OnBeginConnectCompleteCallback);
+	ChannelSession.BeginConnect(true, false, true, JoinToken, OnBeginConnectCompleteCallback);
 }
 
 void UVirtual_life_GameInstance::BindChannelSessionHandlers(bool DoBind, IChannelSession& ChannelSession)
 {
-	// 없어도 되지 않을까 ?
-	//if (DoBind)
-	//{
-	//	ChannelSession.EventAfterParticipantAdded.AddUObject(this, &UVivoxChatManager::OnChannelParticipantAdded);
-	//	ChannelSession.EventBeforeParticipantRemoved.AddUObject(this, &UVivoxChatManager::OnChannelParticipantRemoved);
-	//	ChannelSession.EventAfterParticipantUpdated.AddUObject(this, &UVivoxChatManager::OnChannelParticipantUpdated);
-	//	ChannelSession.EventTextMessageReceived.AddUObject(this, &UVivoxChatManager::OnTextMessageReceived);
-	//	ChannelSession.EventAudioStateChanged.AddUObject(this, &UVivoxChatManager::OnChannelAudioStateChanged);
-	//}
-	//else
-	//{
-	//	ChannelSession.EventAfterParticipantAdded.RemoveAll(this);
-	//	ChannelSession.EventBeforeParticipantRemoved.RemoveAll(this);
-	//	ChannelSession.EventAfterParticipantUpdated.RemoveAll(this);
-	//	ChannelSession.EventTextMessageReceived.RemoveAll(this);
-	//	ChannelSession.EventAudioStateChanged.RemoveAll(this);
-	//}
+	if (DoBind)
+	{
+		ChannelSession.EventAfterParticipantAdded.AddUObject(this, &UVirtual_life_GameInstance::OnChannelParticipantAdded);
+		ChannelSession.EventBeforeParticipantRemoved.AddUObject(this, &UVirtual_life_GameInstance::OnChannelParticipantRemoved);
+		ChannelSession.EventAfterParticipantUpdated.AddUObject(this, &UVirtual_life_GameInstance::OnChannelParticipantUpdated);
+		ChannelSession.EventAudioStateChanged.AddUObject(this, &UVirtual_life_GameInstance::OnChannelAudioStateChanged);
+	}
+	else
+	{
+		ChannelSession.EventAfterParticipantAdded.RemoveAll(this);
+		ChannelSession.EventBeforeParticipantRemoved.RemoveAll(this);
+		ChannelSession.EventAfterParticipantUpdated.RemoveAll(this);
+		ChannelSession.EventAudioStateChanged.RemoveAll(this);
+	}
+}
+
+// 누군가 들어옴
+void UVirtual_life_GameInstance::OnChannelParticipantAdded(const IParticipant& Participant)
+{
+	ChannelId Channel = Participant.ParentChannelSession().Channel();
+	UE_LOG(LogTemp, Log, TEXT("User %s has joined channel %s (self = %s)"), *Participant.Account().Name(), *Channel.Name(), Participant.IsSelf() ? TEXT("true") : TEXT("false"));
+	std::string DisplayName = std::string(TCHAR_TO_UTF8(*Participant.Account().Name()));
+	if (DisplayName.rfind('-') != std::string::npos) {
+		DisplayName = DisplayName.erase(DisplayName.rfind('-'));
+	}
+}
+
+// 누군가 나감
+void UVirtual_life_GameInstance::OnChannelParticipantRemoved(const IParticipant& Participant)
+{
+	ChannelId Channel = Participant.ParentChannelSession().Channel();
+	UE_LOG(LogTemp, Log, TEXT("User %s has left channel %s (self = %s)"), *Participant.Account().Name(), *Channel.Name(), Participant.IsSelf() ? TEXT("true") : TEXT("false"));
+}
+
+// 참가자 상태 변화(말하는지, 음소거인지)
+void UVirtual_life_GameInstance::OnChannelParticipantUpdated(const IParticipant& Participant)
+{
+}
+
+// 연결 성공 시 송신 설정
+void UVirtual_life_GameInstance::OnChannelAudioStateChanged(const IChannelConnectionState& State)
+{
+
+	if (State.State() == ConnectionState::Connected)
+	{
+		ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+		LoginSession.SetTransmissionMode(TransmissionMode::Single, { State.ChannelSession().Channel() });
+
+		UE_LOG(LogTemp, Log, TEXT("SetTransmissionMode(Single) applied to %s"), *State.ChannelSession().Channel().Name());
+	}
 }
 
 void UVirtual_life_GameInstance::VivoxLogout()

@@ -142,10 +142,6 @@ uint32 SendManager::Run()
             {
                 UE_LOG(LogTemp, Error, TEXT("Packet sending failed"));
             }
-            else
-            {
-                UE_LOG(LogTemp, Log, TEXT("Packet sent successfully, Size: %d"), Packet.Num());
-            }
         }
 
         FPlatformProcess::Sleep(0.01f); // CPU 점유율 감소
