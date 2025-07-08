@@ -354,7 +354,7 @@ void Um_CustomizableSkeletalComponent::feel_change(uint8 next_feel)
 	{
 	case 0:
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_smile"), 0.0f, -1);
-		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 1.0f, -1);
+		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_angry"), 0.0f, -1);
 		this->GetCustomizableObjectInstance()->SetFloatParameterSelectedOption(FString("feel_sad"), 0.0f, -1);
 		break;
 	case 1:
