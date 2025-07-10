@@ -1111,6 +1111,7 @@ void UVirtual_life_GameInstance::OnLoginSessionStateChanged(LoginState State)
 		VivoxClient->AudioOutputDevices().SetActiveDevice(VivoxClient->AudioOutputDevices().ActiveDevice());
 		VivoxClient->AudioInputDevices().SetActiveDevice(VivoxClient->AudioInputDevices().ActiveDevice());
 		VivoxClient->AudioInputDevices().SetMuted(false);
+		VivoxClient->GetLoginSession(LoggedInAccountID).SetParticipantSpeakingUpdateRate(ParticipantSpeakingUpdateRate::Update1Hz);
 
 		UE_LOG(LogTemp, Log, TEXT("Login success. Mic unmuted."));
 		break;
@@ -1200,6 +1201,16 @@ void UVirtual_life_GameInstance::OnChannelParticipantRemoved(const IParticipant&
 // 참가자 상태 변화(말하는지, 음소거인지)
 void UVirtual_life_GameInstance::OnChannelParticipantUpdated(const IParticipant& Participant)
 {
+	if (!Participant.IsSelf())
+	{
+		UE_LOG(LogTemp, Log, TEXT("출력 장치: %s"), *VivoxClient->AudioOutputDevices().ActiveDevice().Name());
+
+		const FString Name = Participant.Account().Name();
+		float Energy = Participant.AudioEnergy(); // 0.0 ~ 1.0
+		UE_LOG(LogTemp, Log, TEXT("[%s] AudioEnergy: %.3f"),
+			*Participant.Account().Name(),
+			Energy);
+	}
 }
 
 // 연결 성공 시 송신 설정
@@ -1228,3 +1239,4 @@ void UVirtual_life_GameInstance::VivoxLogout()
 
 	Super::Shutdown();
 }
+
