@@ -772,3 +772,132 @@ void DBManager::DeleteQuest(const std::string& userID, Quest& data)
     }
 }
 
+void DBManager::SaveKidInfo(const Kid& kid)
+{
+    if (!DB_ON) return;
+
+    try {
+        auto conn = GetConnection();
+        std::unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(R"(
+            INSERT INTO kid_info (
+                ID, PREG_ID, SPOUSE_ID, PERSONALITY, HELLO_MSG,
+                SKIN, SHIRT, PANTS, SHOES,
+                R_EYE_COLOR_HUE, R_EYE_COLOR_SAT, L_EYE_COLOR_HUE, L_EYE_COLOR_SAT,
+                EYE_SCALE, PUPIL_SCALE, HAIR, HAIR_COLOR_R, HAIR_COLOR_G, HAIR_COLOR_B,
+                EYE_WIDTH, EYE_THICK, EYE_SLOPE,
+                NOSE_WIDTH, NOSE_HEIGHT,
+                MOUTH_WIDTH, MOUTH_THICK, MOUTH_SLOPE,
+                CHIN, JAW, HEAVY, FACE_WIDTH, EYEBROWS, GLASSES
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                PREG_ID = VALUES(PREG_ID),
+                SPOUSE_ID = VALUES(SPOUSE_ID),
+                PERSONALITY = VALUES(PERSONALITY),
+                HELLO_MSG = VALUES(HELLO_MSG)
+        )"));
+
+        pstmt->setUInt(1, kid.id);
+        pstmt->setUInt(2, kid.preg_id);
+        pstmt->setUInt(3, kid.spouse_id);
+        pstmt->setInt(4, kid.personality);
+        pstmt->setString(5, WStringToUTF8(kid.hello_msg));
+
+        const Customizing& c = kid.customizing;
+
+        pstmt->setDouble(6, c.skin);
+        pstmt->setInt(7, c.shirt);
+        pstmt->setInt(8, c.pants);
+        pstmt->setInt(9, c.shoes);
+        pstmt->setDouble(10, c.R_eye_color_hue);
+        pstmt->setDouble(11, c.R_eye_color_sat);
+        pstmt->setDouble(12, c.L_eye_color_hue);
+        pstmt->setDouble(13, c.L_eye_color_sat);
+        pstmt->setDouble(14, c.eye_scale);
+        pstmt->setDouble(15, c.pupil_scale);
+        pstmt->setDouble(16, c.hair);
+        pstmt->setDouble(17, c.hair_color_R);
+        pstmt->setDouble(18, c.hair_color_G);
+        pstmt->setDouble(19, c.hair_color_B);
+        pstmt->setDouble(20, c.eye_width);
+        pstmt->setDouble(21, c.eye_thick);
+        pstmt->setDouble(22, c.eye_slope);
+        pstmt->setDouble(23, c.nose_width);
+        pstmt->setDouble(24, c.nose_height);
+        pstmt->setDouble(25, c.mouse_width);
+        pstmt->setDouble(26, c.mouse_thick);
+        pstmt->setDouble(27, c.mouse_slope);
+        pstmt->setDouble(28, c.chin);
+        pstmt->setDouble(29, c.jaw);
+        pstmt->setDouble(30, c.heavy);
+        pstmt->setDouble(31, c.face_width);
+        pstmt->setInt(32, c.eyebrows);
+        pstmt->setInt(33, c.glasses);
+
+        pstmt->executeUpdate();
+    }
+    catch (const sql::SQLException& e) {
+        std::cerr << "[DB] SaveKidInfo 예외 발생" << e.what() << std::endl;
+    }
+}
+
+bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
+{
+    if (!DB_ON) return false;
+
+    try {
+        auto conn = GetConnection();
+        std::unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(
+            "SELECT * FROM kid_info WHERE ID = ?"
+        ));
+        pstmt->setUInt(1, id);
+        std::unique_ptr<sql::ResultSet> res(pstmt->executeQuery());
+
+        if (res->next()) {
+            outKid.id = res->getUInt("ID");
+            outKid.preg_id = res->getUInt("PREG_ID");
+            outKid.spouse_id = res->getUInt("SPOUSE_ID");
+            outKid.personality = static_cast<char>(res->getInt("PERSONALITY"));
+
+            std::wstring msg = UTF8ToWString(res->getString("HELLO_MSG"));
+            wcsncpy_s(outKid.hello_msg, msg.c_str(), CHAT_SIZE);
+
+            Customizing& c = outKid.customizing;
+            c.skin = res->getDouble("SKIN");
+            c.shirt = res->getInt("SHIRT");
+            c.pants = res->getInt("PANTS");
+            c.shoes = res->getInt("SHOES");
+            c.R_eye_color_sat = res->getDouble("R_EYE_COLOR_SAT");
+            c.R_eye_color_hue = res->getDouble("R_EYE_COLOR_HUE");
+            c.L_eye_color_hue = res->getDouble("L_EYE_COLOR_HUE");
+            c.L_eye_color_sat = res->getDouble("L_EYE_COLOR_SAT");
+            c.eye_scale = res->getDouble("EYE_SCALE");
+            c.pupil_scale = res->getDouble("PUPIL_SCALE");
+            c.hair = res->getDouble("HAIR");
+            c.hair_color_R = res->getDouble("HAIR_COLOR_R");
+            c.hair_color_G = res->getDouble("HAIR_COLOR_G");
+            c.hair_color_B = res->getDouble("HAIR_COLOR_B");
+            c.eye_width = res->getDouble("EYE_WIDTH");
+            c.eye_thick = res->getDouble("EYE_THICK");
+            c.eye_slope = res->getDouble("EYE_SLOPE");
+            c.nose_width = res->getDouble("NOSE_WIDTH");
+            c.nose_height = res->getDouble("NOSE_HEIGHT");
+            c.mouse_width = res->getDouble("MOUTH_WIDTH");
+            c.mouse_thick = res->getDouble("MOUTH_THICK");
+            c.mouse_slope = res->getDouble("MOUTH_SLOPE");
+            c.chin = res->getDouble("CHIN");
+            c.jaw = res->getDouble("JAW");
+            c.heavy = res->getDouble("HEAVY");
+            c.face_width = res->getDouble("FACE_WIDTH");
+            c.eyebrows = res->getInt("EYEBROWS");
+            c.glasses = res->getInt("GLASSES");
+
+            return true;
+        }
+    }
+    catch (const sql::SQLException& e) {
+        std::cerr << "[DB] LoadKidInfo 예외 발생" << e.what() << std::endl;
+    }
+
+    return false;
+}
+
