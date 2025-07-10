@@ -12,6 +12,11 @@ class AInteractableActor : public AActor
 	GENERATED_BODY()
 
 public:
+	AInteractableActor();
+
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* Mesh;
+
 	UPROPERTY()
 	FName RowID;
 

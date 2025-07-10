@@ -36,6 +36,18 @@ void APlacementActor::SetInteractableActorClass(TSubclassOf<AActor> InClass)
 {
     InteractableActorClass = InClass;
 
+    if (InteractableActorClass)
+    {
+        AActor* DefaultActor = InteractableActorClass->GetDefaultObject<AActor>();
+        if (DefaultActor)
+        {
+            if (UStaticMeshComponent* MeshComp = DefaultActor->FindComponentByClass<UStaticMeshComponent>())
+            {
+                SetMesh(MeshComp->GetStaticMesh());
+            }
+        }
+    }
+
     if (OverlayMaterial && Mesh)
     {
         DynMaterial = UMaterialInstanceDynamic::Create(OverlayMaterial, this);
@@ -171,9 +183,24 @@ void APlacementActor::PlaceBuild()
 
     AActor* SpawnedActor = nullptr;
 
-    if (InteractableActorClass)
+    if (InteractableActorClass) // ---------------------------------------------------------------
     {
         SpawnedActor = GetWorld()->SpawnActor<AActor>(InteractableActorClass, FinalTransform);
+
+        if (AInteractableActor* Interactable = Cast<AInteractableActor>(SpawnedActor))
+        {
+            Interactable->SetRowID(RowID);
+
+            Interactable->SetActorScale3D(FVector(FinalScale));
+
+            if (UStaticMeshComponent* MeshComp = Interactable->FindComponentByClass<UStaticMeshComponent>())
+            {
+                if (Mesh && Mesh->GetStaticMesh())
+                {
+                    MeshComp->SetStaticMesh(Mesh->GetStaticMesh());
+                }
+            }
+        }
     }
     else if (PlaceBuildClass && Mesh)
     {
