@@ -99,6 +99,56 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
+		else if (state == SITTING) {  // SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting1_mon.Sitting1_mon")), 1.0f);
+				}
+			}
+		}
+		else if (state == LYING) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/LyingIdle_Montage.LyingIdle_Montage")), 1.0f);
+				}
+			}
+		}
+		else if (state == SITTING2 ) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting2_mon.Sitting2_mon")), 1.0f);
+				}
+			}
+		}
+		else if (state == SITTING3 ) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting3_mon.Sitting3_mon")), 1.0f);
+				}
+			}
+		}
+		else if (state == SITTING4 ) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting4_mon.Sitting4_mon")), 1.0f);
+				}
+			}
+		}
 		// todo: 애니메이션 동기화 해야 함.
 
 		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
