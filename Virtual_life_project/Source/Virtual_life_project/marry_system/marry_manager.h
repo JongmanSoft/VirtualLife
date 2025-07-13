@@ -18,7 +18,9 @@ public:
 
 
 	//나, 상대방 아이디
+	UPROPERTY(BlueprintReadWrite, Category = "marry")
 	int my_id;
+	UPROPERTY(BlueprintReadWrite, Category = "marry")
 	int you_id;
 
 	// 자식 커스텀 ui에서 받은 정보
