@@ -94,7 +94,7 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/MaleStandingPose_UE_Montage.MaleStandingPose_UE_Montage")), 1.0f);
             }
         }
     }
@@ -106,7 +106,7 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/HipHopDancing_UE_Montage.HipHopDancing_UE_Montage")), 1.0f);
+                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/MaleStandingPose2_UE_Montage.MaleStandingPose2_UE_Montage")), 1.0f);
             }
         }
     }
@@ -123,20 +123,10 @@ void Akid_map_script::Tick(float DeltaSeconds)
         if (customizable) {
             if (customizable->GetCustomizableObjectInstance()) {
                 customizable->feel_change(F_SMILE);
-
-                ACharacter* AOwner = Cast<ACharacter>((GetWorld()->GetFirstPlayerController())->GetPawn());
-                if (AOwner) {
-                    customizable = AOwner->FindComponentByClass<Um_CustomizableSkeletalComponent>();
-                    if (customizable) {
-                        if (customizable->GetCustomizableObjectInstance()) {
-                            customizable->feel_change(F_SMILE);
-                            PrimaryActorTick.bCanEverTick = false;
-                        }
-                    }
-                }
+                PrimaryActorTick.bCanEverTick = false;
+                
            }
-        }
-        
+        }  
     }
     
 
