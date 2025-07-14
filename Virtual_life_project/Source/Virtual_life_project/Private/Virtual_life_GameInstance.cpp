@@ -1142,8 +1142,7 @@ void UVirtual_life_GameInstance::JoinChannel(FString ChannelName)
 			else
 			{
 				UE_LOG(LogTemp, Log, TEXT("Successfully joined channel %s"), *ChannelSession.Channel().Name());
-
-				//LoginSession.SetTransmissionMode(ETransmissionMode::Single, { ChannelSession.Channel() });
+				LoginSession.SetTransmissionMode(TransmissionMode::Single, { ChannelSession.Channel() });
 			}
 		});
 	BindChannelSessionHandlers(true, ChannelSession);
@@ -1189,16 +1188,9 @@ void UVirtual_life_GameInstance::OnChannelParticipantRemoved(const IParticipant&
 // 참가자 상태 변화(말하는지, 음소거인지)
 void UVirtual_life_GameInstance::OnChannelParticipantUpdated(const IParticipant& Participant)
 {
-	if (!Participant.IsSelf())
-	{
-		UE_LOG(LogTemp, Log, TEXT("출력 장치: %s"), *VivoxClient->AudioOutputDevices().ActiveDevice().Name());
-
-		const FString Name = Participant.Account().Name();
-		float Energy = Participant.AudioEnergy(); // 0.0 ~ 1.0
-		UE_LOG(LogTemp, Log, TEXT("[%s] AudioEnergy: %.3f"),
-			*Participant.Account().Name(),
-			Energy);
-	}
+	const FString Name = Participant.Account().Name();
+	float Energy = Participant.AudioEnergy(); // 0.0 ~ 1.0
+	UE_LOG(LogTemp, Log, TEXT("[%s] AudioEnergy: %.3f"), *Participant.Account().Name(), Energy);
 }
 
 // 연결 성공 시 송신 설정
