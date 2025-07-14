@@ -332,6 +332,7 @@ struct SC_ROOM_SETUP_PACKET {
 	char id[M_ID_SIZE]; // 집 주인 아이디
 	unsigned short count; // 실제 오브젝트 개수
 	Object objs[MAX_BUILD_ITEM]; // 오브젝트들
+	bool is_owner; // 내가 방장인지 여부
 };
 
 struct SC_ROOM_LEAVE_PACKET {

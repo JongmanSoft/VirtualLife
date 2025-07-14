@@ -384,6 +384,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				// 신규 유저
 				this->id = p->id;
 				player_setup();
+				rooms[p->id] = new Room();
+				room = rooms[p->id];
+				room->SaveToDB(p->id);
 			}
 		}
 		else {
@@ -564,11 +567,16 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	case CS_ROOM_ENTER:
 	{
 		std::cout << "CS_ENTER_ROOM 받음! id: " << pinfo.id << std::endl;
+		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
 
+		if (id == p->id)
+		{
+
+		}
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
-		strcpy_s(pkt.id, M_ID_SIZE, id.c_str());
-		rooms[id]->packet_setup(pkt); // id << 플레이어의 방 셋업
+		strcpy_s(pkt.id, M_ID_SIZE, p->id);
+		rooms[p->id]->packet_setup(pkt); // p->id << 플레이어의 방 셋업
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
 		pinfo.st = HOME;
 		

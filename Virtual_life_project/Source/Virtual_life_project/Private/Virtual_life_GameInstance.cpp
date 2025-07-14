@@ -206,26 +206,6 @@ void UVirtual_life_GameInstance::SendPartyRejectPacket(const FString& Id_str)
 	SendEnqueue(&p, p.size);
 }
 
-void UVirtual_life_GameInstance::SendVoicePacket(uint8* data, int32 length)
-{
-	while (length > 0)
-	{
-		int32 chunk = FMath::Min(length, 512);
-
-		CS_VOICE_CHAT_PACKET p;
-		p.size = sizeof(uint16) + sizeof(PACKETID) + sizeof(uint32) + sizeof(uint16) + chunk;
-		p.type = CS_VOICE_CHAT;
-		p.from_id = MyPlayerInfo.id;
-		p.data_len = chunk;
-		FMemory::Memcpy(p.data, data, chunk);
-
-		SendEnqueue(&p, p.size);
-
-		data += chunk;
-		length -= chunk;
-	}
-}
-
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -657,14 +637,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
 			break;
 		}
-		case SC_VOICE_CHAT:
-		{
-			SC_VOICE_CHAT_PACKET p;
-			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_VOICE_CHAT_PACKET));
-
-			AVL_Player* TargetPlayer = dynamic_cast<AVL_Player*>(OtherPlayers[p.from_id].character);
-			break;
-		}
 		case SC_RESULT_PARTY:
 		{
 			SC_RESULT_PARTY_PACKET p;
@@ -768,7 +740,7 @@ void UVirtual_life_GameInstance::OnStart()
 	}
 }
 
-void UVirtual_life_GameInstance::EnterMyRoom()
+void UVirtual_life_GameInstance::SendEnterRoom(FString roomID)
 {
 	// 초기화.
 	for (auto& Pair : OtherPlayers)
@@ -784,11 +756,22 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*roomID));
 	p.type = CS_ROOM_ENTER;
-	
-	SendEnqueue(&p, p.size);
 
-	UE_LOG(LogTemp, Warning, TEXT("Ask Enter My Room Send type: %d"),p.type);
+	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::SendEnterMyRoom()
+{
+	loaded = false;
+
+	CS_ROOM_ENTER_PACKET p;
+	p.size = sizeof(CS_ROOM_ENTER_PACKET);
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*StrID));
+	p.type = CS_ROOM_ENTER;
+
+	SendEnqueue(&p, p.size);
 }
 
 void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)

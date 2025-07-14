@@ -288,7 +288,7 @@ void UBuildingHUBWidget::OnConfirmClicked()
     auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
     if (GI)
     {
-        GI->EnterMyRoom();
+        GI->SendEnterMyRoom();
         UE_LOG(LogTemp, Warning, TEXT("Enter My Room Send Completed"));
     }
 }

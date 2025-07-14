@@ -22,8 +22,12 @@ void UGamePlayMainWidget::NativeConstruct()
 
 void UGamePlayMainWidget::OnHomeModeClicked()
 {
-    auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-    if (!GI) return;
-
-    GI->EnterMyRoom();
+    if (RoomJoinWidgetClass)
+    {
+        UUserWidget* RoomWidget = CreateWidget<UUserWidget>(GetWorld(), RoomJoinWidgetClass);
+        if (RoomWidget)
+        {
+            RoomWidget->AddToViewport();
+        }
+    }
 }

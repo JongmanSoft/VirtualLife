@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Room_Join_Widget.h"  // 반드시 포함
 #include "GamePlayMainWidget.generated.h"
 
 /**
@@ -40,6 +41,9 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     class UButton* HomeMode_WB;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget", meta = (ExposeOnSpawn = true, AllowPrivateAccess = true))
+    TSubclassOf<UUserWidget> RoomJoinWidgetClass;
 
     UFUNCTION()
     void OnHomeModeClicked();
