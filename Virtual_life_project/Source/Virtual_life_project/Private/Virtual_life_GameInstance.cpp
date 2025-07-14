@@ -18,7 +18,7 @@
 #include "../building/BuildItemRegistry.h"
 #include "../building/FBuildInfo.h"
 #include "../building/PlaceBuildActor.h"
-#include "InteractableActor.h"
+#include "../building/InteractableActor.h"
 #include "Engine/DataTable.h"
 #include "NoticeFriendUIWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"

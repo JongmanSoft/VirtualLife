@@ -7,7 +7,6 @@
 
 AInteractableActor::AInteractableActor()
 {
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
 }
 
