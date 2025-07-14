@@ -64,7 +64,24 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     CheckActive();
 
     FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
-    if (!Info || !Info->Mesh)
+
+    if (Info)
+    {
+        UE_LOG(LogTemp, Log, TEXT("========== FBuildInfo 정보 출력 =========="));
+
+        // Mesh 확인
+        UE_LOG(LogTemp, Log, TEXT("Mesh: %s"), Info->Mesh ? *Info->Mesh->GetName() : TEXT("None"));
+
+        // InteractableActorClass 확인
+        UE_LOG(LogTemp, Log, TEXT("ActorClass: %s"), Info->InteractableActorClass ? *Info->InteractableActorClass->GetName() : TEXT("None"));
+
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Info is NULL. Row not found."));
+    }
+
+    if (!Info)
     {
         UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Row not found or Mesh missing for: %s"), *RowName.ToString());
         return;
@@ -103,11 +120,13 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     {
         if (Info->Mesh)
         {
+            UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Set Mesh"));
             Spawned->SetMesh(Info->Mesh);
         }
         else if (Info->InteractableActorClass)
         {
             Spawned->SetInteractableActorClass(Info->InteractableActorClass);
+            UE_LOG(LogTemp, Log, TEXT("[BuildingSelectButtonWidget] Set InteractableActorClass to Spawned Actor"));
         }
         Spawned->SetPrice(Info->Price);
         Spawned->SetRowID(RowName);
