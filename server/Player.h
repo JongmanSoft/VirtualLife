@@ -26,7 +26,7 @@ class Player
 	Customizing custom; // д©╫╨ер
 	std::unordered_map<unsigned short, unsigned short> player_item;
 	std::vector<Quest> quests;
-	Room room;
+	Room* room;
 
 	float ping = 0.0f;
 
@@ -47,10 +47,8 @@ class Player
 	bool send_update_gold(int sc_gold_offset);
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
-	bool send_room_setup_packet();
 	bool send_room_leave_packet();
 	bool send_time_sync_packet();
-	bool send_voice_chat_packet();
 	bool send_update_party_packet();
 	bool send_invite_call_packet(std::string& id, std::wstring& name);
 	bool send_reject_call_packet(std::string& id);

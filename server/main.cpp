@@ -13,6 +13,7 @@ concurrency::concurrent_priority_queue<EVENT> g_evt_queue;
 // 함수 전방선언 //
 void initialize_server();
 void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
+bool room_setup();
 
 void workerThread(HANDLE iocp_hd)
 {
@@ -140,14 +141,14 @@ int main()
     // 서버 초기화
     initialize_server();
 
-    //DBManager::DB_ON = false;
 	if (DBManager::DB_ON == true)
 	{
         DBManager::Init();
 
         push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
         push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
-	}
+        room_setup();
+    }
 
     // doing acceptEX
     g_client = WSASocket(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -214,4 +215,15 @@ void push_evt_queue(int from, int to, TASK_TYPE ev, int time) // time: milisecon
     EVENT evt;
     evt.setup(ev, time, from, to);
     g_evt_queue.push(evt);
+}
+
+bool room_setup()
+{
+    bool result = DBManager::LoadAllRoomsFromDB();
+    if (false == result)
+    {
+		std::cerr << "[DB Error] LoadAllRoomsFromDB failed!" << std::endl;
+        return false;
+    }
+    return true;
 }

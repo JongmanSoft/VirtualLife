@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <codecvt>
 #include <locale>
+#include <concurrent_unordered_map.h>
 
 // db때문에 04.15 추가
 #include <memory>
@@ -117,6 +118,7 @@ public:
 
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
+extern concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 extern std::mutex players_mutex;
 extern float f_time;
 extern std::chrono::high_resolution_clock::time_point startTime;

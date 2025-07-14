@@ -46,8 +46,12 @@ public:
     static void SaveKidInfo(const Kid& kid);
     static bool LoadKidInfo(unsigned int id, Kid& outKid);
 
+    // 초기초기화
+    static bool LoadAllRoomsFromDB();
+
 private:
     static sql::mysql::MySQL_Driver* g_driver;
     static thread_local std::unique_ptr<sql::Connection> t_conn;
     static thread_local std::unique_ptr<sql::Statement> t_stmt;
 };
+
