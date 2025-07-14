@@ -97,15 +97,25 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
 
 void APlacementActor::PlaceBuild()
 {
+    UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() Start ===="));
+
     UGameInstance* GI = GetGameInstance();
-    if (!GI) return;
+    if (!GI)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is NULL"));
+        return;
+    }
 
     auto MyGI = Cast<UVirtual_life_GameInstance>(GI);
-    if (!MyGI) return;
-
-    if (!MyGI || MyGI->GetCurrentGold() < BuildPrice)
+    if (!MyGI)
     {
-        // µ· ºÎÁ· À½ !
+        UE_LOG(LogTemp, Error, TEXT("Failed to cast to Virtual_life_GameInstance"));
+        return;
+    }
+
+    if (MyGI->GetCurrentGold() < BuildPrice)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Not enough gold: Current = %d, Required = %d"), MyGI->GetCurrentGold(), BuildPrice);
         return;
     }
 
@@ -114,17 +124,15 @@ void APlacementActor::PlaceBuild()
         UGameplayStatics::PlaySoundAtLocation(this, PlaceSound, GetActorLocation());
     }
 
-    // °ñµå Â÷°¨
     MyGI->SendUpdateGoldPacket(-BuildPrice);
 
-    // UI ¾Ë¸²
     FString Text = FString::Printf(TEXT("-%d"), BuildPrice);
     MyGI->ShowFloatingText(Text, FLinearColor::Yellow, GetActorLocation());
 
-    FTransform FinalTransform;
     FVector FinalLocation;
     float FinalYaw = 0.f;
     float FinalScale = CurrentScale;
+    FTransform FinalTransform;
 
     if (IsA(AWallPlacementActor::StaticClass()))
     {
@@ -134,14 +142,16 @@ void APlacementActor::PlaceBuild()
         FinalTransform = FTransform(GetActorRotation(), GetActorLocation(), FVector(FinalLength, 1.0f, 1.0f));
         FinalLocation = GetActorLocation();
         FinalYaw = GetActorRotation().Yaw;
-        FinalScale = GetActorScale3D().X;
+        FinalScale = FinalLength;
+
+        UE_LOG(LogTemp, Log, TEXT("[Wall] Length: %.2f"), FinalLength);
     }
     else
     {
         FVector Loc = GetActorLocation();
         FRotator Rot(0.f, Rotate, 0.f);
-
         FVector AdjustedLoc = Loc;
+
         if (Mesh && Mesh->GetStaticMesh())
         {
             FVector Origin, BoxExtent;
@@ -152,32 +162,58 @@ void APlacementActor::PlaceBuild()
         FinalTransform = FTransform(Rot, AdjustedLoc, FVector(CurrentScale));
         FinalLocation = AdjustedLoc;
         FinalYaw = Rot.Yaw;
-        FinalScale = CurrentScale;
+
+        UE_LOG(LogTemp, Log, TEXT("[Placement] Location: %s, Yaw: %.1f, Scale: %.2f"), *AdjustedLoc.ToString(), FinalYaw, FinalScale);
     }
 
     AActor* SpawnedActor = nullptr;
 
-    if (InteractableActorClass) // ---------------------------------------------------------------
+    if (InteractableActorClass)
     {
+        UE_LOG(LogTemp, Warning, TEXT("Spawning InteractableActorClass: %s"), *InteractableActorClass->GetName());
+
         SpawnedActor = GetWorld()->SpawnActor<AActor>(InteractableActorClass, FinalTransform);
 
-        if (AInteractableActor* Interactable = Cast<AInteractableActor>(SpawnedActor))
+        if (SpawnedActor)
         {
-            Interactable->SetRowID(RowID);
+            UE_LOG(LogTemp, Log, TEXT("Spawn success: %s"), *SpawnedActor->GetName());
 
-            Interactable->SetActorScale3D(FVector(FinalScale));
-
-            if (UStaticMeshComponent* MeshComp = Interactable->FindComponentByClass<UStaticMeshComponent>())
+            if (AInteractableActor* Interactable = Cast<AInteractableActor>(SpawnedActor))
             {
-                if (Mesh && Mesh->GetStaticMesh())
+                Interactable->SetRowID(RowID);
+                Interactable->SetActorScale3D(FVector(FinalScale));
+
+                if (UStaticMeshComponent* MeshComp = Interactable->FindComponentByClass<UStaticMeshComponent>())
                 {
-                    MeshComp->SetStaticMesh(Mesh->GetStaticMesh());
+                    if (Mesh && Mesh->GetStaticMesh())
+                    {
+                        MeshComp->SetStaticMesh(Mesh->GetStaticMesh());
+                        UE_LOG(LogTemp, Log, TEXT("Set StaticMesh: %s"), *Mesh->GetStaticMesh()->GetName());
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Mesh is NULL"));
+                    }
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("StaticMeshComponent not found on InteractableActor"));
                 }
             }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Spawned actor is not of type AInteractableActor"));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn InteractableActorClass"));
         }
     }
     else if (PlaceBuildClass && Mesh)
     {
+        UE_LOG(LogTemp, Log, TEXT("Spawning PlaceBuildClass"));
+
         APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
         if (Placed)
         {
@@ -187,12 +223,15 @@ void APlacementActor::PlaceBuild()
             Placed->SetRowID(RowID);
             SpawnedActor = Placed;
         }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn PlaceBuildActor"));
+        }
     }
 
     if (SpawnedActor)
     {
-        auto PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-        if (PC)
+        if (ABuildingPlayerController* PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
         {
             uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
 
@@ -203,11 +242,19 @@ void APlacementActor::PlaceBuild()
             NewData.Scale = FinalScale;
 
             PC->AddPendingBuild(NewData);
+            UE_LOG(LogTemp, Log, TEXT("Build data registered. ItemID: %d"), ItemID);
         }
 
         Destroy();
     }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("SpawnedActor is NULL"));
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() End ===="));
 }
+
 
 void APlacementActor::AddRotation(float Delta)
 {
