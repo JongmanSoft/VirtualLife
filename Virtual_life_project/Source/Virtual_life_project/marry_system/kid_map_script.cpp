@@ -31,7 +31,7 @@ void Akid_map_script::BeginPlay()
             {
                 UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance!"));
             }
-            FInputModeUIOnly InputMode;
+            FInputModeGameAndUI InputMode;
             PlayerController->SetInputMode(InputMode);
             PlayerController->bShowMouseCursor = true;
             UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI Only and cursor enabled!"));
