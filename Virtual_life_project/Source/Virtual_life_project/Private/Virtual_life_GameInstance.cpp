@@ -745,7 +745,7 @@ void UVirtual_life_GameInstance::OnStart()
 	}
 }
 
-void UVirtual_life_GameInstance::EnterMyRoom()
+void UVirtual_life_GameInstance::SendEnterRoom(FString roomID)
 {
 	// 초기화.
 	for (auto& Pair : OtherPlayers)
@@ -761,11 +761,22 @@ void UVirtual_life_GameInstance::EnterMyRoom()
 
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*roomID));
 	p.type = CS_ROOM_ENTER;
-	
-	SendEnqueue(&p, p.size);
 
-	UE_LOG(LogTemp, Warning, TEXT("Ask Enter My Room Send type: %d"),p.type);
+	SendEnqueue(&p, p.size);
+}
+
+void UVirtual_life_GameInstance::SendEnterMyRoom()
+{
+	loaded = false;
+
+	CS_ROOM_ENTER_PACKET p;
+	p.size = sizeof(CS_ROOM_ENTER_PACKET);
+	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*StrID));
+	p.type = CS_ROOM_ENTER;
+
+	SendEnqueue(&p, p.size);
 }
 
 void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)

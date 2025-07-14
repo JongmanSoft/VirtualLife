@@ -91,7 +91,10 @@ public:
 	TArray<Object> CachedRoomObjects; // 서버에서 받은 내 방 건물들
 
 	UFUNCTION(BlueprintCallable)
-	void EnterMyRoom(); // 서버에 방 진입 요청
+	void SendEnterRoom(FString roomID); // 서버에 방 진입 요청
+
+	UFUNCTION(BlueprintCallable)
+	void SendEnterMyRoom(); // 서버에 방 진입 요청
 
 	void HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p);
 
@@ -161,9 +164,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendPartyRejectPacket(const FString& Id_str);
-
-	//UFUNCTION(BlueprintCallable)
-	void SendVoicePacket(uint8* data, int32 length);
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
