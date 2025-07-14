@@ -146,17 +146,6 @@ bool Player::send_remove_quest_packet(unsigned short gid, unsigned short n)
 	return true;
 }
 
-bool Player::send_room_setup_packet()
-{
-	SC_ROOM_SETUP_PACKET p;
-	p.size = sizeof(SC_ROOM_SETUP_PACKET);
-	p.type = SC_ROOM_SETUP;
-	p.id = pinfo.id;
-	room.packet_setup(p);
-	send(&p);
-	return true;
-}
-
 bool Player::send_room_leave_packet()
 {
 	SC_ROOM_LEAVE_PACKET p;
@@ -185,13 +174,6 @@ bool Player::send_time_sync_packet()
 	p.time = std::fmod(f_time + (elapsed.count() * 0.001f), 24);
 
 	send(&p);
-	return true;
-}
-
-bool Player::send_voice_chat_packet()
-{
-	SC_VOICE_CHAT_PACKET p;
-
 	return true;
 }
 
@@ -395,7 +377,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
 				addinfo.gold = DBManager::LoadGold(p->id);
-				room.LoadFromDB(p->id);
+				room = rooms[p->id];
 				this->id = p->id;
 			}
 			else {
@@ -585,8 +567,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
-		pkt.id = pinfo.id;
-		room.packet_setup(pkt);
+		strcpy_s(pkt.id, M_ID_SIZE, id.c_str());
+		rooms[id]->packet_setup(pkt); // id << 플레이어의 방 셋업
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
 		pinfo.st = HOME;
 		
@@ -613,7 +595,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		obj.yaw = p->build.yaw;
 		obj.scale = p->build.scale;
 
-		room.AddObject(obj);
+		room->AddObject(obj);
 		break;
 	}
 	case CS_REMOVE_BUILD:
@@ -621,8 +603,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_REMOVE_BUILD_PACKET* p = reinterpret_cast<CS_REMOVE_BUILD_PACKET*>(packet);
 		std::cout << "건물 삭제 요청 받음! 위치: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
 
-		room.RemoveObjectByPosition(p->x, p->y, p->z);
-		//DBManager::DeleteRoomObject(id, p->x, p->y, p->z);
+		room->RemoveObjectByPosition(p->x, p->y, p->z);
 		break;
 	}
 	case CS_UPDATE_BUILD:
@@ -631,8 +612,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "건물 수정 요청 받음! 위치: (" << p->old_x << ", " << p->old_y << ", " << p->old_z << ") → ("
 			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
 
-		room.UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
-		//DBManager::UpdateRoomObject(id, p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+		room->UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
 		break;
 	}
 	case CS_ROOM_LEAVE:
@@ -641,7 +621,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		// 집에서 나갈때 전체 삭제 후 다시 저장
 		DBManager::DeleteRoomObjects(id);
-		room.SaveToDB(id);
+		room->SaveToDB(id);
 
 		pinfo.st = IDLE;
 
@@ -678,23 +658,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_TIME_SYNC_PACKET* p = reinterpret_cast<CS_TIME_SYNC_PACKET*>(packet);
 		
 
-		break;
-	}
-	case CS_VOICE_CHAT:
-	{
-		if (party == nullptr) return;
-		CS_VOICE_CHAT_PACKET* p = reinterpret_cast<CS_VOICE_CHAT_PACKET*>(packet);
-		SC_VOICE_CHAT_PACKET pkt;
-		memcpy(pkt.data, p->data, p->data_len);
-		pkt.data_len = p->data_len;
-		pkt.from_id = p->from_id;
-		pkt.type = SC_VOICE_CHAT;
-		pkt.size = p->size;
-		
-		for (auto& a : party->get_members()) {
-			if (a == this) continue; // 나 제외
-			a->send(&pkt);
-		}
 		break;
 	}
 	case CS_ADD_KID: {

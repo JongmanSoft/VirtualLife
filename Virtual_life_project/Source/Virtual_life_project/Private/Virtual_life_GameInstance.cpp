@@ -428,6 +428,11 @@ void UVirtual_life_GameInstance::StopBGM()
 	if(nullptr != BGMaudio)BGMaudio->SetActive(false);
 }
 
+int UVirtual_life_GameInstance::get_my_player_id()
+{
+	return MyPlayerInfo.id;
+}
+
 void UVirtual_life_GameInstance::ProcessRecvPackets()
 {
 	TArray<uint8> PacketData;
@@ -490,7 +495,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			enter_time = p.time;
 
 			// 메인 맵으로 이동
-			UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("OpenWorldMap"))); 
+			UGameplayStatics::OpenLevel(GetWorld(), (TEXT("OpenWorldMap"))); 
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			StopBGM();
 
