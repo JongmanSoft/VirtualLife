@@ -863,9 +863,9 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
 
             Customizing& c = outKid.customizing;
             c.skin = res->getDouble("SKIN");
-            c.shirt = res->getInt("SHIRT");
-            c.pants = res->getInt("PANTS");
-            c.shoes = res->getInt("SHOES");
+            c.shirt = static_cast<float>(res->getInt("SHIRT"));
+            c.pants = static_cast<float>(res->getInt("PANTS"));
+            c.shoes = static_cast<float>(res->getInt("SHOES"));
             c.R_eye_color_sat = res->getDouble("R_EYE_COLOR_SAT");
             c.R_eye_color_hue = res->getDouble("R_EYE_COLOR_HUE");
             c.L_eye_color_hue = res->getDouble("L_EYE_COLOR_HUE");
@@ -901,3 +901,48 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
     return false;
 }
 
+bool DBManager::LoadAllRoomsFromDB()
+{
+    if (!DB_ON) return false;
+
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return false;
+
+        std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+
+        std::unique_ptr<sql::ResultSet> res(stmt->executeQuery(R"(
+            SELECT ID, ITEM_ID, POS_X, POS_Y, POS_Z, SCALE, YAW
+            FROM player_room
+        )"));
+
+        while (res->next()) {
+            std::string userID = res->getString("ID");
+
+            // Room이 없다면 새로 생성
+            if (rooms.find(userID) == rooms.end()) {
+                rooms[userID] = new Room();
+                rooms[userID]->ownerID = userID;
+            }
+
+            // Object 생성
+            Object obj;
+            obj.item_id = res->getInt("ITEM_ID");
+            obj.x = res->getDouble("POS_X");
+            obj.y = res->getDouble("POS_Y");
+            obj.z = res->getDouble("POS_Z");
+            obj.scale = res->getDouble("SCALE");
+            obj.yaw = res->getDouble("YAW");
+
+            // Room에 추가
+            rooms[userID]->AddObject(obj);
+        }
+
+        std::cout << "[INFO] Loaded " << rooms.size() << " rooms from DB." << std::endl;
+        return true;
+    }
+    catch (const sql::SQLException& e) {
+        std::cerr << "[ERROR] Failed to load rooms: " << e.what() << std::endl;
+    }
+    return false;
+}

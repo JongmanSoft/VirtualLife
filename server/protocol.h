@@ -318,6 +318,7 @@ struct CS_UPDATE_BUILD_PACKET {
 struct CS_ROOM_ENTER_PACKET {
 	unsigned short size;
 	PACKETID type;
+	char id[M_ID_SIZE]; // 집 주인 아이디
 };
 
 struct CS_ROOM_LEAVE_PACKET {
@@ -328,7 +329,7 @@ struct CS_ROOM_LEAVE_PACKET {
 struct SC_ROOM_SETUP_PACKET {
 	unsigned short size;
 	PACKETID type;
-	unsigned short id; // 현재 접속한 집 주인의 아이디
+	char id[M_ID_SIZE]; // 집 주인 아이디
 	unsigned short count; // 실제 오브젝트 개수
 	Object objs[MAX_BUILD_ITEM]; // 오브젝트들
 };
@@ -379,27 +380,11 @@ struct CS_TIME_SYNC_PACKET {
 	float ping;
 };
 
-struct CS_VOICE_CHAT_PACKET {
-	unsigned short size;
-	PACKETID type; // CS_VOICE_CHAT
-	unsigned int from_id;
-	unsigned short data_len;
-	char data[512]; // Opus 압축 데이터
-};
-
 struct SC_TIME_SYNC_PACKET {
 	unsigned short size;
 	PACKETID type;
 	float curtime;
 	float time;
-};
-
-struct SC_VOICE_CHAT_PACKET {
-	unsigned short size;
-	PACKETID type;
-	unsigned int from_id;
-	unsigned short data_len;
-	char data[512]; // Opus 압축 데이터
 };
 
 struct SC_NPC_RESPONSE_PACKET {

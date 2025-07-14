@@ -1,5 +1,4 @@
 #pragma once
-// #include "stdafx.h"
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -11,12 +10,12 @@ class Player;
 class Room
 {
 private:
-	// vector<Object*> objs; // 현재 집에 깔린 가구들
 	std::vector<std::shared_ptr<Object>> objs;
 	std::vector<Player*> players; // 방에 있는 플레이어들
 	std::mutex mtx; // 동기화용 mutex
 
 public:
+	std::string ownerID;
 	Room() {};
 	~Room() {};
 
