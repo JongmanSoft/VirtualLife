@@ -61,7 +61,7 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
         return;
     }
 
-    CheckActive();
+    CheckActive_Implementation();
 
     FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
 
@@ -111,6 +111,11 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
             UE_LOG(LogTemp, Warning, TEXT("WallPlacementActorClass spawned"));
         }
     }
+    else if (Info->InteractableActorClass)
+    {
+        Spawned = World->SpawnActor<APlacementActor>(Info->InteractableActorClass);
+        UE_LOG(LogTemp, Log, TEXT("InteractableActor spawned"));
+    }
     else if (PlacementActorClass)
     {
         Spawned = World->SpawnActor<APlacementActor>(PlacementActorClass);
@@ -120,16 +125,10 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
     {
         if (Info->Mesh)
         {
-            UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Set Mesh"));
             Spawned->SetMesh(Info->Mesh);
         }
-        else if (Info->InteractableActorClass)
-        {
-            Spawned->SetInteractableActorClass(Info->InteractableActorClass);
-            UE_LOG(LogTemp, Log, TEXT("[BuildingSelectButtonWidget] Set InteractableActorClass to Spawned Actor"));
-        }
-        Spawned->SetPrice(Info->Price);
         Spawned->SetRowID(RowName);
+        Spawned->SetPrice(Info->Price);
     }
 }
 

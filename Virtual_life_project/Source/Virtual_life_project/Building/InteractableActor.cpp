@@ -5,11 +5,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Virtual_life_GameInstance.h"
 
-AInteractableActor::AInteractableActor()
-{
-	RootComponent = Mesh;
-}
-
 void AInteractableActor::SendStateToServer(uint8 StateValue)
 {
 	if (auto* GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this)))

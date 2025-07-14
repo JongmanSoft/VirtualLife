@@ -10,6 +10,8 @@
 
 class APlacementActor;
 class AWallPlacementActor;
+class AInteractableActor;
+
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UBuildingSelectButtonWidget : public UUserWidget
@@ -19,8 +21,8 @@ public:
     virtual void NativePreConstruct() override;
     virtual void NativeConstruct() override;
 
-    UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-    void CheckActive();
+    /*UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+    void CheckActive();*/
     virtual void CheckActive_Implementation();
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")

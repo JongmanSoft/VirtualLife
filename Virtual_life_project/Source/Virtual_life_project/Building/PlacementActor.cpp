@@ -32,32 +32,6 @@ void APlacementActor::BeginPlay()
     Super::BeginPlay();
 }
 
-void APlacementActor::SetInteractableActorClass(TSubclassOf<AActor> InClass)
-{
-    InteractableActorClass = InClass;
-
-    if (InteractableActorClass)
-    {
-        AActor* DefaultActor = InteractableActorClass->GetDefaultObject<AActor>();
-        if (DefaultActor)
-        {
-            if (UStaticMeshComponent* MeshComp = DefaultActor->FindComponentByClass<UStaticMeshComponent>())
-            {
-                SetMesh(MeshComp->GetStaticMesh());
-            }
-        }
-    }
-
-    if (OverlayMaterial && Mesh)
-    {
-        DynMaterial = UMaterialInstanceDynamic::Create(OverlayMaterial, this);
-        Mesh->SetMaterial(0, DynMaterial);
-        Mesh->SetRenderCustomDepth(true);
-        Mesh->SetCustomDepthStencilValue(1);
-        UpdateOverlayColor(true);
-    }
-}
-
 void APlacementActor::SetRowID(FName InRowID)
 {
     RowID = InRowID;

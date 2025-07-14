@@ -26,9 +26,6 @@ public:
     TSubclassOf<AActor> InteractableActorClass;
 
     UFUNCTION()
-    void SetInteractableActorClass(TSubclassOf<AActor> InClass);
-
-    UFUNCTION()
     void SetRowID(FName InRowID);
 
     UFUNCTION()

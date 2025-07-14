@@ -13,15 +13,6 @@ class AInteractableActor : public APlacementActor
 	GENERATED_BODY()
 
 public:
-	AInteractableActor();
-
-	UPROPERTY()
-	FName RowID;
-
-	void SetRowID(FName InRowID) { RowID = InRowID; }
-
-	FName GetRowID() const { return RowID; }
-
 	UFUNCTION(BlueprintCallable)
 	void SendStateToServer(uint8 StateValue);
 };

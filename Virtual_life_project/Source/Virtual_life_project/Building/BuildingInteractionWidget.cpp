@@ -64,10 +64,6 @@ void UBuildingInteractionWidget::OnClickModify()
         {
             NewPreview->SetMesh(Info->Mesh);
         }
-        else if (Info->InteractableActorClass)
-        {
-            NewPreview->SetInteractableActorClass(Info->InteractableActorClass);
-        }
 
         NewPreview->SetRowID(RowID);
         NewPreview->SetPrice(0); // 수정이므로 가격 0으로
