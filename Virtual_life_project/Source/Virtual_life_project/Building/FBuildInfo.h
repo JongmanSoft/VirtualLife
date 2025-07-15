@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "InteractableActor.h"
 #include "FBuildInfo.generated.h"
+
 
 UENUM(BlueprintType)
 enum class EBuildCategories : uint8
@@ -17,6 +19,8 @@ enum class EBuildCategories : uint8
     Decor,
     Structure
 };
+
+class AInteractableActor;
 
 USTRUCT(BlueprintType)
 struct FBuildInfo : public FTableRowBase
@@ -42,7 +46,7 @@ struct FBuildInfo : public FTableRowBase
     UStaticMesh* Mesh;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<AActor> InteractableActorClass;
+    TSubclassOf<AInteractableActor> InteractableActorClass;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bIsWall = false; // 벽인지 아닌지

@@ -3,16 +3,29 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PlacementActor.h"
 #include "GameFramework/Actor.h"
 #include "InteractableActor.generated.h"
 
 UCLASS()
-class AInteractableActor : public APlacementActor
+class AInteractableActor : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void SendStateToServer(uint8 StateValue);
+    AInteractableActor();
+
+    UFUNCTION(BlueprintCallable)
+    void SendStateToServer(uint8 StateValue);
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+    class UStaticMeshComponent* Mesh;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FName RowID;
+
+    UFUNCTION(BlueprintCallable)
+    void SetRowID(FName InRowID) { RowID = InRowID; }
+
+    UFUNCTION(BlueprintCallable)
+    void SetMesh(UStaticMesh* StaticMesh);
 };

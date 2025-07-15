@@ -57,79 +57,65 @@ void UBuildingSelectButtonWidget::OnClickedBuildButton()
 {
     if (!DataTable || RowName == NAME_None)
     {
-        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] DataTable or RowName is invalid."));
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Invalid DataTable or RowName"));
         return;
     }
 
     CheckActive_Implementation();
 
-    FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
-
-    if (Info)
-    {
-        UE_LOG(LogTemp, Log, TEXT("========== FBuildInfo 정보 출력 =========="));
-
-        // Mesh 확인
-        UE_LOG(LogTemp, Log, TEXT("Mesh: %s"), Info->Mesh ? *Info->Mesh->GetName() : TEXT("None"));
-
-        // InteractableActorClass 확인
-        UE_LOG(LogTemp, Log, TEXT("ActorClass: %s"), Info->InteractableActorClass ? *Info->InteractableActorClass->GetName() : TEXT("None"));
-
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Info is NULL. Row not found."));
-    }
-
+    const FBuildInfo* Info = DataTable->FindRow<FBuildInfo>(RowName, "");
     if (!Info)
     {
-        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Row not found or Mesh missing for: %s"), *RowName.ToString());
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Row not found: %s"), *RowName.ToString());
         return;
     }
 
     if (!Info->Mesh && !Info->InteractableActorClass)
     {
-        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] No Mesh or ActorClass assigned: %s"), *RowName.ToString());
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] No Mesh or ActorClass in row: %s"), *RowName.ToString());
         return;
     }
+
+    UE_LOG(LogTemp, Log, TEXT("========== FBuildInfo =========="));
+    UE_LOG(LogTemp, Log, TEXT("Mesh: %s"), Info->Mesh ? *Info->Mesh->GetName() : TEXT("None"));
+    UE_LOG(LogTemp, Log, TEXT("ActorClass: %s"), Info->InteractableActorClass ? *Info->InteractableActorClass->GetName() : TEXT("None"));
 
     UWorld* World = GetWorld();
     if (!World) return;
 
     APlacementActor* Spawned = nullptr;
 
-    // UE_LOG(LogTemp, Warning, TEXT("bIsWall: % s"), Info->bIsWall ? TEXT("true") : TEXT("false"));
-    // UE_LOG(LogTemp, Warning, TEXT("WallPlacementActorClass is valid: %s"), WallPlacementActorClass ? TEXT("true") : TEXT("false"));
-
     if (Info->bIsWall && WallPlacementActorClass)
     {
-        AWallPlacementActor* Wall = World->SpawnActor<AWallPlacementActor>(WallPlacementActorClass);
-        if (Wall)
+        Spawned = World->SpawnActor<AWallPlacementActor>(WallPlacementActorClass);
+        if (Spawned)
         {
-            // Wall->SetStartPoint(Wall->CachedMousePosition());
-            Spawned = Wall;
-            UE_LOG(LogTemp, Warning, TEXT("WallPlacementActorClass spawned"));
+            UE_LOG(LogTemp, Log, TEXT("[BuildingSelectButtonWidget] WallPlacementActor spawned"));
         }
-    }
-    else if (Info->InteractableActorClass)
-    {
-        Spawned = World->SpawnActor<APlacementActor>(Info->InteractableActorClass);
-        UE_LOG(LogTemp, Log, TEXT("InteractableActor spawned"));
     }
     else if (PlacementActorClass)
     {
         Spawned = World->SpawnActor<APlacementActor>(PlacementActorClass);
+        if (Spawned)
+        {
+            UE_LOG(LogTemp, Log, TEXT("[BuildingSelectButtonWidget] PlacementActor spawned"));
+        }
     }
 
-    if (Spawned)
+    if (!Spawned)
     {
-        if (Info->Mesh)
-        {
-            Spawned->SetMesh(Info->Mesh);
-        }
-        Spawned->SetRowID(RowName);
-        Spawned->SetPrice(Info->Price);
+        UE_LOG(LogTemp, Error, TEXT("[BuildingSelectButtonWidget] Failed to spawn preview actor"));
+        return;
     }
+
+    if (Info->Mesh)
+    {
+        Spawned->SetMesh(Info->Mesh);
+    }
+
+    Spawned->SetRowID(RowName);
+    Spawned->SetPrice(Info->Price);
+    Spawned->InteractableActorClass = Info->InteractableActorClass;
 }
 
 void UBuildingSelectButtonWidget::SetRowData(UDataTable* InDataTable, FName InRowName)

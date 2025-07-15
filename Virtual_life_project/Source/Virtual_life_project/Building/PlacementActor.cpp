@@ -99,153 +99,97 @@ void APlacementActor::PlaceBuild()
 {
     UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() Start ===="));
 
-    UGameInstance* GI = GetGameInstance();
-    if (!GI)
+    if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
     {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance is NULL"));
-        return;
-    }
+        if (MyGI->GetCurrentGold() < BuildPrice)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Not enough gold: %d / %d"), MyGI->GetCurrentGold(), BuildPrice);
+            return;
+        }
 
-    auto MyGI = Cast<UVirtual_life_GameInstance>(GI);
-    if (!MyGI)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to cast to Virtual_life_GameInstance"));
-        return;
-    }
+        if (PlaceSound)
+        {
+            UGameplayStatics::PlaySoundAtLocation(this, PlaceSound, GetActorLocation());
+        }
 
-    if (MyGI->GetCurrentGold() < BuildPrice)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Not enough gold: Current = %d, Required = %d"), MyGI->GetCurrentGold(), BuildPrice);
-        return;
-    }
-
-    if (PlaceSound)
-    {
-        UGameplayStatics::PlaySoundAtLocation(this, PlaceSound, GetActorLocation());
-    }
-
-    MyGI->SendUpdateGoldPacket(-BuildPrice);
-
-    FString Text = FString::Printf(TEXT("-%d"), BuildPrice);
-    MyGI->ShowFloatingText(Text, FLinearColor::Yellow, GetActorLocation());
-
-    FVector FinalLocation;
-    float FinalYaw = 0.f;
-    float FinalScale = CurrentScale;
-    FTransform FinalTransform;
-
-    if (IsA(AWallPlacementActor::StaticClass()))
-    {
-        FVector PreviewScale = GetActorScale3D();
-        float FinalLength = PreviewScale.X;
-
-        FinalTransform = FTransform(GetActorRotation(), GetActorLocation(), FVector(FinalLength, 1.0f, 1.0f));
-        FinalLocation = GetActorLocation();
-        FinalYaw = GetActorRotation().Yaw;
-        FinalScale = FinalLength;
-
-        UE_LOG(LogTemp, Log, TEXT("[Wall] Length: %.2f"), FinalLength);
+        MyGI->SendUpdateGoldPacket(-BuildPrice);
+        MyGI->ShowFloatingText(FString::Printf(TEXT("-%d"), BuildPrice), FLinearColor::Yellow, GetActorLocation());
     }
     else
     {
-        FVector Loc = GetActorLocation();
-        FRotator Rot(0.f, Rotate, 0.f);
-        FVector AdjustedLoc = Loc;
+        UE_LOG(LogTemp, Error, TEXT("GameInstance cast failed"));
+        return;
+    }
 
-        if (Mesh && Mesh->GetStaticMesh())
-        {
-            FVector Origin, BoxExtent;
-            Mesh->GetLocalBounds(Origin, BoxExtent);
-            AdjustedLoc.Z -= Origin.Z;
-        }
+    // 위치 보정 포함한 최종 Transform
+    FVector FinalLocation = GetActorLocation();
+    FVector FinalScale = GetActorScale3D();
+    FRotator FinalRotation = GetActorRotation();
+    FTransform FinalTransform(FinalRotation, FinalLocation, FinalScale);
 
-        FinalTransform = FTransform(Rot, AdjustedLoc, FVector(CurrentScale));
-        FinalLocation = AdjustedLoc;
-        FinalYaw = Rot.Yaw;
-
-        UE_LOG(LogTemp, Log, TEXT("[Placement] Location: %s, Yaw: %.1f, Scale: %.2f"), *AdjustedLoc.ToString(), FinalYaw, FinalScale);
+    if (Mesh && Mesh->GetStaticMesh())
+    {
+        FVector Origin, Extent;
+        Mesh->GetLocalBounds(Origin, Extent);
+        FinalLocation.Z -= Origin.Z;
+        FinalTransform.SetLocation(FinalLocation);
     }
 
     AActor* SpawnedActor = nullptr;
 
+    // InteractableActorClass 우선
     if (InteractableActorClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Spawning InteractableActorClass: %s"), *InteractableActorClass->GetName());
+        FActorSpawnParameters Params;
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-        SpawnedActor = GetWorld()->SpawnActor<AActor>(InteractableActorClass, FinalTransform);
+        auto* Interactable = GetWorld()->SpawnActor<AInteractableActor>(InteractableActorClass, FinalTransform, Params);
+        SpawnedActor = Interactable;
 
-        if (SpawnedActor)
+        if (Interactable)
         {
-            UE_LOG(LogTemp, Log, TEXT("Spawn success: %s"), *SpawnedActor->GetName());
+            Interactable->SetRowID(RowID);
+            Interactable->SetActorScale3D(FinalScale);
 
-            if (AInteractableActor* Interactable = Cast<AInteractableActor>(SpawnedActor))
+            if (Mesh && Mesh->GetStaticMesh())
             {
-                Interactable->SetRowID(RowID);
-                Interactable->SetActorScale3D(FVector(FinalScale));
-
-                if (UStaticMeshComponent* MeshComp = Interactable->FindComponentByClass<UStaticMeshComponent>())
+                if (auto* MeshComp = Interactable->FindComponentByClass<UStaticMeshComponent>())
                 {
-                    if (Mesh && Mesh->GetStaticMesh())
-                    {
-                        MeshComp->SetStaticMesh(Mesh->GetStaticMesh());
-                        UE_LOG(LogTemp, Log, TEXT("Set StaticMesh: %s"), *Mesh->GetStaticMesh()->GetName());
-                    }
-                    else
-                    {
-                        UE_LOG(LogTemp, Warning, TEXT("Mesh is NULL"));
-                    }
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("StaticMeshComponent not found on InteractableActor"));
+                    MeshComp->SetStaticMesh(Mesh->GetStaticMesh());
                 }
             }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("Spawned actor is not of type AInteractableActor"));
-            }
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Failed to spawn InteractableActorClass"));
-        }
+
+        // DrawDebugBox(GetWorld(), FinalTransform.GetLocation(), FVector(30), FColor::Red, false, 5.f);
     }
+    // 일반 PlaceBuildActor
     else if (PlaceBuildClass && Mesh)
     {
-        UE_LOG(LogTemp, Log, TEXT("Spawning PlaceBuildClass"));
-
-        APlaceBuildActor* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
+        auto* Placed = GetWorld()->SpawnActor<APlaceBuildActor>(PlaceBuildClass, FinalTransform);
         if (Placed)
         {
             Placed->SetMesh(Mesh->GetStaticMesh());
-            bool bZOnly = IsA(AWallPlacementActor::StaticClass());
-            Placed->SetScale(FinalScale, bZOnly);
+            Placed->SetScale(FinalScale.X, IsA(AWallPlacementActor::StaticClass()));
             Placed->SetRowID(RowID);
             SpawnedActor = Placed;
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Failed to spawn PlaceBuildActor"));
-        }
     }
 
+    // 서버 동기화 및 프리뷰 제거
     if (SpawnedActor)
     {
-        if (ABuildingPlayerController* PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+        if (auto* PC = Cast<ABuildingPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
         {
-            uint16 ItemID = FBuildItemRegistry::FNameToItemID(RowID);
-
             FObjectData NewData;
-            NewData.ItemID = ItemID;
+            NewData.ItemID = FBuildItemRegistry::FNameToItemID(RowID);
             NewData.Location = FinalLocation;
-            NewData.Yaw = FinalYaw;
-            NewData.Scale = FinalScale;
+            NewData.Yaw = FinalRotation.Yaw;
+            NewData.Scale = FinalScale.X;
 
             PC->AddPendingBuild(NewData);
-            UE_LOG(LogTemp, Log, TEXT("Build data registered. ItemID: %d"), ItemID);
         }
 
-        Destroy();
+        Destroy(); // 프리뷰 제거
     }
     else
     {
