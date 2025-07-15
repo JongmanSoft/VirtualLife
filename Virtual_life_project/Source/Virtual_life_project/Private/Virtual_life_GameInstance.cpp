@@ -801,7 +801,6 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 	if (!PlaceBuildClass)
 	{
 		PlaceBuildClass = StaticLoadClass(APlaceBuildActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/BuildingSystem/MyPlaceBuildActor.MyPlaceBuildActor_C'"));
-
 		if (!PlaceBuildClass)
 			return;
 	}
@@ -813,13 +812,10 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 	for (const Object& obj : CachedRoomObjects)
 	{
 		FName RowName = FBuildItemRegistry::ItemIDToFName(obj.item_id);
-
 		if (RowName.IsNone()) continue;
 
 		const FBuildInfo* Info = BuildingDataTable->FindRow<FBuildInfo>(RowName, TEXT(""));
 		if (!Info) continue;
-
-		if (!Info->Mesh) continue;
 
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
@@ -827,28 +823,29 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 
 		if (Info->InteractableActorClass)
 		{
-			AActor* Spawned_1 = World->SpawnActor<AActor>(Info->InteractableActorClass, SpawnLoc, SpawnRot);
-			if (Spawned_1)
+			AInteractableActor* SpawnedActor = World->SpawnActor<AInteractableActor>(Info->InteractableActorClass, SpawnLoc, SpawnRot);
+			if (SpawnedActor)
 			{
-				Spawned_1->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetRowID(RowName);
 
-				if (AInteractableActor* Interactable = Cast<AInteractableActor>(Spawned_1))
+				if (Info->Mesh)
 				{
-					Interactable->SetRowID(RowName);
+					if (UStaticMeshComponent* MeshComp = SpawnedActor->FindComponentByClass<UStaticMeshComponent>())
+					{
+						MeshComp->SetStaticMesh(Info->Mesh);
+					}
 				}
 			}
 		}
 		else if (Info->Mesh)
 		{
-			APlaceBuildActor* Spawned_2 = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
-			if (Spawned_2)
+			APlaceBuildActor* SpawnedActor = World->SpawnActor<APlaceBuildActor>(PlaceBuildClass, SpawnLoc, SpawnRot);
+			if (SpawnedActor)
 			{
-				Spawned_2->SetMesh(Info->Mesh);
-				Spawned_2->SetRowID(RowName);
-				if (Info->bIsWall)
-					Spawned_2->SetScale(obj.scale, true);
-				else
-					Spawned_2->SetScale(obj.scale);
+				SpawnedActor->SetMesh(Info->Mesh);
+				SpawnedActor->SetRowID(RowName);
+				SpawnedActor->SetScale(obj.scale, Info->bIsWall);
 			}
 		}
 	}
@@ -880,14 +877,18 @@ void UVirtual_life_GameInstance::SpawnRoomObjectsFromData(const TArray<FObjectDa
 
 		if (Info->InteractableActorClass)
 		{
-			AActor* Spawned_1 = World->SpawnActor<AActor>(Info->InteractableActorClass, Loc, Rot);
-			if (Spawned_1)
+			AInteractableActor* SpawnedActor = World->SpawnActor<AInteractableActor>(Info->InteractableActorClass, Loc, Rot);
+			if (SpawnedActor)
 			{
-				Spawned_1->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetRowID(RowName);
 
-				if (AInteractableActor* Interactable = Cast<AInteractableActor>(Spawned_1))
+				if (Info->Mesh)
 				{
-					Interactable->SetRowID(RowName);
+					if (UStaticMeshComponent* MeshComp = SpawnedActor->FindComponentByClass<UStaticMeshComponent>())
+					{
+						MeshComp->SetStaticMesh(Info->Mesh);
+					}
 				}
 			}
 		}
