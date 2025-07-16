@@ -206,6 +206,16 @@ void UVirtual_life_GameInstance::SendPartyRejectPacket(const FString& Id_str)
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendDoorStatePacket(const uint8& door_id, bool is_open)
+{
+	CS_UPDATE_DOOR_PACKET p;
+	p.size = sizeof(CS_UPDATE_DOOR_PACKET);
+	p.type = CS_DOOR_UPDATE;
+	p.door_id = door_id;
+	p.is_open = is_open;
+	SendEnqueue(&p, p.size);
+}
+
 bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 {
 	TArray<uint8> PacketData;
@@ -627,6 +637,20 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			m_quest->Delete_Quest(p.num);
 			OnQusetUpdate.Broadcast();
 			break;
+		}
+		case SC_DOOR_UPDATE: {
+			SC_UPDATE_DOOR_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_DOOR_PACKET));
+			UpdateDoor.Broadcast(p.door_id,p.is_open);
+			break;
+		}
+		case SC_DOORS_UPDATE: {
+			SC_UPDATE_DOORS_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_DOORS_PACKET));
+			constexpr int Door_num = 13;
+			for (int num = 0; num < Door_num; num++) {
+				UpdateDoor.Broadcast(p.door_id[num], p.is_open[num]);
+			}
 		}
 		case SC_ROOM_SETUP:
 		{

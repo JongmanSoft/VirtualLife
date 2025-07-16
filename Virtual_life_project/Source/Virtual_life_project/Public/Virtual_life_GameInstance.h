@@ -25,6 +25,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChatReceived, const FString&, ChatMessage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChatWithID, const int32&, from_id, const FString&, chat_msg);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FUpdateDoor, const uint8&, door_id, bool, is_open);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, ItemID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
@@ -71,6 +72,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnChatWithID OnChatWithID;
+
+	UPROPERTY(BlueprintAssignable)
+	FUpdateDoor UpdateDoor;
 
 public:
 
@@ -164,6 +168,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SendPartyRejectPacket(const FString& Id_str);
+
+	//문열고 닫음 ㅠㅠ
+	UFUNCTION(BlueprintCallable)
+	void SendDoorStatePacket(const uint8& door_id, bool is_open);
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
