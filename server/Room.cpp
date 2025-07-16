@@ -3,13 +3,13 @@
 
 void Room::AddPlayer(Player* player)
 {
-	std::lock_guard<std::mutex> lock(mtx);
+	std::lock_guard<std::mutex> lock(m);
 	players.push_back(player);
 }
 
 void Room::RemovePlyer(int id)
 {
-	std::lock_guard<std::mutex> lock(mtx);
+	std::lock_guard<std::mutex> lock(m);
 	players.erase(std::remove_if(players.begin(), players.end(),
 		[id](Player* player) { return player->Get_id() == id; }),
 		players.end());

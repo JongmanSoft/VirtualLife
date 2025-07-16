@@ -13,6 +13,7 @@ class Player : public HumanObject
 	// 네트워크 통신 관련
 	EXT_OVER over;
 	SOCKET socket;
+	std::mutex socket_lock;
 	std::vector<char> packet_data; // deque를 사용할까?
 	
 	// 플레이어 정보

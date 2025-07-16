@@ -239,8 +239,8 @@ bool Player::send_doors_state_packet()
 	p.size = sizeof(SC_UPDATE_DOORS_PACKET);
 	p.type = SC_DOORS_UPDATE;
 	for (int i = 0; i < MAX_DOOR; ++i) {
-		p.door_id[i] = doors[i].id;
-		p.is_open[i] = doors[i].is_open.load();
+		p.door_id[i] = i;
+		p.is_open[i] = doors[i].is_open;
 	}
 
 	send(&p);
@@ -326,6 +326,8 @@ bool Player::save_db_pInventory()
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
+	
+	std::lock_guard ll{ socket_lock };
 
 	// 패킷 크기 복사
 	unsigned short p_size;
@@ -370,6 +372,7 @@ void Player::recv()
 		if (error != WSA_IO_PENDING)
 		{
 			printf("WSARecv failed with error: %d\n", error);
+			std::lock_guard ll{ socket_lock };
 			closesocket(socket);
 			WSACleanup();
 		}
@@ -604,12 +607,33 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
 		pinfo.st = HOME;
 		
+		// todo: 여기 테스트 및 클라 수정 필요
+
 		// 모든 플레이어에게 디스폰 보내기
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].state == PLAYING and i != pinfo.id and players[i].pinfo.st != HOME)
 					players[i].send_despawn_packet(pinfo.id);
+			}
+		}
+
+		// 현재 방에 있는 플레이어들에게 나 보내기
+		{
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i]->state == PLAYING and i != pinfo.id)
+					send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
+			}
+		}
+
+		room->AddPlayer(this);
+
+		{
+			// 나에게 현재 방에 있는 플레이어들 보내기
+			std::lock_guard ll{ room->m };
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i]->state == PLAYING and i != pinfo.id)
+					room->players[i]->send_spawn_packet(this->pinfo, this->custom);
 			}
 		}
 
@@ -712,7 +736,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.door_id = p->door_id;
 		pkt.is_open = p->is_open;
 
-		send(&p);
+		for (int i = 0; i < players.size(); ++i) {
+			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
+				players[i].send(&pkt);
+			}
+		}
+
 		break;
 	}
     default:
