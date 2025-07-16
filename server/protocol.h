@@ -39,14 +39,6 @@ struct PlayerInfo
 	float z;
 	float yaw; // 회전값
 	STATE st; // 애니메이션 동기화용?
-};
-
-struct AdditionalInfo
-{
-	unsigned short job;
-	unsigned short age;
-	short hp;
-	short mp;
 	int gold = 500;
 };
 
@@ -185,7 +177,6 @@ struct SC_ENTER_GAME_PACKET { // 클라에게 내 캐릭터의 정보 제공
 	unsigned short items[ITEM_SIZE];
 	float time; 
 	Customizing custom; // 내 캐릭터의 커스터마이징 정보
-	AdditionalInfo addinfo;
 	short giver_id[QUEST_MAX];
 	short num[QUEST_MAX]; // 퀘스트 번호
 };

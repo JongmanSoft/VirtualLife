@@ -1,15 +1,14 @@
 #pragma once
 
+#include "Object.h"
 #include "Quest.h"
 #include "Room.h"
 #include "Party.h"
 #include "Kid.h"
 
 // todo: 락 혹은 concurrency로 모두모두 변경해야 함
-// none: 플레이중이 아님, connecting: 아직 Login success를 보내기 전, playing: 접속중
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
-
-class Player
+class Player : public HumanObject
 {
 	// 네트워크 통신 관련
 	EXT_OVER over;
@@ -18,22 +17,16 @@ class Player
 	
 	// 플레이어 정보
 	std::string id; // 접속용 id
-	std::wstring name = L""; // 플레이어 이름
-	PlayerInfo pinfo; // obj id, 위치/회전정보
-	AdditionalInfo addinfo; // 직업 등 정보
-	STATES state; // 상태
+	STATES state; // 세션상태
 
-	Customizing custom; // 커스텀
 	std::unordered_map<unsigned short, unsigned short> player_item;
 	std::vector<Quest> quests;
 	Room* room;
 
-	float ping = 0.0f;
-
 	// 동기화 관련
 	std::mutex m;
 
-	// ㅠ파티
+	// 파티
 	Party* party = nullptr; // 파티 정보
 
 	// 패킷 send 함수
@@ -60,14 +53,10 @@ class Player
 public:
 
 	Player() : socket(0), state(NONE) {}
-	Player(SOCKET s, int id) : socket(s) { pinfo.id = id; }
+	Player(SOCKET s, int id);
 	~Player() {}
 
-	void init_player(SOCKET s, int id)
-	{
-		socket = s;
-		pinfo.id = id;
-	}
+	void init_player(SOCKET s, int id);
 
 	void send(void* packet);
 	void recv();
@@ -105,6 +94,6 @@ public:
 	STATES get_state() const { return state; }
 	void set_state(STATES st) { state = st; }
 
-	int Get_id() { return pinfo.id; }
+	int Get_id();
 };
 

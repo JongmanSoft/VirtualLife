@@ -116,8 +116,10 @@ public:
     }
 };
 
+#include "Object.h"
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
+extern std::array<Player, MAX_PLAYER> npcs;
 extern concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 extern std::mutex players_mutex;
 extern float f_time;

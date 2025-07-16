@@ -189,12 +189,12 @@ void DBManager::SaveDefCustomizing(const std::string& id)
     SaveCustomizing(id, c);
 }
 
-void DBManager::SaveDefPInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata)
+void DBManager::SaveDefPInfo(const std::string& userID, const PlayerInfo& data)
 {
-    SavePInfo(userID, data, adddata, "");
+    SavePInfo(userID, data, "");
 }
 
-void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, const AdditionalInfo& adddata ,const std::string& name)
+void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data,const std::string& name)
 {
     if (DB_ON == false) return;
     try {
@@ -223,7 +223,7 @@ void DBManager::SavePInfo(const std::string& userID, const PlayerInfo& data, con
         stmt->setDouble(4, data.y);
         stmt->setDouble(5, data.z);
         stmt->setDouble(6, data.yaw);
-        stmt->setInt(7, adddata.gold);
+        stmt->setInt(7, data.gold);
 
         stmt->executeUpdate();
     }

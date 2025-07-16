@@ -2,6 +2,23 @@
 #include "DBManager.h"
 #include "Player.h"
 
+Player::Player(SOCKET s, int id)
+	: socket(s)
+{
+	pinfo.id = id;
+}
+
+void Player::init_player(SOCKET s, int id)
+{
+	socket = s;
+	pinfo.id = id;
+}
+
+int Player::Get_id()
+{
+	return pinfo.id;
+}
+
 bool Player::send_login_info_packet(bool res, bool isnew)
 {
 	SC_LOGIN_INFO_PACKET p;
@@ -21,7 +38,6 @@ bool Player::send_enter_game_packet()
 	p.size = sizeof(SC_ENTER_GAME_PACKET);
 	p.custom = custom;
 	p.player = pinfo;
-	p.addinfo = addinfo; // 여기 추가했는데..
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE);
 	p.type = SC_ENTER_GAME;
 	auto now = std::chrono::high_resolution_clock::now();
@@ -165,15 +181,6 @@ bool Player::send_room_leave_packet()
 
 bool Player::send_time_sync_packet()
 {
-	SC_TIME_SYNC_PACKET p;
-	p.size = sizeof(SC_TIME_SYNC_PACKET);
-	p.type = SC_ROOM_LEAVE;
-	auto now = std::chrono::high_resolution_clock::now();
-	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
-	p.curtime = ping;
-	p.time = std::fmod(f_time + (elapsed.count() * 0.001f), 24);
-
-	send(&p);
 	return true;
 }
 
@@ -300,6 +307,8 @@ bool Player::save_db_pInventory()
 	return true;
 }
 
+
+
 void Player::send(void* packet)
 {
 	EXT_OVER* ov = new EXT_OVER();
@@ -376,7 +385,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
-				addinfo.gold = DBManager::LoadGold(p->id);
+				pinfo.gold = DBManager::LoadGold(p->id);
 				room = rooms[p->id];
 				this->id = p->id;
 			}
@@ -529,9 +538,9 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	case CS_UPDATE_GOLD:
 	{
 		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
-		this->addinfo.gold += p->gold_offset;
-		DBManager::SaveGold(this->id, this->addinfo.gold);
-		send_update_gold(this->addinfo.gold);
+		this->pinfo.gold += p->gold_offset;
+		DBManager::SaveGold(this->id, this->pinfo.gold);
+		send_update_gold(this->pinfo.gold);
 		break;
 	}
 	case CS_GET_QUEST:
@@ -693,9 +702,9 @@ void Player::player_setup() // 신규 플레이어 위치 등 셋업
 	player_item[10] = 1;
 	player_item[11] = 1;
 
-	addinfo.gold = 1500; 
+	pinfo.gold = 1500; 
 
-	DBManager::SaveDefPInfo(this->id, pinfo, addinfo);
+	DBManager::SaveDefPInfo(this->id, pinfo);
 	DBManager::SaveDefCustomizing(this->id);
 	save_db_pInventory();
 }
