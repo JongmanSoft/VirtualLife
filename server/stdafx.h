@@ -116,10 +116,17 @@ public:
     }
 };
 
+struct Door
+{
+    unsigned short id;
+    std::atomic_bool is_open;
+};
+
 #include "Object.h"
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
 extern std::array<Player, MAX_PLAYER> npcs;
+extern std::array<Door, MAX_DOOR> doors; // ¹®µé
 extern concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 extern std::mutex players_mutex;
 extern float f_time;

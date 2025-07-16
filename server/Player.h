@@ -46,6 +46,7 @@ class Player : public HumanObject
 	bool send_invite_call_packet(std::string& id, std::wstring& name);
 	bool send_reject_call_packet(std::string& id);
 	bool send_join_success_packet(std::string& id, std::wstring& name);
+	bool send_doors_state_packet();
 
 	// 핸들러 함수
 	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);

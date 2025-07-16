@@ -13,7 +13,7 @@ constexpr unsigned short MAX_BUILD_ITEM = 200;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 constexpr int MAX_PARTY_MEMBER = 10; // 파티 최대 인원 수
-constexpr unsigned short MAX_DOOR = 50;
+constexpr unsigned short MAX_DOOR = 13; // 수정필요 문개수
 
 // 파티 관련 패킷 응답
 enum PARTY_REQUEST : char

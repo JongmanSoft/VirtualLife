@@ -21,3 +21,4 @@ public:
 	HumanObject() {};
 	~HumanObject() {};
 };
+

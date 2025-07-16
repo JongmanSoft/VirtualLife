@@ -14,6 +14,7 @@ concurrency::concurrent_priority_queue<EVENT> g_evt_queue;
 void initialize_server();
 void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
 bool room_setup();
+bool door_setup();
 
 void workerThread(HANDLE iocp_hd)
 {
@@ -225,4 +226,14 @@ bool room_setup()
         return false;
     }
     return true;
+}
+
+bool door_setup()
+{
+	for (int i = 0; i < MAX_DOOR; ++i)
+	{
+		doors[i].id = i;
+		doors[i].is_open = false;
+	}
+	return true;
 }

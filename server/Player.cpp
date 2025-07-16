@@ -233,6 +233,20 @@ bool Player::send_join_success_packet(std::string& id, std::wstring& name)
 	return true;
 }
 
+bool Player::send_doors_state_packet()
+{
+	SC_UPDATE_DOORS_PACKET p;
+	p.size = sizeof(SC_UPDATE_DOORS_PACKET);
+	p.type = SC_DOORS_UPDATE;
+	for (int i = 0; i < MAX_DOOR; ++i) {
+		p.door_id[i] = doors[i].id;
+		p.is_open[i] = doors[i].is_open.load();
+	}
+
+	send(&p);
+	return true;
+}
+
 bool Player::send_reject_call_packet(std::string& id)
 {
 	SC_RESULT_PARTY_PACKET p;
@@ -429,6 +443,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		}
 
 		send_enter_game_packet();
+		send_doors_state_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -683,6 +698,21 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		//DB에 저장해야된느데
 		Kid temp_kid(*p);
 		
+		break;
+	}
+	case CS_DOOR_UPDATE:
+	{
+		CS_UPDATE_DOOR_PACKET* p = reinterpret_cast<CS_UPDATE_DOOR_PACKET*>(packet);
+		std::cout << "REC	V-CS_DOOR_UPDATE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
+		doors[p->door_id].is_open = p->is_open;
+
+		SC_UPDATE_DOOR_PACKET pkt;
+		pkt.size = sizeof(SC_UPDATE_DOOR_PACKET);
+		pkt.type = SC_DOOR_UPDATE;
+		pkt.door_id = p->door_id;
+		pkt.is_open = p->is_open;
+
+		send(&p);
 		break;
 	}
     default:
