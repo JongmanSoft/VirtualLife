@@ -608,6 +608,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pinfo.st = HOME;
 		
 		// todo: 여기 테스트 및 클라 수정 필요
+		room = rooms[p->id];
+
 
 		// 모든 플레이어에게 디스폰 보내기
 		{
@@ -618,6 +620,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			}
 		}
 
+		room->AddPlayer(this);
+		
 		// 현재 방에 있는 플레이어들에게 나 보내기
 		{
 			for (int i = 0; i < room->players.size(); ++i) {
@@ -625,8 +629,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 					send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
 			}
 		}
-
-		room->AddPlayer(this);
 
 		{
 			// 나에게 현재 방에 있는 플레이어들 보내기
@@ -676,10 +678,26 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
 
 		// 집에서 나갈때 전체 삭제 후 다시 저장
-		DBManager::DeleteRoomObjects(id);
-		room->SaveToDB(id);
+		if (this->id == room->ownerID)
+		{
+			DBManager::DeleteRoomObjects(id);
+			room->SaveToDB(id);
+		}
 
 		pinfo.st = IDLE;
+
+		room->RemovePlyer(pinfo.id); // 방에서 플레이어 제거
+		{
+			std::lock_guard ll{ room->m };
+
+			// 방에 있는 플레이어들한테 나 제거
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i]->state == PLAYING and i != pinfo.id)
+					room->players[i]->send_despawn_packet(pinfo.id);
+			}
+		}
+
+		send_room_leave_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -698,7 +716,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			}
 		}
 
-		send_room_leave_packet();
 		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
 		break;
 	}

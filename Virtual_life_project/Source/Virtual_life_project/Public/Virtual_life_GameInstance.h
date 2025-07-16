@@ -122,6 +122,9 @@ public:
 	void SpawnPlayer();
 
 	UFUNCTION(BlueprintCallable)
+	void SpawnPlayerInRoom();
+
+	UFUNCTION(BlueprintCallable)
 	void SendChatPacket(FString s);
 
 	UFUNCTION(BlueprintCallable)
