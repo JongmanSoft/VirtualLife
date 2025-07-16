@@ -178,6 +178,8 @@ public:
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
+	void ResetPlayers();
+
 	virtual void Tick(float DeltaTime) override;
 	virtual bool IsTickable() const override { return true; }
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UVirtual_life_GameInstance, STATGROUP_Tickables); }

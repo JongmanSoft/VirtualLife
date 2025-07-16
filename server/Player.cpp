@@ -452,14 +452,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			std::lock_guard<std::mutex> lock(players_mutex);
 			// 기존유저들에게 스폰요청
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
 			// 나에게 기존유저 스폰
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
 				}
 			}
@@ -500,7 +500,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
+				if (players[i].state == PLAYING and i != id)
 					players[i].send_despawn_packet(id);
 			}
 		}
@@ -520,12 +520,25 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
+
 			// 위치정보 브로드캐스팅
-			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING and i != id and players[i].pinfo.st != HOME) {
-					players[i].send_move_packet(p->pl);
+			if (this->location == HOME) // 집에 있을 때 -> 집에 있는 애들 끼리
+			{
+				for (int i = 0; i < room->players.size(); ++i) {
+					if (this != room->players[i]) {
+						room->players[i]->send_move_packet(p->pl);
+					}
 				}
 			}
+			else // 집에 없을 때 -> 집에 없는 애들 끼리
+			{
+				for (int i = 0; i < players.size(); ++i) {
+					if (players[i].state == PLAYING and players[i].location == WORLD)
+						players[i].send_move_packet(p->pl);
+				}
+			}
+
+			
 		}
 
 		break;
@@ -596,26 +609,22 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		std::cout << "CS_ENTER_ROOM 받음! id: " << pinfo.id << std::endl;
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
 
-		if (id == p->id)
-		{
-
-		}
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
 		strcpy_s(pkt.id, M_ID_SIZE, p->id);
 		rooms[p->id]->packet_setup(pkt); // p->id << 플레이어의 방 셋업
 		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
-		pinfo.st = HOME;
+		
+		location = HOME;
 		
 		// todo: 여기 테스트 및 클라 수정 필요
 		room = rooms[p->id];
-
 
 		// 모든 플레이어에게 디스폰 보내기
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].state == PLAYING and i != pinfo.id and players[i].pinfo.st != HOME)
+				if (players[i].state == PLAYING and i != pinfo.id and players[i].location == WORLD)
 					players[i].send_despawn_packet(pinfo.id);
 			}
 		}
@@ -625,7 +634,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		// 현재 방에 있는 플레이어들에게 나 보내기
 		{
 			for (int i = 0; i < room->players.size(); ++i) {
-				if (room->players[i]->state == PLAYING and i != pinfo.id)
+				if (room->players[i] != this) // 나제외
 					send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
 			}
 		}
@@ -634,7 +643,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			// 나에게 현재 방에 있는 플레이어들 보내기
 			std::lock_guard ll{ room->m };
 			for (int i = 0; i < room->players.size(); ++i) {
-				if (room->players[i]->state == PLAYING and i != pinfo.id)
+				if (room->players[i] != this) // 나제외
 					room->players[i]->send_spawn_packet(this->pinfo, this->custom);
 			}
 		}
@@ -684,7 +693,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			room->SaveToDB(id);
 		}
 
-		pinfo.st = IDLE;
+		location = WORLD;
 
 		room->RemovePlyer(pinfo.id); // 방에서 플레이어 제거
 		{
@@ -692,8 +701,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 			// 방에 있는 플레이어들한테 나 제거
 			for (int i = 0; i < room->players.size(); ++i) {
-				if (room->players[i]->state == PLAYING and i != pinfo.id)
-					room->players[i]->send_despawn_packet(pinfo.id);
+				room->players[i]->send_despawn_packet(pinfo.id);
 			}
 		}
 
@@ -703,14 +711,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			std::lock_guard<std::mutex> lock(players_mutex);
 			// 기존유저들에게 스폰요청
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
 			// 나에게 기존유저 스폰
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st != HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
 				}
 			}
