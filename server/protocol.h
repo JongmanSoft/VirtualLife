@@ -13,6 +13,7 @@ constexpr unsigned short MAX_BUILD_ITEM = 200;
 constexpr int ITEM_SIZE = 12; // 아이템 종류 수: 수정 필요
 constexpr int QUEST_MAX = 10; // 퀘스트 개수 ?
 constexpr int MAX_PARTY_MEMBER = 10; // 파티 최대 인원 수
+constexpr unsigned short MAX_DOOR = 50;
 
 // 파티 관련 패킷 응답
 enum PARTY_REQUEST : char
@@ -125,6 +126,7 @@ enum PACKETID : char
 	CS_VOICE_CHAT,
 	CS_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
 	CS_ADD_KID, //자식이 생겻져요!
+	CS_DOOR_UPDATE,
 
 	// server to client
 	SC_LOGININFO,
@@ -145,7 +147,9 @@ enum PACKETID : char
 	SC_TIME_SYNC,
 	SC_VOICE_CHAT,
 	SC_UPDATE_PARTY, 
-	SC_RESULT_PARTY
+	SC_RESULT_PARTY,
+	SC_DOOR_UPDATE,
+	SC_DOORS_UPDATE
 };
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
@@ -367,7 +371,29 @@ struct SC_RESULT_PARTY_PACKET {
 	wchar_t	name[M_ID_SIZE];
 };
 
-// 미완 ------------------------------
+// 문 --------------------------------
+struct SC_UPDATE_DOOR_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short door_id; // 문 아이디
+	bool is_open; // 문 열림 여부
+};
+
+struct SC_UPDATE_DOORS_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short door_id[MAX_DOOR]; // 문 아이디
+	bool is_open[MAX_DOOR]; // 문 열림 여부
+};
+
+struct CS_UPDATE_DOOR_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short door_id; // 문 아이디
+	bool is_open; // 문 열림 여부
+};
+
+// 미완 ----------------------------
 struct CS_NPC_CHAT_PACKET {
 	unsigned short size;
 	PACKETID type;

@@ -137,7 +137,6 @@ void check_evt(HANDLE iocp_hd)
 
 int main()
 {
-
     // 서버 초기화
     initialize_server();
 
