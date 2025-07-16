@@ -11,10 +11,10 @@ class Room
 {
 private:
 	std::vector<std::shared_ptr<Object>> objs;
-	std::vector<Player*> players; // 방에 있는 플레이어들
-	std::mutex mtx; // 동기화용 mutex
 
 public:
+	std::mutex m; // 동기화용 mutex
+	std::vector<Player*> players; // 방에 있는 플레이어들
 	std::string ownerID;
 	Room() {};
 	~Room() {};
