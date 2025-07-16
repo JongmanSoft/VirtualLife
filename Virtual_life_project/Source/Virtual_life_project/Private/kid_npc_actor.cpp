@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "kid_npc_actor.h"
 
 // Sets default values
@@ -44,8 +43,46 @@ USkeletalMeshComponent* Akid_npc_actor::find_tag_skeltal_mesh(const FName& tag_n
     return nullptr;
 }
 
+void Akid_npc_actor::find_hair_groom()
+{
+    
+    TArray<UActorComponent*> Components;
+    GetComponents(Components);
+    for (UActorComponent* Component : Components)
+    {
+        if (UGroomComponent* GroomComp = Cast<UGroomComponent>(Component))
+        {
+            if (GroomComp->ComponentHasTag(FName("Hair")))
+            {
+                m_hair_groom = GroomComp;
+            }
+        }
+    }
+}
+
 void Akid_npc_actor::set_groom()
 {
+    if (m_hair_groom) {
+        TCHAR groom_asset_file[5][100]
+            = { TEXT("/Game/MetaHumans/woman/FemaleHair/Hair/Hair_M_BobMessy.Hair_M_BobMessy")
+            ,TEXT("/Game/MetaHumans/man/FemaleHair/Hair/Hair_S_Pixie.Hair_S_Pixie"),
+            TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual"),
+            TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Hair_M_BobCurly.Hair_M_BobCurly"),
+            TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Hair_M_BobBangs.Hair_M_BobBangs")
+        };
+        TCHAR groom_binding_asset_file[5][150]
+            = { TEXT("/Game/MetaHumans/woman/FemaleHair/GroomBinding/Hair_M_BobMessy_Binding.Hair_M_BobMessy_Binding")
+            ,TEXT("/Game/MetaHumans/man/FemaleHair/GroomBinding/Hair_S_Pixie_Binding.Hair_S_Pixie_Binding")
+            ,TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/GroomBinding/Hair_S_Casual_Binding.Hair_S_Casual_Binding"),
+            TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobCurly_Binding.Hair_M_BobCurly_Binding"),
+            TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Hair_M_BobBangs_Binding.Hair_M_BobBangs_Binding")
+
+        };
+
+        auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[m_custom->hair]);
+        m_hair_groom->SetGroomAsset(a);
+        m_hair_groom->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->hair]));
+    }
 }
 
 void Akid_npc_actor::set_skeltal()
@@ -82,22 +119,38 @@ void Akid_npc_actor::create_dynamic_mat_custom()
     }
     //왼쪽눈 머터리얼 
     UMaterialInterface* EYE_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Materials/MyMaterial.MyMaterial"));
-    if (Face_material)
+    if (EYE_material)
     {
         if (face_mesh)
         {
-            UMaterialInstanceDynamic* LEFT_EYE_Material = UMaterialInstanceDynamic::Create(Face_material, this);
+            UMaterialInstanceDynamic* LEFT_EYE_Material = UMaterialInstanceDynamic::Create(EYE_material, this);
             face_mesh->SetMaterial(1, LEFT_EYE_Material);
-            UMaterialInstanceDynamic* RIGHT_EYE_Material = UMaterialInstanceDynamic::Create(Face_material, this);
+            UMaterialInstanceDynamic* RIGHT_EYE_Material = UMaterialInstanceDynamic::Create(EYE_material, this);
             face_mesh->SetMaterial(2, RIGHT_EYE_Material);
+
         }
     }
  
+	//머리 머터리얼
+    if (m_hair_groom) {
+        UMaterialInterface* Hair_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/woman/Materials/MI_Hair_Cards.MI_Hair_Cards"));
+        if (Hair_material) {
+            UMaterialInstanceDynamic* Hair_instance = UMaterialInstanceDynamic::Create(Hair_material, this);
+            m_hair_groom->SetMaterial(0, Hair_instance);
+            m_hair_groom->SetMaterial(1, Hair_instance);
+            m_hair_groom->SetMaterial(2, Hair_instance);
+            Hair_instance->SetScalarParameterValue(FName("hair_R"), m_custom->hair_color_R);
+            Hair_instance->SetScalarParameterValue(FName("hair_G"), m_custom->hair_color_G);
+            Hair_instance->SetScalarParameterValue(FName("hair_B"), m_custom->hair_color_B);
+        }
+    }
+
 
 }
 
 void Akid_npc_actor::set_morph_target()
 {
+
 }
 
 void Akid_npc_actor::apply_custom()

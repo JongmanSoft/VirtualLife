@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "GroomComponent.h"
 #include "../Custom/Custom_data.h"
 #include "kid_npc_actor.generated.h"
 
@@ -26,6 +27,9 @@ public:
 
 public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
+	void find_hair_groom();
+
+
 	void set_groom(); // 머리변경
 	void set_skeltal(); // 옷변경
 	void create_dynamic_mat_custom();
@@ -33,6 +37,8 @@ public:
 	void apply_custom();
 public:
 	//커스텀용
+	UGroomComponent* m_hair_groom = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
 	UMaterialInstanceDynamic* MI_hair = nullptr;
 
