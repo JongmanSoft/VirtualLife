@@ -648,6 +648,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			for (int num = 0; num < Door_num; num++) {
 				UpdateDoor.Broadcast(p.door_id[num], p.is_open[num]);
 			}
+			break;
 		}
 		case SC_ROOM_SETUP:
 		{
