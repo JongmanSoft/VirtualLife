@@ -394,7 +394,11 @@ ACharacter* UVirtual_life_GameInstance::draw_one_player(int draw_id)
 	Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 	Other_actor_m_custom->custom_data_update(Info.cinfo);
 
-
+	if (Actor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to spawn player actor!"));
+		return nullptr;
+	}
 	return Actor;
 }
 
