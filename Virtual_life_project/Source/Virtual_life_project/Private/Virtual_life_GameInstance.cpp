@@ -225,6 +225,24 @@ bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 	return true;
 }
 
+void UVirtual_life_GameInstance::ResetPlayers()
+{
+	for (auto& Pair : OtherPlayers)
+	{
+		ACharacter* Character = Pair.Value.character;
+
+		if (IsValid(Character))
+		{
+			Character->Destroy();        // Actor 제거
+		}
+	}
+
+	OtherPlayers.Empty();
+
+	// 5. 로딩 플래그 초기화
+	loaded = false;
+}
+
 void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s, FString pw)
 {
 	CS_LOGIN_PACKET	p;
@@ -274,7 +292,6 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	for (TPair<int, SpawnInfo>& Pair : OtherPlayers) {
 		int PlayerID = Pair.Key;
 		SpawnInfo& Info = Pair.Value;
-		if (Info.pinfo.st == HOME) continue;
 
 		FVector SpawnLocation(Info.pinfo.x, Info.pinfo.y, Info.pinfo.z);
 		FRotator SpawnRotation(0.f, Info.pinfo.yaw, 0.f);
@@ -630,7 +647,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
 
 			if (FoundPlayer == nullptr) break;
-
 			if (FoundPlayer->character == nullptr) 
 				break;
 
@@ -713,6 +729,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		{
 			SC_ROOM_LEAVE_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_LEAVE_PACKET));
+
+			ResetPlayers();
 
 			enter_time = p.time;
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
@@ -824,16 +842,7 @@ void UVirtual_life_GameInstance::OnStart()
 void UVirtual_life_GameInstance::SendEnterRoom(FString roomID)
 {
 	// 초기화.
-	for (auto& Pair : OtherPlayers)
-	{
-		if (IsValid(Pair.Value.character))
-		{
-			Pair.Value.character->Destroy();
-		}
-	}
-	OtherPlayers.Empty();
-
-	loaded = false;
+	ResetPlayers();
 
 	CS_ROOM_ENTER_PACKET p;
 	p.size = sizeof(CS_ROOM_ENTER_PACKET);

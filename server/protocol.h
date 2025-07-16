@@ -25,7 +25,7 @@ enum PARTY_REQUEST : char
 	PARTY_JOIN_SUCCESS
 };
 
-enum STATE : char { IDLE = 0, WALK = 1, RUN = 2, JUMP = 3, MINE = 4, FISH = 5, SEED = 6, HOME = 7, 
+enum STATE : char { IDLE = 0, WALK = 1, RUN = 2, JUMP = 3, MINE = 4, FISH = 5, SEED = 6,  
 	SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
 
 // sitting1 : 그냥 앉음 lying : 누움 sitting2 : 머리에 손 올리고 앉음

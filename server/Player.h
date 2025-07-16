@@ -8,6 +8,7 @@
 
 // todo: 락 혹은 concurrency로 모두모두 변경해야 함
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
+enum LOCATION { WORLD = 0, HOME = 1 };
 class Player : public HumanObject
 {
 	// 네트워크 통신 관련
@@ -19,6 +20,7 @@ class Player : public HumanObject
 	// 플레이어 정보
 	std::string id; // 접속용 id
 	STATES state; // 세션상태
+	LOCATION location = WORLD; // 현재 위치
 
 	std::unordered_map<unsigned short, unsigned short> player_item;
 	std::vector<Quest> quests;
