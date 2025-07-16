@@ -25,6 +25,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
+	void set_groom(); // 머리변경
+	void set_skeltal(); // 옷변경
+	void create_dynamic_mat_custom();
+	void set_morph_target();
+	void apply_custom();
+public:
 	//커스텀용
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
 	UMaterialInstanceDynamic* MI_hair = nullptr;
