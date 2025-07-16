@@ -7,6 +7,7 @@
 #include "PlacementActor.generated.h"
 
 class APlaceBuildActor;
+class AInteractableActor;
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API APlacementActor : public AActor
@@ -23,7 +24,7 @@ public:
 
     // Ãß°¡
     UPROPERTY()
-    TSubclassOf<AActor> InteractableActorClass;
+    TSubclassOf<AInteractableActor> InteractableActorClass;
 
     UFUNCTION()
     void SetRowID(FName InRowID);
