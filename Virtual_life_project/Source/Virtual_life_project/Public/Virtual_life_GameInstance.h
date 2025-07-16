@@ -262,6 +262,7 @@ private:
 
 	// todo: 이거 옮길지 고민
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
+	//AdditionalInfo AddInfo;
 
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
@@ -301,4 +302,8 @@ public:
 	ChannelId LoggedInChannelId;
 
 	bool bLoggedIn = false;
+public:
+	//door정보
+	unsigned short current_door_id[13]; 
+	bool current_is_open[13]; 
 };

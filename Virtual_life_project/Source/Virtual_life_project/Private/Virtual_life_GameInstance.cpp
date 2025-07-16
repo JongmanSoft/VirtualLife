@@ -296,7 +296,15 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		}
 	}
 
+
+	for (int i = 0; i < 13; i++) {
+		UpdateDoor.Broadcast(current_door_id[i], current_is_open[i]);
+		UE_LOG(LogTemp, Log, TEXT("맵 이동 후 전달 : %d번문 : %d"),
+			current_door_id[i], current_is_open[i]);
+	}
+
 	loaded = true;
+
 }
 
 void UVirtual_life_GameInstance::DisconnectServer()
@@ -490,6 +498,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			StopBGM();
 
+
 			break;
 		}
 		case SC_SPAWN:
@@ -646,7 +655,11 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_DOORS_PACKET));
 			constexpr int Door_num = 13;
 			for (int num = 0; num < Door_num; num++) {
-				UpdateDoor.Broadcast(p.door_id[num], p.is_open[num]);
+				current_door_id[num] = p.door_id[num] ;
+			    current_is_open[num] = p.is_open[num];
+
+				UE_LOG(LogTemp, Log, TEXT("%d번문 : %d"),
+				current_door_id[num],current_is_open[num]);
 			}
 			break;
 		}

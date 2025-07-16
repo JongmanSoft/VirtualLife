@@ -149,5 +149,4 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
             WidgetInstance = nullptr;
         }
     
-
 }
