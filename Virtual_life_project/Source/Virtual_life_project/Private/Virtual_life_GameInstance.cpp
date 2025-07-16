@@ -307,6 +307,45 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 
 }
 
+void UVirtual_life_GameInstance::SpawnPlayerInRoom()
+{
+	// 서버 연결 확인
+	if (!Socket || !Socket->GetConnectionState() == SCS_Connected)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ERROR: Server connection is not established! Aborting SpawnPlayer."));
+		return;
+	}
+
+	UWorld* World = GetWorld();
+
+	// 2. 서버에서 받은 애들 스폰
+	for (TPair<int, SpawnInfo>& Pair : OtherPlayers) {
+		int PlayerID = Pair.Key;
+		SpawnInfo& Info = Pair.Value;
+
+		FVector SpawnLocation(Info.pinfo.x, Info.pinfo.y, Info.pinfo.z);
+		FRotator SpawnRotation(0.f, Info.pinfo.yaw, 0.f);
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		ACharacter* Actor = World->SpawnActor<ACharacter>(
+			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+		Other_actor_m_custom->custom_data_update(Info.cinfo);
+
+		Info.character = Actor;
+
+		auto pl = Cast<AVL_Player>(Info.character);
+		if (pl != nullptr) {
+			pl->set_my_id(Info.pinfo.id);
+		}
+	}
+
+	loaded = true;
+}
+
 void UVirtual_life_GameInstance::DisconnectServer()
 {
 }
@@ -522,8 +561,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				ts.pinfo = p.pl;
 				ts.character = nullptr;
 				OtherPlayers.Add(p.pl.id, ts);
-
-				if (p.pl.st == HOME) break;
 
 				FVector L(p.pl.x, p.pl.y, p.pl.z);
 				FRotator R(0.f, p.pl.yaw, 0.f);
