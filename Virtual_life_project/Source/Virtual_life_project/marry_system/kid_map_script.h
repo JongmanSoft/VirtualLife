@@ -24,7 +24,7 @@ public:
     UUserWidget* WidgetInstance;
 
 	UFUNCTION()
-	void custom_finish(float g_value, uint8 per_value, FString hello);
+	void custom_finish(float g_value, uint8 per_value, FString hello, FString name);
 public:
 	UPROPERTY(EditAnywhere)
 	ACharacter* you_character; //상대캐릭터

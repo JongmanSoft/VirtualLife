@@ -134,7 +134,7 @@ void Akid_map_script::Tick(float DeltaSeconds)
 
 }
 
-void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hello)
+void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hello,FString name)
 {
     
     UE_LOG(LogTemp, Warning, TEXT("hello"));
