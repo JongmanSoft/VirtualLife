@@ -787,13 +787,18 @@ void DBManager::SaveKidInfo(const Kid& kid)
                 EYE_WIDTH, EYE_THICK, EYE_SLOPE,
                 NOSE_WIDTH, NOSE_HEIGHT,
                 MOUTH_WIDTH, MOUTH_THICK, MOUTH_SLOPE,
-                CHIN, JAW, HEAVY, FACE_WIDTH, EYEBROWS, GLASSES
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                CHIN, JAW, HEAVY, FACE_WIDTH, EYEBROWS, GLASSES,
+                x, y, z, yaw, name, is_Kid
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 PREG_ID = VALUES(PREG_ID),
                 SPOUSE_ID = VALUES(SPOUSE_ID),
                 PERSONALITY = VALUES(PERSONALITY),
-                HELLO_MSG = VALUES(HELLO_MSG)
+                HELLO_MSG = VALUES(HELLO_MSG),
+                x = VALUES(x), y = VALUES(y), z = VALUES(z),
+                yaw = VALUES(yaw),
+                name = VALUES(name),
+                is_Kid = VALUES(is_Kid)
         )"));
 
         pstmt->setUInt(1, kid.id);
@@ -833,12 +838,20 @@ void DBManager::SaveKidInfo(const Kid& kid)
         pstmt->setInt(32, c.eyebrows);
         pstmt->setInt(33, c.glasses);
 
+        pstmt->setDouble(34, kid.x);
+        pstmt->setDouble(35, kid.y);
+        pstmt->setDouble(36, kid.z);
+        pstmt->setDouble(37, kid.yaw);
+        pstmt->setString(38, WStringToUTF8(kid.name));
+        pstmt->setInt(39, kid.is_kid);  // bool이면 0/1로 전달
+
         pstmt->executeUpdate();
     }
     catch (const sql::SQLException& e) {
-        std::cerr << "[DB] SaveKidInfo 예외 발생" << e.what() << std::endl;
+        std::cerr << "[DB] SaveKidInfo 예외 발생: " << e.what() << std::endl;
     }
 }
+
 
 bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
 {
@@ -891,15 +904,24 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
             c.eyebrows = res->getInt("EYEBROWS");
             c.glasses = res->getInt("GLASSES");
 
+            // 새로 추가된 필드
+            outKid.x = static_cast<float>(res->getDouble("x"));
+            outKid.y = static_cast<float>(res->getDouble("y"));
+            outKid.z = static_cast<float>(res->getDouble("z"));
+            outKid.yaw = static_cast<float>(res->getDouble("yaw"));
+            outKid.name = UTF8ToWString(res->getString("name"));
+            outKid.is_kid = res->getInt("is_Kid") != 0;
+
             return true;
         }
     }
     catch (const sql::SQLException& e) {
-        std::cerr << "[DB] LoadKidInfo 예외 발생" << e.what() << std::endl;
+        std::cerr << "[DB] LoadKidInfo 예외 발생: " << e.what() << std::endl;
     }
 
     return false;
 }
+
 
 bool DBManager::LoadAllRoomsFromDB()
 {
@@ -961,7 +983,6 @@ bool DBManager::LoadAllKidsFromDB()
             FROM kid_info
         )"));
 
-        int cnt = 0;
         while (res->next()) {
             Kid kid;
 
@@ -1020,10 +1041,10 @@ bool DBManager::LoadAllKidsFromDB()
             kid.is_kid = res->getInt("is_Kid");
 
             npcs[kid.id] = kid;
-            cnt++;
+            npc_count++;
         }
 
-        std::cout << "[INFO] Loaded " << cnt << " kids from DB." << std::endl;
+        std::cout << "[INFO] Loaded " << npc_count << " kids from DB." << std::endl;
         return true;
     }
     catch (const sql::SQLException& e) {

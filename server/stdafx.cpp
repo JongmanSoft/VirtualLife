@@ -9,10 +9,12 @@ concurrency::concurrent_unordered_map<std::string, Room*> rooms{};
 float f_time;
 std::chrono::high_resolution_clock::time_point startTime;
 
-
+unsigned short g_player_count = 0;
+unsigned short npc_count = 0; 
 
 int setid()
 {
+    g_player_count++;
     return id++;
 }
 

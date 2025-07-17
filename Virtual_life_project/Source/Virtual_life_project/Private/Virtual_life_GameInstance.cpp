@@ -46,7 +46,6 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 	if (Connected) { // 연결 성공
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Success")));
 
-		// 스레드 동작 시작하기
 		RecvThread = new RecvManager(Socket, this);
 		SendThread = new SendManager(Socket, this);
 
@@ -55,9 +54,6 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 	else {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Failed")));
 	}
-
-	// 음성채팅 서버 연결
-
 }
 
 void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, int num)
@@ -573,6 +569,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			else {
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Fail!")));
 				// todo: leave 패킷 송신 필요
+				SendPacketQueue.Empty(); // 큐 비우기
 			}
 
 			break;

@@ -247,6 +247,56 @@ bool Player::send_doors_state_packet()
 	return true;
 }
 
+bool Player::send_spawn_npcs_packet()
+{
+	// 한 번에 보내기엔 너무 많다면 분할 전송 로직 필요
+	SC_SPAWN_NPCS_PACKET p;
+	p.type = SC_NPCS_SPAWN;
+	p.npc_count = min(npc_count, MAX_NPC);
+	p.size = sizeof(SC_SPAWN_NPCS_PACKET);
+
+	for (int i = 0; i < npc_count; ++i)
+	{
+		auto npc = npcs[i];
+
+		NPCUnitData& data = p.npcs[i];
+		data.id = npc.id;
+		data.preg_id = npc.preg_id;
+		data.spouse_id = npc.spouse_id;
+		data.c = npc.customizing;
+		data.x = npc.x;
+		data.y = npc.y;
+		data.z = npc.z;
+		data.yaw = npc.yaw;
+		data.personality = npc.personality;
+	}
+
+	send(&p);
+	return true;
+}
+
+bool Player::send_spawn_npc_packet(int id) // 엔피씨 한마리 보내는 것
+{
+	auto target = npcs[id];
+
+	SC_SPAWN_NPC_PACKET p;
+	p.size = sizeof(SC_SPAWN_NPC_PACKET);
+	p.type = SC_NPC_SPAWN;
+	p.id = id;
+	p.preg_id = target.preg_id;
+	p.spouse_id = target.spouse_id;
+	p.c = target.customizing;
+	p.x = target.x;
+	p.y = target.y;
+	p.z = target.z;
+	p.yaw = target.yaw;
+	p.personality = target.personality;
+
+	send(&p);
+	return true;
+}
+
+
 bool Player::send_reject_call_packet(std::string& id)
 {
 	SC_RESULT_PARTY_PACKET p;
@@ -321,8 +371,6 @@ bool Player::save_db_pInventory()
 	return true;
 }
 
-
-
 void Player::send(void* packet)
 {
 	std::lock_guard ll{ socket_lock };
@@ -354,7 +402,6 @@ void Player::send(void* packet)
 		}
 	}
 }
-
 
 void Player::recv()
 {
@@ -457,6 +504,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		send_enter_game_packet();
 		send_doors_state_packet();
+		send_spawn_npcs_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -544,7 +592,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				}
 			}
 		}
-
 		break;
 	}
 	case CS_GET_ITEM:
@@ -747,13 +794,12 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 
 		break;
 	}
-	case CS_ADD_KID: {
+	case CS_ADD_KID: 
+	{
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
-		//DB에 저장해야된느데
 		Kid temp_kid(*p);
-		//DBManager::SaveKid(this->id, temp_kid);
-		
+		DBManager::SaveKidInfo(temp_kid);
 		break;
 	}
 	case CS_DOOR_UPDATE:
@@ -773,7 +819,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				players[i].send(&pkt);
 			}
 		}
-
 		break;
 	}
     default:
