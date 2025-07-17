@@ -62,7 +62,19 @@ void AVL_Player::Tick(float DeltaTime)
 
 	if (false == isMyPlayer || false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
 	{
-		if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
+		if (state == IDLE)
+		{
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp)
+			{
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance && AnimInstance->IsAnyMontagePlaying())
+				{
+					AnimInstance->Montage_Stop(0.5f);
+				}
+			}
+		}
+		else if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
 		{
 			Jump();
 		}
