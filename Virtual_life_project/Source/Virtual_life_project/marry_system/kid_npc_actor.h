@@ -24,7 +24,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+public:
+	FString name; //이름
+	FString hello;//인사말
 public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
 	void find_hair_groom();

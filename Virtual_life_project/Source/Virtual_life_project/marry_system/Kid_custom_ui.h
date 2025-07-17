@@ -5,7 +5,7 @@
 #include "Components/EditableTextBox.h" // UEditableTextBox 추가
 #include "Kid_custom_ui.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnKidSetting, float, ProgressValue, uint8, Personality, FString, InputText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnKidSetting, float, ProgressValue, uint8, Personality, FString, InputText, FString, NameInput);
 
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UKid_custom_ui : public UUserWidget
@@ -45,7 +45,9 @@ protected:
 
     UPROPERTY(meta = (BindWidget))
     class UCheckBox* Personality_Check4;
-
+    //자식 이름 입력
+    UPROPERTY(meta = (BindWidget))
+    class UEditableTextBox* name_etb;
     // 인사말 입력
     UPROPERTY(meta = (BindWidget))
     class UEditableTextBox* hello_etb;

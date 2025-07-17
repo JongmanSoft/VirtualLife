@@ -405,9 +405,10 @@ struct CS_ADD_KID_PACKET {
 	unsigned int preg_id; // 낳은놈 아이디
 	unsigned int spouse_id; // 배우자 아이디
 	Customizing c; // 자식 커스터마이징 정보
+	wchar_t name[M_ID_SIZE]; // 자식 이름
 	float x, y, z, yaw;// 위치
 	char personality; // 자식 성격
-	//wchar_t	hello_msg[CHAT_SIZE];//자식인사말
+	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
 };
 
 // NPC 한마리 스폰하는 패킷

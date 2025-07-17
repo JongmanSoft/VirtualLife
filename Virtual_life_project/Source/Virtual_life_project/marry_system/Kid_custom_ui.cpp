@@ -113,6 +113,7 @@ void UKid_custom_ui::on_ok_btn()
     float ProgressValue = Genetic_ratio_slider && (!random_genetic || !random_genetic->IsChecked()) ? Genetic_ratio_slider->GetValue() : 0.5f;
     uint8 Personality = FMath::RandRange(0, 2);  // 기본값
     FString InputText = hello_etb ? hello_etb->GetText().ToString() : TEXT("");
+    FString name_input = name_etb ? name_etb->GetText().ToString() : TEXT("KID");
 
     // 선택된 체크박스에 따라 Personality 값 설정
     if (Personality_Check1 && Personality_Check1->IsChecked())
@@ -133,5 +134,6 @@ void UKid_custom_ui::on_ok_btn()
     }
 
     // 델리게이트 호출
-    OnKidSetting.Broadcast(ProgressValue, Personality, InputText);
+    
+    OnKidSetting.Broadcast(ProgressValue, Personality, InputText,name_input);
 }

@@ -25,16 +25,13 @@ void Akid_map_script::BeginPlay()
             if (WidgetInstance)
             {
                 WidgetInstance->AddToViewport();
-                UE_LOG(LogTemp, Warning, TEXT("Widget added to viewport!"));
+               
             }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance!"));
-            }
+           
             FInputModeGameAndUI InputMode;
             PlayerController->SetInputMode(InputMode);
             PlayerController->bShowMouseCursor = true;
-            UE_LOG(LogTemp, Warning, TEXT("Input mode set to UI Only and cursor enabled!"));
+       
         }
        
     }
@@ -85,29 +82,57 @@ void Akid_map_script::BeginPlay()
 
     //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
+    //you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
 
     //너부터 춤춰라...
-    if (you_character) {
-
+    if (you_character)
+    {
         USkeletalMeshComponent* SkeletalMeshComp = you_character->FindComponentByClass<USkeletalMeshComponent>();
-        if (SkeletalMeshComp) {
+        if (SkeletalMeshComp)
+        {
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/MaleStandingPose_UE_Montage.MaleStandingPose_UE_Montage")), 1.0f);
+                // 애니메이션 시퀀스 로드
+                UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose_UE.MaleStandingPose_UE"));
+                if (AnimSequence)
+                {
+                    // 애니메이션 모드를 Use Animation Asset으로 설정
+                    SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+                    // 애니메이션 시퀀스 재생
+                    AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimSequence"));
+                }
             }
         }
     }
     //나도 출게...
-    ACharacter* AOwner = Cast<ACharacter>( PlayerController->GetPawn());
-    if (AOwner) {
+    ACharacter* AOwner = Cast<ACharacter>(PlayerController->GetPawn());
+    if (AOwner)
+    {
         USkeletalMeshComponent* SkeletalMeshComp = AOwner->FindComponentByClass<USkeletalMeshComponent>();
-        if (SkeletalMeshComp) {
+        if (SkeletalMeshComp)
+        {
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/MaleStandingPose2_UE_Montage.MaleStandingPose2_UE_Montage")), 1.0f);
+                UE_LOG(LogTemp, Warning, TEXT("PAWN_ANIMATION"));
+                // 애니메이션 시퀀스 로드
+                UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose2_UE.MaleStandingPose2_UE"));
+                if (AnimSequence)
+                {
+                    // 애니메이션 모드를 Use Animation Asset으로 설정
+                    SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+                    // 애니메이션 시퀀스 재생
+                    AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimSequence"));
+                }
             }
         }
     }
@@ -134,7 +159,7 @@ void Akid_map_script::Tick(float DeltaSeconds)
 
 }
 
-void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hello)
+void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hello,FString name)
 {
     
     UE_LOG(LogTemp, Warning, TEXT("hello"));
