@@ -7,13 +7,14 @@ Akid_npc_actor::Akid_npc_actor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
 }
 
 // Called when the game starts or when spawned
 void Akid_npc_actor::BeginPlay()
 {
 	Super::BeginPlay();
+
 
     apply_custom();
 
@@ -63,43 +64,50 @@ void Akid_npc_actor::find_hair_groom()
 void Akid_npc_actor::set_groom()
 {
     //머리 
-    //TODO : 머리 하나더 크리에이터에서 갖고오자
-    if (m_hair_groom) {
-        TCHAR groom_asset_file[3][100]
-            = { TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe.Hair_S_SideSweptFringe")
-            ,TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/Hair/Hair_S_UpdoBraids.Hair_S_UpdoBraids"),
-            TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual")
-        };
-        TCHAR groom_binding_asset_file[3][150]
-            = { TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/GroomBinding/Hair_S_SideSweptFringe_Binding.Hair_S_SideSweptFringe_Binding")
-            ,TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/GroomBinding/Hair_S_UpdoBraids_Binding.Hair_S_UpdoBraids_Binding")
-            ,TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/GroomBinding/Hair_S_Casual_Binding.Hair_S_Casual_Binding")
+   
+    if (m_hair_groom)
+    {
+        TCHAR groom_asset_file[5][100] = {
+            TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe.Hair_S_SideSweptFringe"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/Hair/Hair_S_UpdoBraids.Hair_S_UpdoBraids"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_BobSlick.Hair_M_BobSlick"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_L_StraightBangs.Hair_L_StraightBangs"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_FauxMohawk.Hair_M_FauxMohawk")
         };
 
+        TCHAR groom_binding_asset_file[5][150] = {
+            TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/GroomBinding/Hair_S_SideSweptFringe_Binding.Hair_S_SideSweptFringe_Binding"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/GroomBinding/Hair_S_UpdoBraids_Binding.Hair_S_UpdoBraids_Binding"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_M_BobSlick_Binding.Hair_M_BobSlick_Binding"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_L_StraightBangs_Binding.Hair_L_StraightBangs_Binding"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_M_FauxMohawk_Binding.Hair_M_FauxMohawk_Binding")
+        };
         auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[m_custom->hair]);
         m_hair_groom->SetGroomAsset(a);
         m_hair_groom->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->hair]));
     }
 
    //눈썹
-    //todo:눈썹 2개 메타휴먼 크리에이터에서 갖고올것
     UGroomComponent* owner_brows = Cast<UGroomComponent>(FindComponentByTag(UGroomComponent::StaticClass(), FName("EYEBROW")));
     if (owner_brows) {
         TCHAR groom_asset_file[3][100]
             = { TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Eyebrows_S_Shaded.Eyebrows_S_Shaded")
-            ,TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Eyebrows_L_Shaded.Eyebrows_L_Shaded"),
-            TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/Hair/Eyebrows_S_FlatThin.Eyebrows_S_FlatThin")
+            ,TEXT("/Game/MetaHumans/real_kid/MaleHair/Hair/Eyebrows_S_FlatThin.Eyebrows_S_FlatThin"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Eyebrows_L_Shaded.Eyebrows_L_Shaded")
         };
         TCHAR groom_binding_asset_file[3][150]
             = { TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Eyebrows_S_Shaded_Binding.Eyebrows_S_Shaded_Binding")
-            ,TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Eyebrows_L_Shaded_Binding.Eyebrows_L_Shaded_Binding")
-            ,TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/GroomBinding/Eyebrows_S_FlatThin_Binding.Eyebrows_S_FlatThin_Binding")
+            ,TEXT("/Game/MetaHumans/real_kid/MaleHair/GroomBinding/Eyebrows_S_FlatThin_Binding.Eyebrows_S_FlatThin_Binding")
+            ,TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Eyebrows_L_Shaded_Binding.Eyebrows_L_Shaded_Binding")
         };
 
 
         auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[m_custom->eyebrows]);
-        owner_brows->SetGroomAsset(a);
-        owner_brows->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->eyebrows]));
+        if (owner_brows) {
+            owner_brows->SetGroomAsset(a);
+            owner_brows->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->eyebrows]));
+        }
+      
     }
 }
 
@@ -139,8 +147,8 @@ void Akid_npc_actor::set_skeltal()
 void Akid_npc_actor::create_dynamic_mat_custom()
 {
     //몸 피부 머터리얼
-    UMaterialInterface* Body_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Materials/MyMaterial.MyMaterial"));
-    USkeletalMeshComponent* body_mesh = find_tag_skeltal_mesh(FName("Face"));
+    UMaterialInterface* Body_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Body/Materials/MI_BodySynthesized_Simplified.MI_BodySynthesized_Simplified"));
+    USkeletalMeshComponent* body_mesh = find_tag_skeltal_mesh(FName("Body"));
     if (Body_material)
     {
         if (body_mesh)
@@ -154,7 +162,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
 
 
 	//페이스 피부 머터리얼 
-    UMaterialInterface* Face_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Materials/MyMaterial.MyMaterial"));
+    UMaterialInterface* Face_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Face/Materials/MI_HeadSynthesized_Simplified_LOD5.MI_HeadSynthesized_Simplified_LOD5"));
     USkeletalMeshComponent* face_mesh = find_tag_skeltal_mesh(FName("Face"));
     if (Face_material)
     {
@@ -167,7 +175,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
         }
     }
     //눈 머터리얼
-    UMaterialInterface* EYE_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/Materials/MyMaterial.MyMaterial"));
+    UMaterialInterface* EYE_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Face/Materials/MI_MetaHumanEye_Simplified.MI_MetaHumanEye_Simplified"));
     if (EYE_material)
     {
         if (face_mesh)
@@ -209,7 +217,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
 
 void Akid_npc_actor::set_morph_target()
 {
-    //todo: 언리얼에디터에서 모프타겟만들자..;
+
     USkeletalMeshComponent* face_mesh = find_tag_skeltal_mesh(FName("Face"));
     face_mesh->SetMorphTarget(FName("eye_slope"), m_custom-> eye_slope  , false);
     face_mesh->SetMorphTarget(FName("eye_width"), m_custom-> eye_width  , false);
