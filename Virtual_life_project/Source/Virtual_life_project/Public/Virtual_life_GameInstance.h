@@ -263,11 +263,7 @@ private:
 	int id;
 	FString name = TEXT("김겜공");
 
-
-
-	// todo: 이거 옮길지 고민
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
-	//AdditionalInfo AddInfo;
 
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
@@ -276,6 +272,13 @@ public :
 	void set_name(FString _name) { name = _name; };
 	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
 	virtual void Init() override;
+
+// 메인 맵 -> 집 들어갈 때 위치 저장용
+public:
+	FVector LastMainMapLocation;
+	FRotator LastMainMapRotation;
+
+	bool bReturnFromRoom = false;
 
 // 음성 채팅
 public: 
@@ -298,17 +301,16 @@ public:
 	void OnChannelParticipantUpdated(const IParticipant& Participant);
 	void OnChannelAudioStateChanged(const IChannelConnectionState& State);
 
-	// VivoxCoreModule 포인터
 	FVivoxCoreModule* VivoxCore;
 
-	// Vivox 세션 관련
 	IClient* VivoxClient = nullptr;
 	AccountId LoggedInAccountID;
 	ChannelId LoggedInChannelId;
 
 	bool bLoggedIn = false;
+
+// 문 동기화 관련
 public:
-	//door정보
 	unsigned short current_door_id[13]; 
 	bool current_is_open[13]; 
 };

@@ -169,6 +169,8 @@ void UVirtual_life_GameInstance::SendUpdateBuildPacket(const FVector& OldLoc, co
 
 void UVirtual_life_GameInstance::SendRoomLeavePacket()
 {
+	bReturnFromRoom = true;
+
 	CS_ROOM_LEAVE_PACKET p;
 	p.size = sizeof(CS_ROOM_LEAVE_PACKET);
 	p.type = CS_ROOM_LEAVE;
@@ -227,6 +229,8 @@ bool UVirtual_life_GameInstance::SendEnqueue(void* packet, int32 PacketSize)
 
 void UVirtual_life_GameInstance::ResetPlayers()
 {
+	loaded = false;
+
 	for (auto& Pair : OtherPlayers)
 	{
 		ACharacter* Character = Pair.Value.character;
@@ -240,7 +244,6 @@ void UVirtual_life_GameInstance::ResetPlayers()
 	OtherPlayers.Empty();
 
 	// 5. 로딩 플래그 초기화
-	loaded = false;
 }
 
 void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s, FString pw)
@@ -266,25 +269,49 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	UWorld* World = GetWorld();
 
 	// 1. 서버에서 받은 내 좌표로 나 이동.
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
-	if (PlayerController)
+	if (bReturnFromRoom)
 	{
-		APawn* PlayerPawn = PlayerController->GetPawn();
-		if (PlayerPawn)
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+		if (PlayerController)
 		{
-			auto p = Cast<AVL_Player>(PlayerPawn);
-			p->isMyPlayer = true;
-			FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
-			FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
+			APawn* PlayerPawn = PlayerController->GetPawn();
+			if (PlayerPawn)
+			{
+				auto p = Cast<AVL_Player>(PlayerPawn);
+				p->isMyPlayer = true;
+
+				PlayerPawn->SetActorHiddenInGame(false);
+				PlayerPawn->SetActorEnableCollision(true);
+				PlayerPawn->SetActorTickEnabled(true);
+
+				PlayerPawn->SetActorLocationAndRotation(LastMainMapLocation, LastMainMapRotation);
+
+				bReturnFromRoom = false; // 위치 복구 후 플래그 리셋
+			}
+		}
+	}
+	else
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+		if (PlayerController)
+		{
+			APawn* PlayerPawn = PlayerController->GetPawn();
+			if (PlayerPawn)
+			{
+				auto p = Cast<AVL_Player>(PlayerPawn);
+				p->isMyPlayer = true;
+				FVector NewLocation(MyPlayerInfo.x, MyPlayerInfo.y, MyPlayerInfo.z);
+				FRotator NewRotation(0.f, MyPlayerInfo.yaw, 0.f);
 
 
-			PlayerPawn->SetActorHiddenInGame(false);
-			PlayerPawn->SetActorEnableCollision(true);
-			PlayerPawn->SetActorTickEnabled(true);
+				PlayerPawn->SetActorHiddenInGame(false);
+				PlayerPawn->SetActorEnableCollision(true);
+				PlayerPawn->SetActorTickEnabled(true);
 
-			PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
+				PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
 
-			p->set_my_id(MyPlayerInfo.id);
+				p->set_my_id(MyPlayerInfo.id);
+			}
 		}
 	}
 
@@ -316,12 +343,9 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 
 	for (int i = 0; i < 13; i++) {
 		UpdateDoor.Broadcast(current_door_id[i], current_is_open[i]);
-		UE_LOG(LogTemp, Log, TEXT("맵 이동 후 전달 : %d번문 : %d"),
-			current_door_id[i], current_is_open[i]);
 	}
 
 	loaded = true;
-
 }
 
 void UVirtual_life_GameInstance::SpawnPlayerInRoom()
@@ -841,6 +865,13 @@ void UVirtual_life_GameInstance::OnStart()
 
 void UVirtual_life_GameInstance::SendEnterRoom(FString roomID)
 {
+	// 현재 플레이어 위치 저장
+	if (ACharacter* MyChar = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	{
+		LastMainMapLocation = MyChar->GetActorLocation();
+		LastMainMapRotation = MyChar->GetActorRotation();
+	}
+
 	// 초기화.
 	ResetPlayers();
 
