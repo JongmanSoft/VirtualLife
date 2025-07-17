@@ -50,13 +50,14 @@ void UVirtual_life_GameInstance::ConnectServer(FString addr)
 		RecvThread = new RecvManager(Socket, this);
 		SendThread = new SendManager(Socket, this);
 
+		LoginToVivox();
 	}
 	else {
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Connection Failed")));
 	}
 
 	// 음성채팅 서버 연결
-	LoginToVivox();
+
 }
 
 void UVirtual_life_GameInstance::SendGetItemPacket(uint8 item_id, int num)
@@ -408,6 +409,17 @@ void UVirtual_life_GameInstance::Tick(float DeltaTime)
 {
 	ProcessRecvPackets();
 
+	if (GEngine)
+	{
+		FString Status = loaded ? TEXT("loaded: true") : TEXT("loaded: false");
+		GEngine->AddOnScreenDebugMessage(
+			/*Key*/ 1,           // 고유 ID (같은 키면 덮어씀)
+			/*TimeToDisplay*/ 0.f, // 다음 프레임에도 계속 보이게
+			/*Color*/ FColor::Yellow,
+			/*Message*/ Status
+		);
+	}
+
 	if (true == loaded) {
 		TimeAccumulator += DeltaTime;
 		if (TimeAccumulator >= 0.1f)  
@@ -683,11 +695,11 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			auto FoundPlayer = OtherPlayers.Find(p.pl.id);
 
-			if (FoundPlayer == nullptr) break;
-			if (FoundPlayer->character == nullptr) 
+			if (FoundPlayer == nullptr || !IsValid(FoundPlayer->character))
 				break;
 
 			ACharacter* PlayerActor = FoundPlayer->character;
+			if (PlayerActor == nullptr) break;
 
 			FVector NewLocation(p.pl.x, p.pl.y, p.pl.z);
 			FRotator NewRotation(0.f, p.pl.yaw, 0.f);
@@ -697,7 +709,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				pl->setDestInfo(p.pl);
 				pl->setState(p.pl.st);
 			}
-
 			break;
 		}
 		case SC_UPDATE_ITEM:

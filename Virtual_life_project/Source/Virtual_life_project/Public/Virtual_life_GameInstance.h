@@ -255,8 +255,25 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StopBGM();
 	
-
+	
+	// 맵전환때문에
+public:
 	std::atomic_bool loaded = false;
+	UFUNCTION(BlueprintCallable)
+	void SetLoaded(bool b) 
+	{ 
+		loaded = b; 
+	}
+	UFUNCTION(BlueprintCallable)
+	void SetNullAllPlayer()
+	{
+		for (auto& Pair : OtherPlayers)
+		{
+			Pair.Value.character->Destroy();
+			Pair.Value.character = nullptr;
+		}
+	}
+
 public:
 	UFUNCTION(BlueprintCallable)
 	int get_my_player_id();
