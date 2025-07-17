@@ -123,9 +123,10 @@ struct Door
 };
 
 #include "Object.h"
+#include "Kid.h"
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
-extern std::array<Player, MAX_NPC> npcs; // ¿£ÇÇ¾¾µé
+extern std::array<Kid, MAX_NPC> npcs; // ¿£ÇÇ¾¾µé
 extern std::array<Door, MAX_DOOR> doors; // ¹®µé
 extern concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 extern std::mutex players_mutex;

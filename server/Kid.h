@@ -1,8 +1,7 @@
 #pragma once
 #include "protocol.h"
 
-
-class Kid
+class Kid 
 {
 public:
 	unsigned int id; // ¾ÆÀÌµð

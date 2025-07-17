@@ -27,7 +27,7 @@ void Room::packet_setup(SC_ROOM_SETUP_PACKET& pkt)
     pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
     pkt.type = SC_ROOM_SETUP;
 
-    int count = min(objs.size(), (size_t)MAX_BUILD_ITEM);
+    int count = static_cast<int>(min(objs.size(), (size_t)MAX_BUILD_ITEM));
     pkt.count = count;
 
     for (int i = 0; i < count; ++i)

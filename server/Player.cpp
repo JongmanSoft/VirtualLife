@@ -43,7 +43,7 @@ bool Player::send_enter_game_packet()
 	auto now = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
-	p.time = std::fmod(f_time + (elapsed.count() * 0.0001f), 24);
+	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
 
 	// 인벤토리 초기화
 	for (int i = 0; i < ITEM_SIZE; ++i) {
@@ -170,7 +170,7 @@ bool Player::send_room_leave_packet()
 	auto now = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
-	p.time = std::fmod(f_time + (elapsed.count() * 0.0001f), 24);
+	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
 	std::cout << "시간: " << p.time << std::endl;
 	p.x = 960;
 	p.y = 1650;
@@ -364,7 +364,7 @@ void Player::recv()
 	}
 
 	ZeroMemory(&over.over, sizeof(over.over));
-	over.wsabuf.len = BUFSIZE - packet_data.size();
+	over.wsabuf.len = static_cast<ULONG>(BUFSIZE - packet_data.size());
 	over.wsabuf.buf = over.wb_buf + packet_data.size();
 
 	if (over.wsabuf.buf == nullptr) {

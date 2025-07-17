@@ -12,7 +12,7 @@ public:
 	void set_partyID(std::string& str) { partyID = str; }
 	std::string get_partyID() { return partyID; }
 	std::vector<Player*>& get_members() { return members; }
-	int get_member_count() { return members.size(); }
+	int get_member_count() { return static_cast<int>(members.size()); }
 	void add_member(Player* player)
 	{
 		std::lock_guard<std::mutex> lock(party_lock);
