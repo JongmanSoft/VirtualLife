@@ -15,7 +15,7 @@ void Akid_npc_actor::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+    find_hair_groom();
     apply_custom();
 
 }
@@ -64,7 +64,7 @@ void Akid_npc_actor::find_hair_groom()
 void Akid_npc_actor::set_groom()
 {
     //¸Ó¸® 
-   
+    
     if (m_hair_groom)
     {
         TCHAR groom_asset_file[5][100] = {
@@ -218,6 +218,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
 void Akid_npc_actor::set_morph_target()
 {
 
+ 
     USkeletalMeshComponent* face_mesh = find_tag_skeltal_mesh(FName("Face"));
     face_mesh->SetMorphTarget(FName("eye_slope"), m_custom-> eye_slope  , false);
     face_mesh->SetMorphTarget(FName("eye_width"), m_custom-> eye_width  , false);
@@ -231,6 +232,8 @@ void Akid_npc_actor::set_morph_target()
     face_mesh->SetMorphTarget(FName("heavy"), m_custom->heavy, false);
     face_mesh->SetMorphTarget(FName("chin"), m_custom->chin, false);
     face_mesh->SetMorphTarget(FName("jaw"), m_custom->jaw, false);
+
+    
 
 }
 
