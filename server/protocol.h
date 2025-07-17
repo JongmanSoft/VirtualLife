@@ -94,6 +94,17 @@ struct Object // 건축 오브젝트
 	float scale; // 크기
 };
 
+// 직렬화때문에 만듦
+struct NPCUnitData
+{
+	unsigned int preg_id;
+	unsigned int spouse_id;
+	unsigned int id;
+	Customizing c;
+	float x, y, z, yaw;
+	char personality;
+};
+
 // Packet ID
 enum PACKETID : char
 {
@@ -144,6 +155,8 @@ enum PACKETID : char
 	SC_DOOR_UPDATE,
 	SC_DOORS_UPDATE
 };
+
+
 
 constexpr int HEADER_SIZE = sizeof(PACKETID) + sizeof(unsigned short);
 // client to server
@@ -385,6 +398,38 @@ struct CS_UPDATE_DOOR_PACKET {
 	bool is_open; // 문 열림 여부
 };
 
+// 엔피씨 ---------------------------
+struct CS_ADD_KID_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned int preg_id; // 낳은놈 아이디
+	unsigned int spouse_id; // 배우자 아이디
+	Customizing c; // 자식 커스터마이징 정보
+	float x, y, z, yaw;// 위치
+	char personality; // 자식 성격
+	//wchar_t	hello_msg[CHAT_SIZE];//자식인사말
+};
+
+// NPC 한마리 스폰하는 패킷
+struct SC_SPAWN_NPC_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned int preg_id; // 낳은놈 아이디
+	unsigned int spouse_id; // 배우자 아이디
+	unsigned int id; // npc 아이디
+	Customizing c; // npc 커스터마이징 정보
+	float x, y, z, yaw; // 위치
+	char personality; // npc 성격
+};
+
+// NPC 여러마리 스폰하는 패킷
+struct SC_SPAWN_NPCS_PACKET {
+	unsigned short size;
+	PACKETID type;
+	unsigned short npc_count;
+	NPCUnitData npcs[MAX_NPC]; 
+};
+
 // 미완 ----------------------------
 struct CS_NPC_CHAT_PACKET {
 	unsigned short size;
@@ -413,14 +458,6 @@ struct SC_NPC_RESPONSE_PACKET {
 	wchar_t	msg[CHAT_SIZE];
 };
 
-struct CS_ADD_KID_PACKET {
-	unsigned short size;
-	PACKETID type;
-	unsigned int preg_id; // 낳은놈 아이디
-	unsigned int spouse_id; // 배우자 아이디
-	Customizing c; // 자식 커스터마이징 정보
-	char personality; // 자식 성격
-	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
-};
+
 
 #pragma pack (pop)
