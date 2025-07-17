@@ -58,8 +58,6 @@ void AVL_Player::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 
-	// 여기서 목적지로 이동하고 회전하는 코드 작성
-
 	if (false == isMyPlayer || false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
 	{
 		if (state == IDLE)
@@ -185,6 +183,15 @@ void AVL_Player::Tick(float DeltaTime)
 		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
 
 		SetActorRotation(NewRotation);
+	}
+	else // 내가 조종하는 캐릭터
+	{
+		auto curLocation = GetActorLocation();
+		if (curLocation.Z < 1000.f)
+		{
+			curLocation.Z = 4000.0f;
+			SetActorLocation(curLocation);
+		}
 	}
 }
 
