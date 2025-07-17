@@ -862,32 +862,32 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
             wcsncpy_s(outKid.hello_msg, msg.c_str(), CHAT_SIZE);
 
             Customizing& c = outKid.customizing;
-            c.skin = res->getDouble("SKIN");
-            c.shirt = static_cast<float>(res->getInt("SHIRT"));
-            c.pants = static_cast<float>(res->getInt("PANTS"));
-            c.shoes = static_cast<float>(res->getInt("SHOES"));
-            c.R_eye_color_sat = res->getDouble("R_EYE_COLOR_SAT");
-            c.R_eye_color_hue = res->getDouble("R_EYE_COLOR_HUE");
-            c.L_eye_color_hue = res->getDouble("L_EYE_COLOR_HUE");
-            c.L_eye_color_sat = res->getDouble("L_EYE_COLOR_SAT");
-            c.eye_scale = res->getDouble("EYE_SCALE");
-            c.pupil_scale = res->getDouble("PUPIL_SCALE");
-            c.hair = res->getDouble("HAIR");
-            c.hair_color_R = res->getDouble("HAIR_COLOR_R");
-            c.hair_color_G = res->getDouble("HAIR_COLOR_G");
-            c.hair_color_B = res->getDouble("HAIR_COLOR_B");
-            c.eye_width = res->getDouble("EYE_WIDTH");
-            c.eye_thick = res->getDouble("EYE_THICK");
-            c.eye_slope = res->getDouble("EYE_SLOPE");
-            c.nose_width = res->getDouble("NOSE_WIDTH");
-            c.nose_height = res->getDouble("NOSE_HEIGHT");
-            c.mouse_width = res->getDouble("MOUTH_WIDTH");
-            c.mouse_thick = res->getDouble("MOUTH_THICK");
-            c.mouse_slope = res->getDouble("MOUTH_SLOPE");
-            c.chin = res->getDouble("CHIN");
-            c.jaw = res->getDouble("JAW");
-            c.heavy = res->getDouble("HEAVY");
-            c.face_width = res->getDouble("FACE_WIDTH");
+            c.skin = static_cast<float>(res->getDouble("SKIN"));
+            c.shirt = static_cast<unsigned short>(res->getInt("SHIRT"));
+            c.pants = static_cast<unsigned short>(res->getInt("PANTS"));
+            c.shoes = static_cast<unsigned short>(res->getInt("SHOES"));
+            c.R_eye_color_sat = static_cast<float>(res->getDouble("R_EYE_COLOR_SAT"));
+            c.R_eye_color_hue = static_cast<float>(res->getDouble("R_EYE_COLOR_HUE"));
+            c.L_eye_color_hue = static_cast<float>(res->getDouble("L_EYE_COLOR_HUE"));
+            c.L_eye_color_sat = static_cast<float>(res->getDouble("L_EYE_COLOR_SAT"));
+            c.eye_scale = static_cast<float>(res->getDouble("EYE_SCALE"));
+            c.pupil_scale = static_cast<float>(res->getDouble("PUPIL_SCALE"));
+            c.hair = static_cast<unsigned short>(res->getInt("HAIR"));
+            c.hair_color_R = static_cast<float>(res->getDouble("HAIR_COLOR_R"));
+            c.hair_color_G = static_cast<float>(res->getDouble("HAIR_COLOR_G"));
+            c.hair_color_B = static_cast<float>(res->getDouble("HAIR_COLOR_B"));
+            c.eye_width = static_cast<float>(res->getDouble("EYE_WIDTH"));
+            c.eye_thick = static_cast<float>(res->getDouble("EYE_THICK"));
+            c.eye_slope = static_cast<float>(res->getDouble("EYE_SLOPE"));
+            c.nose_width = static_cast<float>(res->getDouble("NOSE_WIDTH"));
+            c.nose_height = static_cast<float>(res->getDouble("NOSE_HEIGHT"));
+            c.mouse_width = static_cast<float>(res->getDouble("MOUTH_WIDTH"));
+            c.mouse_thick = static_cast<float>(res->getDouble("MOUTH_THICK"));
+            c.mouse_slope = static_cast<float>(res->getDouble("MOUTH_SLOPE"));
+            c.chin = static_cast<float>(res->getDouble("CHIN"));
+            c.jaw = static_cast<float>(res->getDouble("JAW"));
+            c.heavy = static_cast<float>(res->getDouble("HEAVY"));
+            c.face_width = static_cast<float>(res->getDouble("FACE_WIDTH"));
             c.eyebrows = res->getInt("EYEBROWS");
             c.glasses = res->getInt("GLASSES");
 
@@ -928,11 +928,11 @@ bool DBManager::LoadAllRoomsFromDB()
             // Object 생성
             Object obj;
             obj.item_id = res->getInt("ITEM_ID");
-            obj.x = res->getDouble("POS_X");
-            obj.y = res->getDouble("POS_Y");
-            obj.z = res->getDouble("POS_Z");
-            obj.scale = res->getDouble("SCALE");
-            obj.yaw = res->getDouble("YAW");
+            obj.x = static_cast<float>(res->getDouble("POS_X"));
+            obj.y = static_cast<float>(res->getDouble("POS_Y"));
+            obj.z = static_cast<float>(res->getDouble("POS_Z"));
+            obj.scale = static_cast<float>(res->getDouble("SCALE"));
+            obj.yaw = static_cast<float>(res->getDouble("YAW"));
 
             // Room에 추가
             rooms[userID]->AddObject(obj);
@@ -944,5 +944,91 @@ bool DBManager::LoadAllRoomsFromDB()
     catch (const sql::SQLException& e) {
         std::cerr << "[ERROR] Failed to load rooms: " << e.what() << std::endl;
     }
+    return false;
+}
+
+bool DBManager::LoadAllKidsFromDB()
+{
+    if (!DB_ON) return false;
+
+    try {
+        sql::Connection* conn = GetConnection();
+        if (!conn) return false;
+
+        std::unique_ptr<sql::Statement> stmt(conn->createStatement());
+        std::unique_ptr<sql::ResultSet> res(stmt->executeQuery(R"(
+            SELECT *
+            FROM kid_info
+        )"));
+
+        int cnt = 0;
+        while (res->next()) {
+            Kid kid;
+
+            kid.id = res->getUInt("ID");
+            kid.preg_id = res->getUInt("PREG_ID");
+            kid.spouse_id = res->getUInt("SPOUSE_ID");
+            kid.personality = static_cast<char>(res->getInt("PERSONALITY"));
+
+            std::wstring msg = UTF8ToWString(res->getString("HELLO_MSG"));
+            wcsncpy_s(kid.hello_msg, msg.c_str(), CHAT_SIZE);
+
+            Customizing& c = kid.customizing;
+            c.skin = static_cast<float>(res->getDouble("SKIN"));
+            c.shirt = res->getInt("SHIRT");
+            c.pants = res->getInt("PANTS");
+            c.shoes = res->getInt("SHOES");
+
+            c.R_eye_color_hue = static_cast<float>(res->getDouble("R_EYE_COLOR_HUE"));
+            c.R_eye_color_sat = static_cast<float>(res->getDouble("R_EYE_COLOR_SAT"));
+            c.L_eye_color_hue = static_cast<float>(res->getDouble("L_EYE_COLOR_HUE"));
+            c.L_eye_color_sat = static_cast<float>(res->getDouble("L_EYE_COLOR_SAT"));
+
+            c.eye_scale = static_cast<float>(res->getDouble("EYE_SCALE"));
+            c.pupil_scale = static_cast<float>(res->getDouble("PUPIL_SCALE"));
+            c.hair = static_cast<short>(res->getInt("HAIR"));
+            c.hair_color_R = static_cast<float>(res->getDouble("HAIR_COLOR_R"));
+            c.hair_color_G = static_cast<float>(res->getDouble("HAIR_COLOR_G"));
+            c.hair_color_B = static_cast<float>(res->getDouble("HAIR_COLOR_B"));
+
+            c.eye_width = static_cast<float>(res->getDouble("EYE_WIDTH"));
+            c.eye_thick = static_cast<float>(res->getDouble("EYE_THICK"));
+            c.eye_slope = static_cast<float>(res->getDouble("EYE_SLOPE"));
+            c.nose_width = static_cast<float>(res->getDouble("NOSE_WIDTH"));
+            c.nose_height = static_cast<float>(res->getDouble("NOSE_HEIGHT"));
+
+            c.mouse_width = static_cast<float>(res->getDouble("MOUTH_WIDTH"));
+            c.mouse_thick = static_cast<float>(res->getDouble("MOUTH_THICK"));
+            c.mouse_slope = static_cast<float>(res->getDouble("MOUTH_SLOPE"));
+
+            c.chin = static_cast<float>(res->getDouble("CHIN"));
+            c.jaw = static_cast<float>(res->getDouble("JAW"));
+            c.heavy = static_cast<float>(res->getDouble("HEAVY"));
+            c.face_width = static_cast<float>(res->getDouble("FACE_WIDTH"));
+
+            c.eyebrows = res->getInt("EYEBROWS");
+            c.glasses = res->getInt("GLASSES");
+
+            kid.x = static_cast<float>(res->getDouble("x"));
+            kid.y = static_cast<float>(res->getDouble("y"));
+            kid.z = static_cast<float>(res->getDouble("z"));
+            kid.yaw = static_cast<float>(res->getDouble("yaw"));
+
+            std::string nameStr = res->getString("name");
+            kid.name = UTF8ToWString(nameStr);
+
+            kid.is_kid = res->getInt("is_Kid");
+
+            npcs[kid.id] = kid;
+            cnt++;
+        }
+
+        std::cout << "[INFO] Loaded " << cnt << " kids from DB." << std::endl;
+        return true;
+    }
+    catch (const sql::SQLException& e) {
+        std::cerr << "[DB] LoadAllKidInfo 예외 발생: " << e.what() << std::endl;
+    }
+
     return false;
 }

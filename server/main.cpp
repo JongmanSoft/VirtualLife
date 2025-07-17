@@ -15,6 +15,7 @@ void initialize_server();
 void push_evt_queue(int from, int to, TASK_TYPE ev, int time);
 bool room_setup();
 bool door_setup();
+bool npc_setup();
 
 void workerThread(HANDLE iocp_hd)
 {
@@ -148,6 +149,7 @@ int main()
         push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
         push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         room_setup();
+        npc_setup();
     }
 
     // doing acceptEX
@@ -236,4 +238,10 @@ bool door_setup()
 		doors[i].is_open = false;
 	}
 	return true;
+}
+
+bool npc_setup()
+{
+    DBManager::LoadAllKidsFromDB();
+    return true;
 }

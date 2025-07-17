@@ -1,6 +1,7 @@
 #pragma once
 #include "protocol.h"
 
+#include <string>
 class Kid 
 {
 public:
@@ -10,7 +11,9 @@ public:
 	Customizing customizing; // 커스터마이징 정보
 	char personality; // 성격
 	wchar_t hello_msg[CHAT_SIZE]; // 인사말
-
+	float x = 0, y = 0, z = 0, yaw = 0; // 위치 정보
+	bool is_kid = true;
+	std::wstring name = L""; // 이름
 
 	Kid(unsigned int id, unsigned int preg_id, unsigned int spouse_id, const Customizing& cus, char personality, const wchar_t* msg);
 	Kid(const CS_ADD_KID_PACKET& pkt);
