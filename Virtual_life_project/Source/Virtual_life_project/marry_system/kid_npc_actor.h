@@ -25,7 +25,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FString name; //이름
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString hello;//인사말
 public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
@@ -46,4 +48,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CustomClass")
 	UCustom_data* m_custom;
+
+
 };
