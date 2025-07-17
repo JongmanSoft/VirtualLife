@@ -2,6 +2,7 @@
 
 std::atomic_int id = 0;
 std::array<Player, MAX_PLAYER> players{};
+std::array<Kid, MAX_NPC> npcs{};
 std::mutex players_mutex;
 std::array<Door, MAX_DOOR> doors{};
 concurrency::concurrent_unordered_map<std::string, Room*> rooms{};

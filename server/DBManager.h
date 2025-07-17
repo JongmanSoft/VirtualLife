@@ -48,6 +48,7 @@ public:
 
     // 초기초기화
     static bool LoadAllRoomsFromDB();
+    static bool LoadAllKidsFromDB();
 
 private:
     static sql::mysql::MySQL_Driver* g_driver;
