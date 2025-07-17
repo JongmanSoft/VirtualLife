@@ -176,6 +176,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendDoorStatePacket(const uint8& door_id, bool is_open);
 
+	//새로운 자식을 만들었어요!
+	void SendCreateKidPacket(unsigned int preg_id,unsigned int spouse_id, Customizing c, float x, float y, float z, float yaw,char personality);
+
 	bool SendEnqueue(void* packet, int32 PacketSize);
 
 	void ResetPlayers();
