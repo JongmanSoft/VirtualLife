@@ -325,13 +325,18 @@ bool Player::save_db_pInventory()
 
 void Player::send(void* packet)
 {
-	EXT_OVER* ov = new EXT_OVER();
-	
 	std::lock_guard ll{ socket_lock };
 
-	// 패킷 크기 복사
+	if (socket == INVALID_SOCKET)
+	{
+		printf("[send] Invalid socket. Send aborted.\n");
+		return;
+	}
+
 	unsigned short p_size;
 	memcpy(&p_size, packet, 2);
+
+	EXT_OVER* ov = new EXT_OVER();
 	ov->setup_send(reinterpret_cast<char*>(packet), p_size);
 
 	int result = WSASend(socket, &ov->wsabuf, 1, 0, 0, &ov->over, NULL);
@@ -341,10 +346,15 @@ void Player::send(void* packet)
 		if (error != WSA_IO_PENDING)
 		{
 			printf("WSASend failed with error: %d\n", error);
+
 			closesocket(socket);
+			socket = INVALID_SOCKET;
+
+			delete ov;
 		}
 	}
 }
+
 
 void Player::recv()
 {
@@ -487,8 +497,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
     case CS_LEAVE:
     {
-		std::cout << "RECV-CS_LEAVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
-		int id = pinfo.id;
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
 
 		if (state != PLAYING) {
@@ -500,8 +508,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].state == PLAYING and i != id)
-					players[i].send_despawn_packet(id);
+				if (players[i].state == PLAYING and i != pinfo.id)
+					players[i].send_despawn_packet(pinfo.id);
 			}
 		}
 		
@@ -513,9 +521,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
     }
 	case CS_MOVEP:
 	{
-		int id = pinfo.id;
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		std::cout << "RECV-CS_MOVE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음, 현재상태: " << int(p->pl.st) << std::endl;
 		pinfo = p->pl;
 
 		{
@@ -537,8 +543,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 						players[i].send_move_packet(p->pl);
 				}
 			}
-
-			
 		}
 
 		break;
@@ -606,8 +610,8 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	}
 	case CS_ROOM_ENTER:
 	{
-		std::cout << "CS_ENTER_ROOM 받음! id: " << pinfo.id << std::endl;
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
+		std::cout << "CS_ENTER_ROOM: " << pinfo.id << "가 " << p->id <<"의 방에 진입, 현재 인원: " << rooms[p->id]->players.size() << "명" << std::endl;
 
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
@@ -686,24 +690,27 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 	{
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
 
-		// 집에서 나갈때 전체 삭제 후 다시 저장
+		// 집에서 나갈때 전체 삭제 후 다시 저장, 내 방일 때만
 		if (this->id == room->ownerID)
 		{
 			DBManager::DeleteRoomObjects(id);
 			room->SaveToDB(id);
 		}
 
-		location = WORLD;
+		this->location = WORLD;
+		std::cout << "CS_ROOM_LEAVE_PACKET: " << pinfo.id << "가 " << room->ownerID << "의 방에서 나감, 현재 인원: " << room->players.size() - 1 << "명" << std::endl;
 
-		room->RemovePlyer(pinfo.id); // 방에서 플레이어 제거
 		{
 			std::lock_guard ll{ room->m };
 
-			// 방에 있는 플레이어들한테 나 제거
-			for (int i = 0; i < room->players.size(); ++i) {
-				room->players[i]->send_despawn_packet(pinfo.id);
+			for (Player* p : room->players)
+			{
+				if (p != this)
+					p->send_despawn_packet(pinfo.id);
 			}
 		}
+		room->RemovePlyer(pinfo.id); // 방에서 플레이어 제거
+		this->room = nullptr; // 방 정보 초기화
 
 		send_room_leave_packet();
 
@@ -724,7 +731,6 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 			}
 		}
 
-		std::cout << "[CS_ROOM_LEAVE_PACKET] - " << pinfo.id << "가 집에서 나감 " << std::endl;
 		break;
 	}
 	case CS_UPDATE_PARTY:
