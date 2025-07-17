@@ -65,15 +65,19 @@ void Akid_npc_actor::set_groom()
     //머리 
     //TODO : 머리 하나더 크리에이터에서 갖고오자
     if (m_hair_groom) {
-        TCHAR groom_asset_file[3][100]
+        TCHAR groom_asset_file[5][100]
             = { TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe.Hair_S_SideSweptFringe")
             ,TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/Hair/Hair_S_UpdoBraids.Hair_S_UpdoBraids"),
-            TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/Hair/Hair_S_Casual.Hair_S_Casual")
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_BobSlick.Hair_M_BobSlick" ),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_L_StraightBangs.Hair_L_StraightBangs"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_FauxMohawk.Hair_M_FauxMohawk")
         };
-        TCHAR groom_binding_asset_file[3][150]
+        TCHAR groom_binding_asset_file[5][150]
             = { TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/GroomBinding/Hair_S_SideSweptFringe_Binding.Hair_S_SideSweptFringe_Binding")
             ,TEXT("/Game/MetaHumans/real_kid/FemaleHair_pfn/GroomBinding/Hair_S_UpdoBraids_Binding.Hair_S_UpdoBraids_Binding")
-            ,TEXT("/Game/MetaHumans/naked_character/MaleHair_fro/GroomBinding/Hair_S_Casual_Binding.Hair_S_Casual_Binding")
+            ,TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_M_BobSlick_Binding.Hair_M_BobSlick_Binding",
+                TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_L_StraightBangs_Binding.Hair_L_StraightBangs_Binding"),
+                TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Hair_M_FauxMohawk_Binding.Hair_M_FauxMohawk_Binding")
         };
 
         auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[m_custom->hair]);
@@ -87,13 +91,13 @@ void Akid_npc_actor::set_groom()
     if (owner_brows) {
         TCHAR groom_asset_file[3][100]
             = { TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Eyebrows_S_Shaded.Eyebrows_S_Shaded")
-            ,TEXT("/Game/MetaHumans/naked_character/FemaleHair/Hair/Eyebrows_L_Shaded.Eyebrows_L_Shaded"),
-            TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/Hair/Eyebrows_S_FlatThin.Eyebrows_S_FlatThin")
+            ,TEXT("/Game/MetaHumans/real_kid/MaleHair/Hair/Eyebrows_S_FlatThin.Eyebrows_S_FlatThin"),
+            TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Eyebrows_L_Shaded.Eyebrows_L_Shaded")
         };
         TCHAR groom_binding_asset_file[3][150]
             = { TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Eyebrows_S_Shaded_Binding.Eyebrows_S_Shaded_Binding")
-            ,TEXT("/Game/MetaHumans/naked_character/FemaleHair/GroomBinding/Eyebrows_L_Shaded_Binding.Eyebrows_L_Shaded_Binding")
-            ,TEXT("/Game/MetaHumans/gyungcheal_id/MaleHair/GroomBinding/Eyebrows_S_FlatThin_Binding.Eyebrows_S_FlatThin_Binding")
+            ,TEXT("/Game/MetaHumans/real_kid/MaleHair/GroomBinding/Eyebrows_S_FlatThin_Binding.Eyebrows_S_FlatThin_Binding")
+            ,TEXT("/Game/MetaHumans/real_kid/FemaleHair/GroomBinding/Eyebrows_L_Shaded_Binding.Eyebrows_L_Shaded_Binding")
         };
 
 
