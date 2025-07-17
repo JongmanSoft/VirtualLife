@@ -134,5 +134,6 @@ void UKid_custom_ui::on_ok_btn()
     }
 
     // 델리게이트 호출
+    
     OnKidSetting.Broadcast(ProgressValue, Personality, InputText,name_input);
 }
