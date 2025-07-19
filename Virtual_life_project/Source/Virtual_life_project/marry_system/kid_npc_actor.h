@@ -29,6 +29,9 @@ public:
 	FString name; //이름
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString hello;//인사말
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int personality; //성격
+
 public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
 	void find_hair_groom();

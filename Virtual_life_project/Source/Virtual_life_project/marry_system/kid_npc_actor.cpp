@@ -156,6 +156,8 @@ void Akid_npc_actor::create_dynamic_mat_custom()
             UMaterialInstanceDynamic* BodyMaterial = UMaterialInstanceDynamic::Create(Body_material, this);
             body_mesh->SetMaterial(0, BodyMaterial);
             BodyMaterial->SetScalarParameterValue(FName("BaseColor_Brightness"), m_custom->skin);
+        
+
      
         }
     }
@@ -172,6 +174,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
             face_mesh->SetMaterial(6, FACEMaterial);
             face_mesh->SetMaterial(7, FACEMaterial);
             FACEMaterial->SetScalarParameterValue(FName("BaseColor_Brightness"), m_custom->skin);
+    
         }
     }
     //눈 머터리얼
