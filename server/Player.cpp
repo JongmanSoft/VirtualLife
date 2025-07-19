@@ -249,7 +249,6 @@ bool Player::send_doors_state_packet()
 
 bool Player::send_spawn_npcs_packet()
 {
-	// 한 번에 보내기엔 너무 많다면 분할 전송 로직 필요
 	SC_SPAWN_NPCS_PACKET p;
 	p.type = SC_NPCS_SPAWN;
 	p.npc_count = min(npc_count, MAX_NPC);
