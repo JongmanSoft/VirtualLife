@@ -6,6 +6,7 @@
 #include "Engine/LevelScriptActor.h"
 #include "Kid_custom_ui.h"
 #include "VL_Player.h"
+#include "../Public/Virtual_life_GameInstance.h"
 #include "kid_map_script.generated.h"
 
 /**
@@ -29,4 +30,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	ACharacter* you_character; //상대캐릭터
 
+	void set_customizing_inteerpol(Customizing& change_cus, const Customizing& standard_cus, float interpol_value);
+	Customizing make_kid_customizing(const Customizing& my_custom, const Customizing& you_custom);
 };

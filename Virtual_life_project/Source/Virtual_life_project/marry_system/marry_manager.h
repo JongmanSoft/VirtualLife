@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Kid_custom_ui.h"
+#include "../../server/protocol.h"
 #include "marry_manager.generated.h"
 
 /**
@@ -23,15 +24,19 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "marry")
 	int you_id;
 
-	// 자식 커스텀 ui에서 받은 정보
-	float genetic_value;
+	// 자식 커스텀 맵에서 얻은정보
+	Customizing kid_cinfo;
 	uint8 Personality;
 	FString hello_text;
+	FString kid_name; //자식이름
+
+	UPROPERTY(BlueprintReadWrite, Category = "marry")
+	bool have_to_send_kid = false;
 
 	//유도 정보
 	float gentic_offset;
 
 public:
-	void set_kid_custom_data(float _genetic_value, uint8 personality, FString input_text);
+	void set_kid_custom_data(Customizing kid, uint8 personality, FString input_text, FString name);
 	
 };

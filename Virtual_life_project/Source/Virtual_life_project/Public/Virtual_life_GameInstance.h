@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notic in the Description page of Project Settings.
 
 #pragma once
 
@@ -228,6 +228,7 @@ public:
 	UCustom_data* m_custom;
 	void custom_data_update(UCustom_data* targer_data, Customizing recv_cus);
 	void custom_packet_setup(Customizing& targer_data, const UCustom_data* recv_cus);
+
 public:
 	//퀘스트들을 관리하는 퀘스트매니저클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Quest")

@@ -3,7 +3,6 @@
 
 #include "kid_map_script.h"
 #include "Blueprint/UserWidget.h"
-#include "../Public/Virtual_life_GameInstance.h"
 #include "../Custom/m_CustomizableSkeletalComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -82,7 +81,7 @@ void Akid_map_script::BeginPlay()
 
     //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-    //you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
+    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
 
     //너부터 춤춰라...
     if (you_character)
@@ -173,5 +172,114 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
             WidgetInstance->RemoveFromParent();
             WidgetInstance = nullptr;
         }
-    
+
+        //커스텀 시작! 0일수록 나, 1일수록 상대방임
+        auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+		if (m_inst)
+		{
+            auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo;
+            Customizing my_custom;
+			m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
+
+            if (g_value < 0.5) {
+                //얼굴이 나에 가깝다
+				set_customizing_inteerpol(you_custom, my_custom, g_value);
+            }
+            else if (g_value > 0.5) {
+                //얼굴이 상대방에 가깝다
+				set_customizing_inteerpol(my_custom, you_custom, 1 - g_value);
+            }
+
+            //그럼 결국 자식 커스텀은..
+			Customizing kid_custom = make_kid_customizing(my_custom,you_custom);
+            
+		}
+
+}
+
+void Akid_map_script::set_customizing_inteerpol(Customizing& change_cus, const Customizing& standard_cus, float interpol_value)
+{
+    change_cus.skin = change_cus.skin * interpol_value + standard_cus.skin * (1 - interpol_value);
+    change_cus.R_eye_color_hue = change_cus.R_eye_color_hue * interpol_value + standard_cus.R_eye_color_hue * (1 - interpol_value);
+    change_cus.R_eye_color_sat = change_cus.R_eye_color_sat * interpol_value + standard_cus.R_eye_color_sat * (1 - interpol_value);
+    change_cus.L_eye_color_hue = change_cus.L_eye_color_hue * interpol_value + standard_cus.L_eye_color_hue * (1 - interpol_value);
+    change_cus.L_eye_color_sat = change_cus.L_eye_color_sat * interpol_value + standard_cus.L_eye_color_sat * (1 - interpol_value);
+    change_cus.eye_scale = change_cus.eye_scale * interpol_value + standard_cus.eye_scale * (1 - interpol_value);
+    change_cus.pupil_scale = change_cus.pupil_scale * interpol_value + standard_cus.pupil_scale * (1 - interpol_value);
+    change_cus.hair_color_R = change_cus.hair_color_R * interpol_value + standard_cus.hair_color_R * (1 - interpol_value);
+    change_cus.hair_color_G = change_cus.hair_color_G * interpol_value + standard_cus.hair_color_G * (1 - interpol_value);
+    change_cus.hair_color_B = change_cus.hair_color_B * interpol_value + standard_cus.hair_color_B * (1 - interpol_value);
+    change_cus.eye_width = change_cus.eye_width * interpol_value + standard_cus.eye_width * (1 - interpol_value);
+    change_cus.eye_thick = change_cus.eye_thick * interpol_value + standard_cus.eye_thick * (1 - interpol_value);
+    change_cus.eye_slope = change_cus.eye_slope * interpol_value + standard_cus.eye_slope * (1 - interpol_value);
+    change_cus.nose_width = change_cus.nose_width * interpol_value + standard_cus.nose_width * (1 - interpol_value);
+    change_cus.nose_height = change_cus.nose_height * interpol_value + standard_cus.nose_height * (1 - interpol_value);
+    change_cus.mouse_width = change_cus.mouse_width * interpol_value + standard_cus.mouse_width * (1 - interpol_value);
+    change_cus.mouse_thick = change_cus.mouse_thick * interpol_value + standard_cus.mouse_thick * (1 - interpol_value);
+    change_cus.mouse_slope = change_cus.mouse_slope * interpol_value + standard_cus.mouse_slope * (1 - interpol_value);
+    change_cus.chin = change_cus.chin * interpol_value + standard_cus.chin * (1 - interpol_value);
+    change_cus.jaw = change_cus.jaw * interpol_value + standard_cus.jaw * (1 - interpol_value);
+    change_cus.heavy = change_cus.heavy * interpol_value + standard_cus.heavy * (1 - interpol_value);
+    change_cus.face_width = change_cus.face_width * interpol_value + standard_cus.face_width * (1 - interpol_value);
+}
+
+Customizing Akid_map_script::make_kid_customizing(const Customizing& my_custom, const Customizing& you_custom)
+{
+	Customizing kid_custom;
+	float random_value = FMath::FRandRange(0.0f, 1.0f); 
+
+    kid_custom.skin = my_custom.skin * random_value + you_custom.skin * (1-random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+	kid_custom.R_eye_color_hue = my_custom.R_eye_color_hue * random_value + you_custom.R_eye_color_hue * (1 - random_value);
+	random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.R_eye_color_sat = my_custom.R_eye_color_sat * random_value + you_custom.R_eye_color_sat * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.L_eye_color_hue = my_custom.L_eye_color_hue * random_value + you_custom.L_eye_color_hue * (1 - random_value);
+	random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.L_eye_color_sat = my_custom.L_eye_color_sat * random_value + you_custom.L_eye_color_sat * (1 - random_value);
+	random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.eye_scale = my_custom.eye_scale * random_value + you_custom.eye_scale * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.pupil_scale = my_custom.pupil_scale * random_value + you_custom.pupil_scale * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.hair_color_R = my_custom.hair_color_R * random_value + you_custom.hair_color_R * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.hair_color_G = my_custom.hair_color_G * random_value + you_custom.hair_color_G * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.hair_color_B = my_custom.hair_color_B * random_value + you_custom.hair_color_B * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.eye_width = my_custom.eye_width * random_value + you_custom.eye_width * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.eye_thick = my_custom.eye_thick * random_value + you_custom.eye_thick * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.eye_slope = my_custom.eye_slope * random_value + you_custom.eye_slope * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.nose_width = my_custom.nose_width * random_value + you_custom.nose_width * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.nose_height = my_custom.nose_height * random_value + you_custom.nose_height * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.mouse_width = my_custom.mouse_width * random_value + you_custom.mouse_width * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.mouse_thick = my_custom.mouse_thick * random_value + you_custom.mouse_thick * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.mouse_slope = my_custom.mouse_slope * random_value + you_custom.mouse_slope * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.chin = my_custom.chin * random_value + you_custom.chin * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.jaw = my_custom.jaw * random_value + you_custom.jaw * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.heavy = my_custom.heavy * random_value + you_custom.heavy * (1 - random_value);
+    random_value = FMath::FRandRange(0.0f, 1.0f);
+    kid_custom.face_width = my_custom.face_width * random_value + you_custom.face_width * (1 - random_value);
+
+	//헤어는 랜덤으로
+	kid_custom.hair = FMath::RandRange(0, 4);
+	//옷은 랜덤으로   
+	kid_custom.shirt = FMath::RandRange(0, 1);
+	kid_custom.pants = FMath::RandRange(0, 1);
+	kid_custom.shoes = FMath::RandRange(0, 1);
+	//눈썹과 안경은 랜덤으로
+	kid_custom.eyebrows = FMath::RandRange(0, 2);
+
+    return kid_custom;
 }
