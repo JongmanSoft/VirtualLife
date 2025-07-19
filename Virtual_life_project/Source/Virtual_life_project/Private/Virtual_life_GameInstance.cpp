@@ -350,7 +350,25 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		}
 	}
 
+	// 3. NPC 스폰
+	for (auto& Pair : OtherNPCs) // TMap<uint32, NPCUnitData>
+	{
+		const NPCUnitData& npcData = Pair.Value.data;
 
+		FVector Location(npcData.x, npcData.y, npcData.z);
+		FRotator Rotation(0.f, npcData.yaw, 0.f);
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		ACharacter* SpawnedNPC = World->SpawnActor<ACharacter>(PlayerClass, Location, Rotation, SpawnParams);
+		Um_CustomizableSkeletalComponent* Other_actor_m_custom = SpawnedNPC->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+		Other_actor_m_custom->custom_data_update(npcData.c);
+
+		Pair.Value.character = SpawnedNPC; // 스폰된 NPC를 TMap에 저장
+	}
+
+	// 문
 	for (int i = 0; i < 13; i++) {
 		UpdateDoor.Broadcast(current_door_id[i], current_is_open[i]);
 	}
@@ -393,6 +411,7 @@ void UVirtual_life_GameInstance::SpawnPlayerInRoom()
 			pl->set_my_id(Info.pinfo.id);
 		}
 	}
+	
 
 	loaded = true;
 }
@@ -600,7 +619,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Login Success!")));
 			StopBGM();
 
-
 			break;
 		}
 		case SC_SPAWN:
@@ -779,6 +797,23 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 			enter_time = p.time;
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
+			break;
+		}
+		case SC_NPCS_SPAWN:
+		{
+			SC_SPAWN_NPCS_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_NPCS_PACKET));
+
+			for (int i = 0; i < p.npc_count; ++i)
+			{
+				const NPCUnitData& unit = p.npcs[i];
+
+				NPCInfo npc;
+				npc.data = unit;
+				npc.character = nullptr;
+
+				OtherNPCs.Add(unit.id, npc); 
+			}
 			break;
 		}
 		case SC_RESULT_PARTY:

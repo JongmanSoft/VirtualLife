@@ -1,4 +1,5 @@
 #include "NetworkManager.h"
+constexpr int BUFSIZE = 8192;
 
  // todo: 여기 정리..
 RecvManager::RecvManager(FSocket* socket, UVirtual_life_GameInstance* ins)
@@ -86,7 +87,7 @@ bool RecvManager::ProcessPacket()
     }
 
     uint16 PacketSize = *reinterpret_cast<uint16*>(Buffer.GetData());  // 패킷 크기 읽기
-    if (PacketSize < HEADER_SIZE || PacketSize > 4096)  // 유효성 검사
+    if (PacketSize < HEADER_SIZE || PacketSize > BUFSIZE)  // 유효성 검사
     {
         UE_LOG(LogTemp, Error, TEXT("Invalid packet size received: %d"), PacketSize);
         Buffer.RemoveAt(0, HEADER_SIZE);  // 유효하지 않은 헤더 삭제 후 다음 데이터 확인

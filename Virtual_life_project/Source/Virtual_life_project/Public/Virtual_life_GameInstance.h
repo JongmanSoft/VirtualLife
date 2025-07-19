@@ -39,6 +39,12 @@ struct SpawnInfo
 	ACharacter* character;
 };
 
+struct NPCInfo
+{
+	NPCUnitData data;                  // 서버에서 온 순수 데이터
+	ACharacter* character = nullptr;  // 실제 월드에 스폰된 NPC 액터
+};
+
 UCLASS()
 class VIRTUAL_LIFE_PROJECT_API UVirtual_life_GameInstance : public UGameInstance, public FTickableGameObject
 {
@@ -204,10 +210,11 @@ public:
 	TQueue<TArray<uint8>> SendPacketQueue;
 
 	std::mutex lock;
-
-	// 여기 이제 수정해야 함
-	TMap<int, SpawnInfo> OtherPlayers;
 	TArray<FString> chats;
+
+public: // 다른 플레이어 및 엔피씨
+	TMap<int, SpawnInfo> OtherPlayers;
+	TMap<int, NPCInfo> OtherNPCs; // npc 정보 저장
 
 public:
 	// 건축 관련
