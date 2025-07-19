@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "kid_map_script.h"
@@ -11,12 +11,12 @@
 
 void Akid_map_script::BeginPlay()
 {
-    Super::BeginPlay(); // ºÎ¸ğ Å¬·¡½ºÀÇ BeginPlay È£Ãâ
-    // ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ °¡Á®¿À±â
+    Super::BeginPlay(); // ë¶€ëª¨ í´ë˜ìŠ¤ì˜ BeginPlay í˜¸ì¶œ
+    // í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸°
     APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
     if (PlayerController)
     {
-        // À§Á¬ Å¬·¡½º ·Îµå
+        // ìœ„ì ¯ í´ë˜ìŠ¤ ë¡œë“œ
         TSubclassOf<UUserWidget> WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/UI/MyKid_custom_ui.MyKid_custom_ui_C"));
         if (WidgetClass)
         {
@@ -34,7 +34,7 @@ void Akid_map_script::BeginPlay()
         }
        
     }
-   //Ä¿½ºÅÒ Á¾·á½Ã ÈÄ ÀÌº¥Æ® ¹ÙÀÎµù
+   //ì»¤ìŠ¤í…€ ì¢…ë£Œì‹œ í›„ ì´ë²¤íŠ¸ ë°”ì¸ë”©
 
     UKid_custom_ui* CustomUI = Cast<UKid_custom_ui>(WidgetInstance);
     if (CustomUI)
@@ -44,46 +44,46 @@ void Akid_map_script::BeginPlay()
     }
 	
 
-    //°¢µµÁ¶Á¤
-    // ÇöÀç ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ °¡Á®¿À±â
+    //ê°ë„ì¡°ì •
+    // í˜„ì¬ í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ê°€ì ¸ì˜¤ê¸°
     PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PlayerController)
     {
-        // ÇöÀç Pawn °¡Á®¿À±â
+        // í˜„ì¬ Pawn ê°€ì ¸ì˜¤ê¸°
         APawn* CurrentPawn = PlayerController->GetPawn();
         if (CurrentPawn)
         {
-            // SpringArm ÄÄÆ÷³ÍÆ® Ã£±â
+            // SpringArm ì»´í¬ë„ŒíŠ¸ ì°¾ê¸°
             USpringArmComponent* SpringArm = CurrentPawn->FindComponentByClass<USpringArmComponent>();
             if (SpringArm)
             {
-                // SpringArmÀÇ »ó´ë À§Ä¡¸¦ (0, 0, 52)·Î ¼³Á¤
+                // SpringArmì˜ ìƒëŒ€ ìœ„ì¹˜ë¥¼ (0, 0, 52)ë¡œ ì„¤ì •
                 SpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, 52.0f));
-                // Target Arm Length¸¦ 100À¸·Î ¼³Á¤
+                // Target Arm Lengthë¥¼ 100ìœ¼ë¡œ ì„¤ì •
                 SpringArm->TargetArmLength = 100.0f;
             }
             else
             {
-                UE_LOG(LogTemp, Warning, TEXT("SpringArm ÄÄÆ÷³ÍÆ®¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù."));
+                UE_LOG(LogTemp, Warning, TEXT("SpringArm ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
             }
         }
         else
         {
-            UE_LOG(LogTemp, Warning, TEXT("PawnÀ» Ã£À» ¼ö ¾ø½À´Ï´Ù."));
+            UE_LOG(LogTemp, Warning, TEXT("Pawnì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
         }
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("PlayerController¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù."));
+        UE_LOG(LogTemp, Warning, TEXT("PlayerControllerë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."));
     }
 
 
 
-    //»ó´ë¹æ±×¸®±â (ÀÏ´Ü ³ªÁß¿¡...)
+    //ìƒëŒ€ë°©ê·¸ë¦¬ê¸° (ì¼ë‹¨ ë‚˜ì¤‘ì—...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
     you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
 
-    //³ÊºÎÅÍ ÃãÃç¶ó...
+    //ë„ˆë¶€í„° ì¶¤ì¶°ë¼...
     if (you_character)
     {
         USkeletalMeshComponent* SkeletalMeshComp = you_character->FindComponentByClass<USkeletalMeshComponent>();
@@ -92,13 +92,13 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÄö½º ·Îµå
+                // ì• ë‹ˆë©”ì´ì…˜ ì‹œí€€ìŠ¤ ë¡œë“œ
                 UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose_UE.MaleStandingPose_UE"));
                 if (AnimSequence)
                 {
-                    // ¾Ö´Ï¸ŞÀÌ¼Ç ¸ğµå¸¦ Use Animation AssetÀ¸·Î ¼³Á¤
+                    // ì• ë‹ˆë©”ì´ì…˜ ëª¨ë“œë¥¼ Use Animation Assetìœ¼ë¡œ ì„¤ì •
                     SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-                    // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÄö½º Àç»ı
+                    // ì• ë‹ˆë©”ì´ì…˜ ì‹œí€€ìŠ¤ ì¬ìƒ
                     AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
                 }
                 else
@@ -108,7 +108,7 @@ void Akid_map_script::BeginPlay()
             }
         }
     }
-    //³ªµµ Ãâ°Ô...
+    //ë‚˜ë„ ì¶œê²Œ...
     ACharacter* AOwner = Cast<ACharacter>(PlayerController->GetPawn());
     if (AOwner)
     {
@@ -119,13 +119,13 @@ void Akid_map_script::BeginPlay()
             if (AnimInstance)
             {
                 UE_LOG(LogTemp, Warning, TEXT("PAWN_ANIMATION"));
-                // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÄö½º ·Îµå
+                // ì• ë‹ˆë©”ì´ì…˜ ì‹œí€€ìŠ¤ ë¡œë“œ
                 UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose2_UE.MaleStandingPose2_UE"));
                 if (AnimSequence)
                 {
-                    // ¾Ö´Ï¸ŞÀÌ¼Ç ¸ğµå¸¦ Use Animation AssetÀ¸·Î ¼³Á¤
+                    // ì• ë‹ˆë©”ì´ì…˜ ëª¨ë“œë¥¼ Use Animation Assetìœ¼ë¡œ ì„¤ì •
                     SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-                    // ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÄö½º Àç»ı
+                    // ì• ë‹ˆë©”ì´ì…˜ ì‹œí€€ìŠ¤ ì¬ìƒ
                     AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
                 }
                 else
@@ -141,7 +141,7 @@ void Akid_map_script::BeginPlay()
 
 void Akid_map_script::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds); // ºÎ¸ğ Å¬·¡½ºÀÇ Tick È£Ãâ
+    Super::Tick(DeltaSeconds); // ë¶€ëª¨ í´ë˜ìŠ¤ì˜ Tick í˜¸ì¶œ
  
     if (you_character) {
         Um_CustomizableSkeletalComponent* customizable = you_character->FindComponentByClass<Um_CustomizableSkeletalComponent>();
@@ -173,7 +173,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
             WidgetInstance = nullptr;
         }
 
-        //Ä¿½ºÅÒ ½ÃÀÛ! 0ÀÏ¼ö·Ï ³ª, 1ÀÏ¼ö·Ï »ó´ë¹æÀÓ
+        //ì»¤ìŠ¤í…€ ì‹œì‘! 0ì¼ìˆ˜ë¡ ë‚˜, 1ì¼ìˆ˜ë¡ ìƒëŒ€ë°©ì„
         auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 		if (m_inst)
 		{
@@ -182,15 +182,15 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
 			m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
 
             if (g_value < 0.5) {
-                //¾ó±¼ÀÌ ³ª¿¡ °¡±õ´Ù
+                //ì–¼êµ´ì´ ë‚˜ì— ê°€ê¹ë‹¤
 				set_customizing_inteerpol(you_custom, my_custom, g_value);
             }
             else if (g_value > 0.5) {
-                //¾ó±¼ÀÌ »ó´ë¹æ¿¡ °¡±õ´Ù
+                //ì–¼êµ´ì´ ìƒëŒ€ë°©ì— ê°€ê¹ë‹¤
 				set_customizing_inteerpol(my_custom, you_custom, 1 - g_value);
             }
 
-            //±×·³ °á±¹ ÀÚ½Ä Ä¿½ºÅÒÀº..
+            //ê·¸ëŸ¼ ê²°êµ­ ìì‹ ì»¤ìŠ¤í…€ì€..
 			Customizing kid_custom = make_kid_customizing(my_custom,you_custom);
             
 		}
@@ -272,13 +272,13 @@ Customizing Akid_map_script::make_kid_customizing(const Customizing& my_custom, 
     random_value = FMath::FRandRange(0.0f, 1.0f);
     kid_custom.face_width = my_custom.face_width * random_value + you_custom.face_width * (1 - random_value);
 
-	//Çì¾î´Â ·£´ıÀ¸·Î
+	//í—¤ì–´ëŠ” ëœë¤ìœ¼ë¡œ
 	kid_custom.hair = FMath::RandRange(0, 4);
-	//¿ÊÀº ·£´ıÀ¸·Î   
+	//ì˜·ì€ ëœë¤ìœ¼ë¡œ   
 	kid_custom.shirt = FMath::RandRange(0, 1);
 	kid_custom.pants = FMath::RandRange(0, 1);
 	kid_custom.shoes = FMath::RandRange(0, 1);
-	//´«½ç°ú ¾È°æÀº ·£´ıÀ¸·Î
+	//ëˆˆì¹ê³¼ ì•ˆê²½ì€ ëœë¤ìœ¼ë¡œ
 	kid_custom.eyebrows = FMath::RandRange(0, 2);
 
     return kid_custom;

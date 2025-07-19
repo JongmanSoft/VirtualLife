@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "marry_manager.h"
@@ -8,9 +8,9 @@
 
 void Umarry_manager::set_kid_custom_data(Customizing kid, uint8 personality, FString input_text, FString name)
 {
-	kid_cinfo = kid; // ÀÚ½Ä Ä¿½ºÅÍ¸¶ÀÌÂ¡ Á¤º¸	
+	kid_cinfo = kid; // ìì‹ ì»¤ìŠ¤í„°ë§ˆì´ì§• ì •ë³´	
 	Personality = personality;
 	hello_text = input_text;
 	kid_name = name;
-	have_to_send_kid = true; // ÀÚ½Ä Á¤º¸¸¦ º¸³»¾ß ÇÔ
+	have_to_send_kid = true; // ìì‹ ì •ë³´ë¥¼ ë³´ë‚´ì•¼ í•¨
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "kid_npc_actor.h"
 
@@ -8,6 +8,8 @@ Akid_npc_actor::Akid_npc_actor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
     m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
+ 
+   
 }
 
 // Called when the game starts or when spawned
@@ -63,7 +65,7 @@ void Akid_npc_actor::find_hair_groom()
 
 void Akid_npc_actor::set_groom()
 {
-    //∏”∏Æ 
+    //Î®∏Î¶¨ 
     
     if (m_hair_groom)
     {
@@ -87,7 +89,7 @@ void Akid_npc_actor::set_groom()
         m_hair_groom->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->hair]));
     }
 
-   //¥´ΩÁ
+   //ÎààÏçπ
     UGroomComponent* owner_brows = Cast<UGroomComponent>(FindComponentByTag(UGroomComponent::StaticClass(), FName("EYEBROW")));
     if (owner_brows) {
         TCHAR groom_asset_file[3][100]
@@ -113,7 +115,7 @@ void Akid_npc_actor::set_groom()
 
 void Akid_npc_actor::set_skeltal()
 {
-    //ªÛ¿«
+    //ÏÉÅÏùò
     TCHAR torso_object_path[2][150] = {TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Tops/Crewneckt/m_srt_unw_top_crewneckt_nrm_Medium.m_srt_unw_top_crewneckt_nrm_Medium"),
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Tops/Sweater/m_srt_unw_top_sweater_nrm_Medium.m_srt_unw_top_sweater_nrm_Medium") };
 
@@ -122,7 +124,7 @@ void Akid_npc_actor::set_skeltal()
         torso_skeltal->SetSkeletalMeshAsset(LoadObject<USkeletalMesh>(nullptr, torso_object_path[m_custom->shirt]));
     }
 
-    //«œ¿«
+    //ÌïòÏùò
     TCHAR pants_object_path[2][150] = {
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Bottoms/Shorts/m_srt_unw_btm_shorts_nrm_Medium.m_srt_unw_btm_shorts_nrm_Medium"),
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Bottoms/Jeans/m_srt_unw_btm_jeans_nrm_Medium.m_srt_unw_btm_jeans_nrm_Medium")
@@ -132,7 +134,7 @@ void Akid_npc_actor::set_skeltal()
         pants_skeltal->SetSkeletalMeshAsset(LoadObject<USkeletalMesh>(nullptr, pants_object_path[m_custom->pants]));
     }
 
-	//Ω≈πﬂ
+	//Ïã†Î∞ú
     TCHAR shoes_object_path[2][150] = {
       TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Shoes/Oxfords/m_srt_unw_shs_oxfords_Medium.m_srt_unw_shs_oxfords_Medium"),
       TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Shoes/Flipflops/m_srt_unw_shs_flipflops_Medium.m_srt_unw_shs_flipflops_Medium")
@@ -146,7 +148,7 @@ void Akid_npc_actor::set_skeltal()
 
 void Akid_npc_actor::create_dynamic_mat_custom()
 {
-    //∏ˆ ««∫Œ ∏”≈Õ∏ÆæÛ
+    //Î™∏ ÌîºÎ∂Ä Î®∏ÌÑ∞Î¶¨Ïñº
     UMaterialInterface* Body_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Body/Materials/MI_BodySynthesized_Simplified.MI_BodySynthesized_Simplified"));
     USkeletalMeshComponent* body_mesh = find_tag_skeltal_mesh(FName("Body"));
     if (Body_material)
@@ -163,7 +165,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
     }
 
 
-	//∆‰¿ÃΩ∫ ««∫Œ ∏”≈Õ∏ÆæÛ 
+	//ÌéòÏù¥Ïä§ ÌîºÎ∂Ä Î®∏ÌÑ∞Î¶¨Ïñº 
     UMaterialInterface* Face_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Face/Materials/MI_HeadSynthesized_Simplified_LOD5.MI_HeadSynthesized_Simplified_LOD5"));
     USkeletalMeshComponent* face_mesh = find_tag_skeltal_mesh(FName("Face"));
     if (Face_material)
@@ -177,7 +179,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
     
         }
     }
-    //¥´ ∏”≈Õ∏ÆæÛ
+    //Îàà Î®∏ÌÑ∞Î¶¨Ïñº
     UMaterialInterface* EYE_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/real_kid/Face/Materials/MI_MetaHumanEye_Simplified.MI_MetaHumanEye_Simplified"));
     if (EYE_material)
     {
@@ -201,7 +203,7 @@ void Akid_npc_actor::create_dynamic_mat_custom()
         }
     }
  
-	//∏”∏Æ ∏”≈Õ∏ÆæÛ
+	//Î®∏Î¶¨ Î®∏ÌÑ∞Î¶¨Ïñº
     if (m_hair_groom) {
         UMaterialInterface* Hair_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/woman/Materials/MI_Hair_Cards.MI_Hair_Cards"));
         if (Hair_material) {

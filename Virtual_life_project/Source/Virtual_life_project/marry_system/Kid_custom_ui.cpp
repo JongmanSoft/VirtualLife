@@ -1,4 +1,4 @@
-#include "Kid_custom_ui.h"
+Ôªø#include "Kid_custom_ui.h"
 #include "Components/Slider.h" 
 #include "Components/VerticalBox.h" 
 #include "Components/CheckBox.h"
@@ -15,7 +15,7 @@ void UKid_custom_ui::NativeConstruct()
         Genetic_ratio_slider->SetValue(0.5f);
     }
 
-    // √º≈©π⁄Ω∫ ¿Ã∫•∆Æ πŸ¿Œµ˘
+    // Ï≤¥ÌÅ¨Î∞ïÏä§ Ïù¥Î≤§Ìä∏ Î∞îÏù∏Îî©
     if (Personality_Check1)
     {
         Personality_Check1->OnCheckStateChanged.AddDynamic(this, &UKid_custom_ui::_cheak1);
@@ -111,11 +111,11 @@ void UKid_custom_ui::_cheak4(bool bIsChecked)
 void UKid_custom_ui::on_ok_btn()
 {
     float ProgressValue = Genetic_ratio_slider && (!random_genetic || !random_genetic->IsChecked()) ? Genetic_ratio_slider->GetValue() : 0.5f;
-    uint8 Personality = FMath::RandRange(0, 2);  // ±‚∫ª∞™
+    uint8 Personality = FMath::RandRange(0, 2);  // Í∏∞Î≥∏Í∞í
     FString InputText = hello_etb ? hello_etb->GetText().ToString() : TEXT("");
     FString name_input = name_etb ? name_etb->GetText().ToString() : TEXT("KID");
 
-    // º±≈√µ» √º≈©π⁄Ω∫ø° µ˚∂Û Personality ∞™ º≥¡§
+    // ÏÑ†ÌÉùÎêú Ï≤¥ÌÅ¨Î∞ïÏä§Ïóê Îî∞Îùº Personality Í∞í ÏÑ§Ï†ï
     if (Personality_Check1 && Personality_Check1->IsChecked())
     {
         Personality = FMath::RandRange(0, 2); 
@@ -133,7 +133,7 @@ void UKid_custom_ui::on_ok_btn()
         Personality = 2; 
     }
 
-    // µ®∏Æ∞‘¿Ã∆Æ »£√‚
+    // Îç∏Î¶¨Í≤åÏù¥Ìä∏ Ìò∏Ï∂ú
     
     OnKidSetting.Broadcast(ProgressValue, Personality, InputText,name_input);
 }
