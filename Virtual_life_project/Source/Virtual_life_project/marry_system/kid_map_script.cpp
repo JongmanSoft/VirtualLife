@@ -82,7 +82,7 @@ void Akid_map_script::BeginPlay()
 
     //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-//    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id);
+//    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id); //여기수정
 
     //너부터 춤춰라...
     if (you_character)
@@ -178,7 +178,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
         auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 		if (m_inst)
 		{
-            //auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo;
+            //auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo; //여기수정
             Customizing you_custom;
             Customizing my_custom;
 			m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
@@ -193,7 +193,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
             }
 
             //그럼 결국 자식 커스텀은..
-			Customizing kid_custom = make_kid_customizing(my_custom,you_custom);
+			Customizing kid_custom = make_kid_customizing(my_custom,my_custom); //여기수정
             m_inst->m_marry->set_kid_custom_data(kid_custom, per_value, hello, name);
 
             if (preview_kid)
@@ -292,98 +292,6 @@ Customizing Akid_map_script::make_kid_customizing(const Customizing& my_custom, 
 	//눈썹과 안경은 랜덤으로
 	kid_custom.eyebrows = FMath::RandRange(0, 2);
 
-    // Log all my_custom values
-    UE_LOG(LogTemp, Log, TEXT("My Customizing Values:"));
-    UE_LOG(LogTemp, Log, TEXT("skin: %f"), my_custom.skin);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_hue: %f"), my_custom.R_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_sat: %f"), my_custom.R_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_hue: %f"), my_custom.L_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_sat: %f"), my_custom.L_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("eye_scale: %f"), my_custom.eye_scale);
-    UE_LOG(LogTemp, Log, TEXT("pupil_scale: %f"), my_custom.pupil_scale);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_R: %f"), my_custom.hair_color_R);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_G: %f"), my_custom.hair_color_G);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_B: %f"), my_custom.hair_color_B);
-    UE_LOG(LogTemp, Log, TEXT("eye_width: %f"), my_custom.eye_width);
-    UE_LOG(LogTemp, Log, TEXT("eye_thick: %f"), my_custom.eye_thick);
-    UE_LOG(LogTemp, Log, TEXT("eye_slope: %f"), my_custom.eye_slope);
-    UE_LOG(LogTemp, Log, TEXT("nose_width: %f"), my_custom.nose_width);
-    UE_LOG(LogTemp, Log, TEXT("nose_height: %f"), my_custom.nose_height);
-    UE_LOG(LogTemp, Log, TEXT("mouse_width: %f"), my_custom.mouse_width);
-    UE_LOG(LogTemp, Log, TEXT("mouse_thick: %f"), my_custom.mouse_thick);
-    UE_LOG(LogTemp, Log, TEXT("mouse_slope: %f"), my_custom.mouse_slope);
-    UE_LOG(LogTemp, Log, TEXT("chin: %f"), my_custom.chin);
-    UE_LOG(LogTemp, Log, TEXT("jaw: %f"), my_custom.jaw);
-    UE_LOG(LogTemp, Log, TEXT("heavy: %f"), my_custom.heavy);
-    UE_LOG(LogTemp, Log, TEXT("face_width: %f"), my_custom.face_width);
-    UE_LOG(LogTemp, Log, TEXT("hair: %d"), my_custom.hair);
-    UE_LOG(LogTemp, Log, TEXT("shirt: %d"), my_custom.shirt);
-    UE_LOG(LogTemp, Log, TEXT("pants: %d"), my_custom.pants);
-    UE_LOG(LogTemp, Log, TEXT("shoes: %d"), my_custom.shoes);
-    UE_LOG(LogTemp, Log, TEXT("eyebrows: %d"), my_custom.eyebrows);
-
-    // Log all you_custom values
-    UE_LOG(LogTemp, Log, TEXT("You Customizing Values:"));
-    UE_LOG(LogTemp, Log, TEXT("skin: %f"), you_custom.skin);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_hue: %f"), you_custom.R_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_sat: %f"), you_custom.R_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_hue: %f"), you_custom.L_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_sat: %f"), you_custom.L_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("eye_scale: %f"), you_custom.eye_scale);
-    UE_LOG(LogTemp, Log, TEXT("pupil_scale: %f"), you_custom.pupil_scale);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_R: %f"), you_custom.hair_color_R);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_G: %f"), you_custom.hair_color_G);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_B: %f"), you_custom.hair_color_B);
-    UE_LOG(LogTemp, Log, TEXT("eye_width: %f"), you_custom.eye_width);
-    UE_LOG(LogTemp, Log, TEXT("eye_thick: %f"), you_custom.eye_thick);
-    UE_LOG(LogTemp, Log, TEXT("eye_slope: %f"), you_custom.eye_slope);
-    UE_LOG(LogTemp, Log, TEXT("nose_width: %f"), you_custom.nose_width);
-    UE_LOG(LogTemp, Log, TEXT("nose_height: %f"), you_custom.nose_height);
-    UE_LOG(LogTemp, Log, TEXT("mouse_width: %f"), you_custom.mouse_width);
-    UE_LOG(LogTemp, Log, TEXT("mouse_thick: %f"), you_custom.mouse_thick);
-    UE_LOG(LogTemp, Log, TEXT("mouse_slope: %f"), you_custom.mouse_slope);
-    UE_LOG(LogTemp, Log, TEXT("chin: %f"), you_custom.chin);
-    UE_LOG(LogTemp, Log, TEXT("jaw: %f"), you_custom.jaw);
-    UE_LOG(LogTemp, Log, TEXT("heavy: %f"), you_custom.heavy);
-    UE_LOG(LogTemp, Log, TEXT("face_width: %f"), you_custom.face_width);
-    UE_LOG(LogTemp, Log, TEXT("hair: %d"), you_custom.hair);
-    UE_LOG(LogTemp, Log, TEXT("shirt: %d"), you_custom.shirt);
-    UE_LOG(LogTemp, Log, TEXT("pants: %d"), you_custom.pants);
-    UE_LOG(LogTemp, Log, TEXT("shoes: %d"), you_custom.shoes);
-    UE_LOG(LogTemp, Log, TEXT("eyebrows: %d"), you_custom.eyebrows);
-
-
-
-
-    // Log all kid_custom values
-    UE_LOG(LogTemp, Log, TEXT("Kid Customizing Values:"));
-    UE_LOG(LogTemp, Log, TEXT("skin: %f"), kid_custom.skin);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_hue: %f"), kid_custom.R_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("R_eye_color_sat: %f"), kid_custom.R_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_hue: %f"), kid_custom.L_eye_color_hue);
-    UE_LOG(LogTemp, Log, TEXT("L_eye_color_sat: %f"), kid_custom.L_eye_color_sat);
-    UE_LOG(LogTemp, Log, TEXT("eye_scale: %f"), kid_custom.eye_scale);
-    UE_LOG(LogTemp, Log, TEXT("pupil_scale: %f"), kid_custom.pupil_scale);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_R: %f"), kid_custom.hair_color_R);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_G: %f"), kid_custom.hair_color_G);
-    UE_LOG(LogTemp, Log, TEXT("hair_color_B: %f"), kid_custom.hair_color_B);
-    UE_LOG(LogTemp, Log, TEXT("eye_width: %f"), kid_custom.eye_width);
-    UE_LOG(LogTemp, Log, TEXT("eye_thick: %f"), kid_custom.eye_thick);
-    UE_LOG(LogTemp, Log, TEXT("eye_slope: %f"), kid_custom.eye_slope);
-    UE_LOG(LogTemp, Log, TEXT("nose_width: %f"), kid_custom.nose_width);
-    UE_LOG(LogTemp, Log, TEXT("nose_height: %f"), kid_custom.nose_height);
-    UE_LOG(LogTemp, Log, TEXT("mouse_width: %f"), kid_custom.mouse_width);
-    UE_LOG(LogTemp, Log, TEXT("mouse_thick: %f"), kid_custom.mouse_thick);
-    UE_LOG(LogTemp, Log, TEXT("mouse_slope: %f"), kid_custom.mouse_slope);
-    UE_LOG(LogTemp, Log, TEXT("chin: %f"), kid_custom.chin);
-    UE_LOG(LogTemp, Log, TEXT("jaw: %f"), kid_custom.jaw);
-    UE_LOG(LogTemp, Log, TEXT("heavy: %f"), kid_custom.heavy);
-    UE_LOG(LogTemp, Log, TEXT("face_width: %f"), kid_custom.face_width);
-    UE_LOG(LogTemp, Log, TEXT("hair: %d"), kid_custom.hair);
-    UE_LOG(LogTemp, Log, TEXT("shirt: %d"), kid_custom.shirt);
-    UE_LOG(LogTemp, Log, TEXT("pants: %d"), kid_custom.pants);
-    UE_LOG(LogTemp, Log, TEXT("shoes: %d"), kid_custom.shoes);
-    UE_LOG(LogTemp, Log, TEXT("eyebrows: %d"), kid_custom.eyebrows);
-
+    
     return kid_custom;
 }

@@ -152,10 +152,15 @@ void Akid_npc_actor::set_skeltal()
     //상의
     TCHAR torso_object_path[2][150] = {TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Tops/Crewneckt/m_srt_unw_top_crewneckt_nrm_Medium.m_srt_unw_top_crewneckt_nrm_Medium"),
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Tops/Sweater/m_srt_unw_top_sweater_nrm_Medium.m_srt_unw_top_sweater_nrm_Medium") };
-
+    TCHAR torso_material_path[2][150] = { TEXT("/Game/MetaHumans/real_kid/Shared/Materials/MI_Fabric_Torso_Simplified.MI_Fabric_Torso_Simplified"),
+    TEXT("/Game/MetaHumans/other_source_kid/Shared/Materials/MI_Fabric_Torso_Simplified.MI_Fabric_Torso_Simplified") };
     USkeletalMeshComponent* torso_skeltal = find_tag_skeltal_mesh(FName("Torso"));
     if (torso_skeltal) {
         torso_skeltal->SetSkeletalMeshAsset(LoadObject<USkeletalMesh>(nullptr, torso_object_path[m_custom->shirt]));
+        
+        //머터리얼 재세팅
+        UMaterialInstanceDynamic* mat_inst = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(nullptr,torso_material_path[m_custom->shirt]), this);
+        torso_skeltal->SetMaterial(0, mat_inst);
     }
 
     //하의
@@ -163,9 +168,18 @@ void Akid_npc_actor::set_skeltal()
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Bottoms/Shorts/m_srt_unw_btm_shorts_nrm_Medium.m_srt_unw_btm_shorts_nrm_Medium"),
         TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Bottoms/Jeans/m_srt_unw_btm_jeans_nrm_Medium.m_srt_unw_btm_jeans_nrm_Medium")
     };
+    TCHAR pants_material_path[2][150] = {
+        TEXT("/Game/MetaHumans/other_source_kid/Shared/Materials/MI_Fabric_Legs_Simplified.MI_Fabric_Legs_Simplified"),
+        TEXT("/Game/MetaHumans/real_kid/Shared/Materials/MI_Fabric_Legs_Simplified.MI_Fabric_Legs_Simplified")
+    };
     USkeletalMeshComponent* pants_skeltal = find_tag_skeltal_mesh(FName("Pants"));
     if (pants_skeltal) {
         pants_skeltal->SetSkeletalMeshAsset(LoadObject<USkeletalMesh>(nullptr, pants_object_path[m_custom->pants]));
+  
+        //머터리얼 재세팅
+        UMaterialInstanceDynamic* mat_inst = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(nullptr, pants_material_path[m_custom->pants]), this);
+        pants_skeltal->SetMaterial(0, mat_inst);
+    
     }
 
 	//신발
@@ -173,9 +187,17 @@ void Akid_npc_actor::set_skeltal()
       TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Shoes/Oxfords/m_srt_unw_shs_oxfords_Medium.m_srt_unw_shs_oxfords_Medium"),
       TEXT("/Game/MetaHumans/Common/Male/Short/UnderWeight/Shoes/Flipflops/m_srt_unw_shs_flipflops_Medium.m_srt_unw_shs_flipflops_Medium")
     };
+    TCHAR shoes_material_path[2][150] = {
+        TEXT("/Game/MetaHumans/real_kid/Shared/Materials/MI_Fabric_Feet_Simplified.MI_Fabric_Feet_Simplified"),
+        TEXT("/Game/MetaHumans/other_source_kid/Shared/Materials/MI_Fabric_Feet_Simplified.MI_Fabric_Feet_Simplified")
+    };
     USkeletalMeshComponent* shoes_skeltal = find_tag_skeltal_mesh(FName("Shoes"));
     if (shoes_skeltal) {
         shoes_skeltal->SetSkeletalMeshAsset(LoadObject<USkeletalMesh>(nullptr, shoes_object_path[m_custom->pants]));
+   
+        //머터리얼 재세팅
+        UMaterialInstanceDynamic* mat_inst = UMaterialInstanceDynamic::Create(LoadObject<UMaterialInterface>(nullptr, shoes_material_path[m_custom->shoes]), this);
+        shoes_skeltal->SetMaterial(0, mat_inst);
     }
 
 }
