@@ -19,4 +19,8 @@ Kid::Kid(const CS_ADD_KID_PACKET& pkt)
 	hello_msg[CHAT_SIZE - 1] = L'\0'; // 안전하게 널 종료
 	wcsncpy_s(_name, pkt.name, M_ID_SIZE - 1);
 	name[M_ID_SIZE - 1] = L'\0'; // 안전하게 널 종료
+	x = pkt.x;
+	y = pkt.y;	
+	z = pkt.z;
+	yaw = pkt.yaw; 
 }

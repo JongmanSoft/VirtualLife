@@ -225,8 +225,8 @@ void UVirtual_life_GameInstance::SendCreateKidPacket(unsigned int preg_id, unsig
 	p.c = c;
 	p.x = x, p.y = y, p.z = z, p.yaw = yaw;
 	p.personality = personality;
-	strcpy_s(p.name, M_ID_SIZE, TCHAR_TO_ANSI(*kid_name));
-	strcpy_s(p.hello_msg, CHAT_SIZE, TCHAR_TO_ANSI(*kid_hello));
+	FCString::Strcpy(p.name, kid_name.Len() + 1, *kid_name);
+	FCString::Strcpy(p.hello_msg, kid_hello.Len() + 1, *kid_hello);
 	SendEnqueue(&p, p.size);
 }
 
