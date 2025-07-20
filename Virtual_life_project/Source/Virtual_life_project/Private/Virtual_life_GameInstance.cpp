@@ -215,16 +215,18 @@ void UVirtual_life_GameInstance::SendDoorStatePacket(const uint8& door_id, bool 
 	SendEnqueue(&p, p.size);
 }
 
-void UVirtual_life_GameInstance::SendCreateKidPacket(unsigned int preg_id, unsigned int spouse_id, Customizing c, float x, float y, float z, float yaw, char personality)
+void UVirtual_life_GameInstance::SendCreateKidPacket(unsigned int preg_id, unsigned int spouse_id, Customizing c, float x, float y, float z, float yaw, char personality, const FString& kid_name, const FString& kid_hello)
 {
 	CS_ADD_KID_PACKET p;
 	p.size = sizeof(CS_ADD_KID_PACKET);
 	p.type = CS_ADD_KID;
 	p.preg_id = preg_id;
-	p.spouse_id = spouse_id; 
-	p.c = c; 
-	p.x =x, p.y=y, p.z=z, p.yaw=yaw;
+	p.spouse_id = spouse_id;
+	p.c = c;
+	p.x = x, p.y = y, p.z = z, p.yaw = yaw;
 	p.personality = personality;
+	strcpy_s(p.name, M_ID_SIZE, TCHAR_TO_ANSI(*kid_name));
+	strcpy_s(p.hello_msg, CHAT_SIZE, TCHAR_TO_ANSI(*kid_hello));
 	SendEnqueue(&p, p.size);
 }
 

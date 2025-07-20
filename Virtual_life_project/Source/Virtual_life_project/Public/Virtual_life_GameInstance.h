@@ -184,7 +184,9 @@ public:
 
 	//새로운 자식을 만들었어요!
 	void SendCreateKidPacket(unsigned int preg_id,
-		unsigned int spouse_id, Customizing c, float x, float y, float z, float yaw,char personality);
+		unsigned int spouse_id, Customizing c, float x, float y, float z, float yaw,char personality
+	,const FString& name, const FString& hello
+	);
 
 	bool SendEnqueue(void* packet, int32 PacketSize);
 

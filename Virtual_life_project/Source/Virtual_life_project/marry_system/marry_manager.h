@@ -29,6 +29,13 @@ public:
 	uint8 Personality;
 	FString hello_text;
 	FString kid_name; //자식이름
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "marry")
+	float kid_x;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "marry")
+	float kid_y;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "marry")
+	float kid_z;
 
 	UPROPERTY(BlueprintReadWrite, Category = "marry")
 	bool have_to_send_kid = false;
@@ -39,4 +46,6 @@ public:
 public:
 	void set_kid_custom_data(Customizing kid, uint8 personality, FString input_text, FString name);
 	
+	UFUNCTION(BlueprintCallable)
+	void send_add_kid();
 };

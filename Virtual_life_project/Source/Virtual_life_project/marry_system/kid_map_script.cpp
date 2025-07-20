@@ -82,7 +82,7 @@ void Akid_map_script::BeginPlay()
 
     //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-//    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id); //여기수정
+     you_character = m_inst->draw_one_player(m_inst->m_marry->you_id); //여기수정
 
     //너부터 춤춰라...
     if (you_character)
@@ -119,7 +119,6 @@ void Akid_map_script::BeginPlay()
             UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
             if (AnimInstance)
             {
-                UE_LOG(LogTemp, Warning, TEXT("PAWN_ANIMATION"));
                 // 애니메이션 시퀀스 로드
                 UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose2_UE.MaleStandingPose2_UE"));
                 if (AnimSequence)
@@ -178,8 +177,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
         auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 		if (m_inst)
 		{
-            //auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo; //여기수정
-            Customizing you_custom;
+            auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo; //여기수정
             Customizing my_custom;
 			m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
 
@@ -193,7 +191,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
             }
 
             //그럼 결국 자식 커스텀은..
-			Customizing kid_custom = make_kid_customizing(my_custom,my_custom); //여기수정
+			Customizing kid_custom = make_kid_customizing(my_custom,you_custom); //여기수정
             m_inst->m_marry->set_kid_custom_data(kid_custom, per_value, hello, name);
 
             if (preview_kid)
@@ -204,7 +202,7 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
                 PlayerController->SetViewTargetWithBlend(preview_kid, 2.0f);
 
                 make_finish_widget(name, per_value, hello);
-
+                kid_set_animation(per_value);
             }
 		}
 
@@ -353,5 +351,101 @@ void Akid_map_script::make_finish_widget(const FString& kid_name, const int& per
                 }
             }
         }
+    }
+}
+
+void Akid_map_script::kid_set_animation(int personality)
+{
+    // 애니메이션 몽타주 경로 배열
+    TCHAR face_animation_path[3][150] = {
+        TEXT("/Game/animation/face_animation/short_woman_Montage.short_woman_Montage"),
+        TEXT("/Game/animation/face_animation/short_animation_Montage.short_animation_Montage"),
+        TEXT("/Game/animation/face_animation/short_animation_Montage.short_animation_Montage")
+    };
+
+    TCHAR body_animation_path[3][150] = {
+       TEXT("/Game/animation/dance/GangnamStyle_UE_Montage.GangnamStyle_UE_Montage"),
+       TEXT("/Game/animation/loop_headnodyes.loop_headnodyes"),
+       TEXT("/Game/animation/Thinking_UE_Montage.Thinking_UE_Montage")
+    };
+
+    // personality 값이 유효한지 확인 (0~2)
+    if (personality < 0 || personality >= 3)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Invalid personality value: %d"), personality);
+        return;
+    }
+
+    // preview_kid가 유효한지 확인
+    if (!preview_kid)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("preview_kid is null"));
+        return;
+    }
+
+    // "Face" 태그를 가진 스켈레탈 메시 컴포넌트 찾기
+    USkeletalMeshComponent* FaceMesh = nullptr;
+    TArray<UActorComponent*> Components;
+    preview_kid->GetComponents(Components);
+    for (UActorComponent* Component : Components)
+    {
+        if (USkeletalMeshComponent* SkeletalMesh = Cast<USkeletalMeshComponent>(Component))
+        {
+            if (SkeletalMesh->ComponentHasTag(FName("Face")))
+            {
+                FaceMesh = SkeletalMesh;
+                break;
+            }
+        }
+    }
+
+    // "Body" 태그를 가진 스켈레탈 메시 컴포넌트 찾기
+    USkeletalMeshComponent* BodyMesh = nullptr;
+    for (UActorComponent* Component : Components)
+    {
+        if (USkeletalMeshComponent* SkeletalMesh = Cast<USkeletalMeshComponent>(Component))
+        {
+            if (SkeletalMesh->ComponentHasTag(FName("anim_body")))
+            {
+                BodyMesh = SkeletalMesh;
+                break;
+            }
+        }
+    }
+
+    // Face 애니메이션 몽타주 로드 및 재생
+    if (FaceMesh)
+    {
+        UAnimMontage* FaceMontage = LoadObject<UAnimMontage>(nullptr, face_animation_path[personality]);
+        if (FaceMontage)
+        {
+            FaceMesh->GetAnimInstance()->Montage_Play(FaceMontage);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Failed to load FaceMontage: %s"), face_animation_path[personality]);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("FaceMesh not found"));
+    }
+
+    // Body 애니메이션 몽타주 로드 및 재생
+    if (BodyMesh)
+    {
+        UAnimMontage* BodyMontage = LoadObject<UAnimMontage>(nullptr, body_animation_path[personality]);
+        if (BodyMontage)
+        {
+            BodyMesh->GetAnimInstance()->Montage_Play(BodyMontage);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Failed to load BodyMontage: %s"), body_animation_path[personality]);
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("BodyMesh not found"));
     }
 }
