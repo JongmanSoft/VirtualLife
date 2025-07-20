@@ -203,6 +203,8 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
                 APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
                 PlayerController->SetViewTargetWithBlend(preview_kid, 2.0f);
 
+                make_finish_widget(name, per_value, hello);
+
             }
 		}
 
@@ -294,4 +296,62 @@ Customizing Akid_map_script::make_kid_customizing(const Customizing& my_custom, 
 
     
     return kid_custom;
+}
+
+void Akid_map_script::make_finish_widget(const FString& kid_name, const int& personality, const FString& hello_text)
+{
+    // 블루프린트 위젯 클래스 동적 로드
+    UClass* WidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/UI/kid_finish_ui.kid_finish_ui_C"));
+    if (WidgetClass)
+    {
+        // 현재 월드와 플레이어 컨트롤러 가져오기
+        UWorld* World = GetWorld();
+        if (World)
+        {
+            APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, 0);
+            if (PlayerController)
+            {
+                // 위젯 인스턴스 생성
+                UUserWidget* MyWidget = CreateWidget<UUserWidget>(PlayerController, WidgetClass);
+                if (MyWidget)
+                {
+                    // kid_name 설정
+                    FProperty* Property = MyWidget->GetClass()->FindPropertyByName(FName("kid_name"));
+                    if (Property)
+                    {
+                        FString* kid_name_value = Property->ContainerPtrToValuePtr<FString>(MyWidget);
+                        if (kid_name_value)
+                        {
+                            *kid_name_value = kid_name;
+                        }
+                    }
+
+                    // kid_hello 설정
+                    Property = MyWidget->GetClass()->FindPropertyByName(FName("kid_hello"));
+                    if (Property)
+                    {
+                        FString* kid_hello_value = Property->ContainerPtrToValuePtr<FString>(MyWidget);
+                        if (kid_hello_value)
+                        {
+                            *kid_hello_value = hello_text;
+                        }
+                    }
+
+                    // kid_personality 설정
+                    Property = MyWidget->GetClass()->FindPropertyByName(FName("kid_personality"));
+                    if (Property)
+                    {
+                        int* kid_per_value = Property->ContainerPtrToValuePtr<int>(MyWidget);
+                        if (kid_per_value)
+                        {
+                            *kid_per_value = personality;
+                        }
+                    }
+
+                    // 뷰포트에 추가
+                    MyWidget->AddToViewport();
+                }
+            }
+        }
+    }
 }

@@ -35,4 +35,5 @@ public:
 
 	void set_customizing_inteerpol(Customizing& change_cus, const Customizing& standard_cus, float interpol_value);
 	Customizing make_kid_customizing(const Customizing& my_custom, const Customizing& you_custom);
+	void make_finish_widget(const FString& kid_name, const int& personality, const FString& hello_text);
 };
