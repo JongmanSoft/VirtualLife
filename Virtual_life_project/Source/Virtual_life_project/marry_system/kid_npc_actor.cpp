@@ -29,6 +29,40 @@ void Akid_npc_actor::Tick(float DeltaTime)
 
 }
 
+void Akid_npc_actor::set_new_custom(Customizing recv_cus)
+{
+    m_custom->skin = recv_cus.skin;
+    m_custom->eye_scale = recv_cus.eye_scale;
+    m_custom->hair = recv_cus.hair;
+    m_custom->hair_color_B = recv_cus.hair_color_B;
+    m_custom->hair_color_G = recv_cus.hair_color_G;
+    m_custom->hair_color_R = recv_cus.hair_color_R;
+    m_custom->L_eye_color_hue = recv_cus.L_eye_color_hue;
+    m_custom->L_eye_color_sat = recv_cus.L_eye_color_sat;
+    m_custom->R_eye_color_hue = recv_cus.R_eye_color_hue;
+    m_custom->R_eye_color_sat = recv_cus.R_eye_color_sat;
+    m_custom->pants = recv_cus.pants;
+    m_custom->pupil_scale = recv_cus.pupil_scale;
+    m_custom->shirt = recv_cus.shirt;
+    m_custom->shoes = recv_cus.shoes;
+    m_custom->eye_width = recv_cus.eye_width;
+    m_custom->eye_thick = recv_cus.eye_thick;
+    m_custom->eye_slope = recv_cus.eye_slope;
+    m_custom->nose_width = recv_cus.nose_width;
+    m_custom->nose_height = recv_cus.nose_height;
+    m_custom->mouse_width = recv_cus.mouse_width;
+    m_custom->mouse_thick = recv_cus.mouse_thick;
+    m_custom->mouse_slope = recv_cus.mouse_slope;
+    m_custom->chin = recv_cus.chin;
+    m_custom->jaw = recv_cus.jaw;
+    m_custom->heavy = recv_cus.heavy;
+    m_custom->face_width = recv_cus.face_width;
+    m_custom->eyebrows = recv_cus.eyebrows;
+    m_custom->glasses = recv_cus.glasses;
+
+    apply_custom();
+}
+
 USkeletalMeshComponent* Akid_npc_actor::find_tag_skeltal_mesh(const FName& tag_name)
 {
     TArray<UActorComponent*> Components;

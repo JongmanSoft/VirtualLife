@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GroomComponent.h"
 #include "../Custom/Custom_data.h"
+#include "../../server/protocol.h"
 #include "kid_npc_actor.generated.h"
 
 UCLASS()
@@ -24,6 +25,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void set_new_custom(Customizing recv_cus);
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FString name; //¿Ã∏ß

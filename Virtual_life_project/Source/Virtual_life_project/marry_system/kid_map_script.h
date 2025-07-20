@@ -27,8 +27,11 @@ public:
 	UFUNCTION()
 	void custom_finish(float g_value, uint8 per_value, FString hello, FString name);
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ACharacter* you_character; //상대캐릭터
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	AActor* preview_kid; //아이
 
 	void set_customizing_inteerpol(Customizing& change_cus, const Customizing& standard_cus, float interpol_value);
 	Customizing make_kid_customizing(const Customizing& my_custom, const Customizing& you_custom);
