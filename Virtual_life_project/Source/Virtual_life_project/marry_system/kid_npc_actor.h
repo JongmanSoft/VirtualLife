@@ -27,6 +27,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void set_new_custom(Customizing recv_cus);
+	void set_kid_info(const FString& name, const FString& hello, const int& personality);
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FString name; //¿Ã∏ß

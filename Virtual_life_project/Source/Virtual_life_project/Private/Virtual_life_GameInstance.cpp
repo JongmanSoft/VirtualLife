@@ -14,6 +14,7 @@
 #include "EngineUtils.h"
 #include "VL_AnimInstance.h"
 #include "VL_Player.h"
+#include "../marry_system/kid_npc_actor.h"
 #include "FloatingTextWidget.h"
 #include "../building/BuildItemRegistry.h"
 #include "../building/FBuildInfo.h"
@@ -355,19 +356,49 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	// 3. NPC 스폰
 	for (auto& Pair : OtherNPCs) // TMap<uint32, NPCUnitData>
 	{
-		const NPCUnitData& npcData = Pair.Value.data;
+		{
+			//자식이 아닐경우
+			const NPCUnitData& npcData = Pair.Value.data;
 
-		FVector Location(npcData.x, npcData.y, npcData.z);
-		FRotator Rotation(0.f, npcData.yaw, 0.f);
+			FVector Location(npcData.x, npcData.y, npcData.z);
+			FRotator Rotation(0.f, npcData.yaw, 0.f);
 
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-		ACharacter* SpawnedNPC = World->SpawnActor<ACharacter>(PlayerClass, Location, Rotation, SpawnParams);
-		Um_CustomizableSkeletalComponent* Other_actor_m_custom = SpawnedNPC->FindComponentByClass<Um_CustomizableSkeletalComponent>();
-		Other_actor_m_custom->custom_data_update(npcData.c);
+			ACharacter* SpawnedNPC = World->SpawnActor<ACharacter>(PlayerClass, Location, Rotation, SpawnParams);
+			Um_CustomizableSkeletalComponent* Other_actor_m_custom = SpawnedNPC->FindComponentByClass<Um_CustomizableSkeletalComponent>();
+			Other_actor_m_custom->custom_data_update(npcData.c);
 
-		Pair.Value.character = SpawnedNPC; // 스폰된 NPC를 TMap에 저장
+			Pair.Value.character = SpawnedNPC; // 스폰된 NPC를 TMap에 저장
+		}
+		
+
+		if(false){
+			//자식일경우
+			const NPCUnitData& npcData = Pair.Value.data;
+			FSoftClassPath BlueprintPath(TEXT("/Game/VirtualLife_Character/KID_npc.KID_npc"));
+			UClass* BlueprintClass = LoadClass<AActor>(nullptr, *BlueprintPath.ToString());
+
+			if (BlueprintClass)
+			{
+				FActorSpawnParameters SpawnParams;
+				FVector SpawnLocation = FVector(npcData.x, npcData.y, npcData.z);
+				FRotator SpawnRotation = FRotator(0.0f,npcData.yaw, 0.0f);
+
+				AActor* SpawnedActor = World->SpawnActor<AActor>(BlueprintClass, SpawnLocation, SpawnRotation, SpawnParams);
+				if (SpawnedActor)
+				{
+					UE_LOG(LogTemp, Log, TEXT("kid spawn success!"));
+					Akid_npc_actor* spawn_kid = Cast<Akid_npc_actor>(SpawnedActor);
+					if (spawn_kid) {
+						spawn_kid->set_new_custom(npcData.c);
+						spawn_kid->set_kid_info(npcData.name, npcData.hello_msg, npcData.personality);
+					}
+				}
+			}
+			
+		}
 	}
 
 	// 문

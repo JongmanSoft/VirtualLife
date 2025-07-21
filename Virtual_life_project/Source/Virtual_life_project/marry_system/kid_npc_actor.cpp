@@ -63,6 +63,13 @@ void Akid_npc_actor::set_new_custom(Customizing recv_cus)
     apply_custom();
 }
 
+void Akid_npc_actor::set_kid_info(const FString& _name, const FString& _hello, const int& _personality)
+{
+    name = _name;
+    hello = _hello;
+    personality = _personality;
+}
+
 USkeletalMeshComponent* Akid_npc_actor::find_tag_skeltal_mesh(const FName& tag_name)
 {
     TArray<UActorComponent*> Components;
