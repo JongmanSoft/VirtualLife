@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "kid_npc_actor.h"
 #include "GameFramework/Pawn.h"
+#include "../public/VL_Player.h"
 #include "Kismet/GameplayStatics.h"
 
 void Akid_map_script::BeginPlay()
@@ -82,33 +83,8 @@ void Akid_map_script::BeginPlay()
 
     //상대방그리기 (일단 나중에...)
     auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
-     you_character = m_inst->draw_one_player(m_inst->m_marry->you_id); //여기수정
-
-    //너부터 춤춰라...
-    if (you_character)
-    {
-        USkeletalMeshComponent* SkeletalMeshComp = you_character->FindComponentByClass<USkeletalMeshComponent>();
-        if (SkeletalMeshComp)
-        {
-            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
-            if (AnimInstance)
-            {
-                // 애니메이션 시퀀스 로드
-                UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose_UE.MaleStandingPose_UE"));
-                if (AnimSequence)
-                {
-                    // 애니메이션 모드를 Use Animation Asset으로 설정
-                    SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
-                    // 애니메이션 시퀀스 재생
-                    AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimSequence"));
-                }
-            }
-        }
-    }
+    you_character = m_inst->draw_one_player(m_inst->m_marry->you_id); //여기수정
+   
     //나도 출게...
     ACharacter* AOwner = Cast<ACharacter>(PlayerController->GetPawn());
     if (AOwner)
@@ -126,7 +102,33 @@ void Akid_map_script::BeginPlay()
                     // 애니메이션 모드를 Use Animation Asset으로 설정
                     SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
                     // 애니메이션 시퀀스 재생
-                    AnimInstance->PlaySlotAnimationAsDynamicMontage(AnimSequence, "DefaultSlot", 0.25f, 0.25f, 1.0f);
+                    SkeletalMeshComp->PlayAnimation(AnimSequence, true);
+               
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Failed to load AnimSequence"));
+                }
+            }
+        }
+    }
+
+    //너부터 춤춰라...
+    if (you_character)
+    {
+        USkeletalMeshComponent* SkeletalMeshComp = you_character->FindComponentByClass<USkeletalMeshComponent>();
+        if (SkeletalMeshComp)
+        {
+            UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+            if (AnimInstance)
+            {
+                // 애니메이션 시퀀스 로드
+                UAnimSequence* AnimSequence = LoadObject<UAnimSequence>(nullptr, TEXT("/Game/animation/animation_resource/MaleStandingPose_UE.MaleStandingPose_UE"));
+                if (AnimSequence)
+                {
+                    // 애니메이션 모드를 Use Animation Asset으로 설정
+                    SkeletalMeshComp->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+                    SkeletalMeshComp->PlayAnimation(AnimSequence, true);
                 }
                 else
                 {
