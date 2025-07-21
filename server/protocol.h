@@ -432,10 +432,9 @@ struct SC_SPAWN_NPC_PACKET {
 
 // NPC 여러마리 스폰하는 패킷
 struct SC_SPAWN_NPCS_PACKET {
-	unsigned short size;
-	PACKETID type;
-	unsigned short npc_count;
-	NPCUnitData npcs[MAX_NPC]; 
+	unsigned short size;      // 전체 패킷 크기
+	PACKETID type;            // 패킷 ID
+	unsigned short npc_count; // NPC 개수
 };
 
 // 미완 ----------------------------

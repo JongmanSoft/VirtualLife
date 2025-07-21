@@ -115,3 +115,5 @@ server/server/*
 server/x64/Release/*
 server/x64/Release/server.pdb
 server/x64/Release/server.exe
+Virtual_life_project/Content/StarterContent/Architecture/Floor_400x400.uasset
+Virtual_life_project/Content/StarterContent/Blueprints/Blueprint_CeilingLight.uasset

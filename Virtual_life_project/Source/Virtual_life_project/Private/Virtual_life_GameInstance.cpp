@@ -834,18 +834,21 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		}
 		case SC_NPCS_SPAWN:
 		{
-			SC_SPAWN_NPCS_PACKET p;
-			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_SPAWN_NPCS_PACKET));
+			const uint8* raw = PacketData.GetData();
+			const SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<const SC_SPAWN_NPCS_PACKET*>(raw);
 
-			for (int i = 0; i < p.npc_count; ++i)
+			// npc 배열은 패킷 뒤에 붙어 있음
+			const NPCUnitData* npcs = reinterpret_cast<const NPCUnitData*>(raw + sizeof(SC_SPAWN_NPCS_PACKET));
+
+			for (int i = 0; i < p->npc_count; ++i)
 			{
-				const NPCUnitData& unit = p.npcs[i];
+				const NPCUnitData& unit = npcs[i];
 
 				NPCInfo npc;
 				npc.data = unit;
 				npc.character = nullptr;
 
-				OtherNPCs.Add(unit.id, npc); 
+				OtherNPCs.Add(unit.id, npc);
 			}
 			break;
 		}
@@ -1025,13 +1028,14 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
 		FVector SpawnScale = FVector(obj.scale);
+		FVector DefaultScale = FVector(1.0f, 1.0f, 1.0f);
 
 		if (Info->InteractableActorClass)
 		{
 			AInteractableActor* SpawnedActor = World->SpawnActor<AInteractableActor>(Info->InteractableActorClass, SpawnLoc, SpawnRot);
 			if (SpawnedActor)
 			{
-				SpawnedActor->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetActorScale3D(DefaultScale);
 				SpawnedActor->SetRowID(RowName);
 
 				if (Info->Mesh)

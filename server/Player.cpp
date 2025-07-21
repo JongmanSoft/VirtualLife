@@ -249,30 +249,39 @@ bool Player::send_doors_state_packet()
 
 bool Player::send_spawn_npcs_packet()
 {
-	SC_SPAWN_NPCS_PACKET p;
-	p.type = SC_NPCS_SPAWN;
-	p.npc_count = min(npc_count, MAX_NPC);
-	p.size = sizeof(SC_SPAWN_NPCS_PACKET);
+	int count = min(npc_count, MAX_NPC);
+	int packetSize = sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData) * count;
 
-	for (int i = 0; i < npc_count; ++i)
+	// 동적 버퍼 할당
+	char* buffer = new char[packetSize];
+
+	// 헤더 설정
+	SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<SC_SPAWN_NPCS_PACKET*>(buffer);
+	p->type = SC_NPCS_SPAWN;
+	p->npc_count = count;
+	p->size = packetSize;
+
+	// 뒤에 붙는 npc 배열 채우기
+	NPCUnitData* npc_array = reinterpret_cast<NPCUnitData*>(buffer + sizeof(SC_SPAWN_NPCS_PACKET));
+	for (int i = 0; i < count; ++i)
 	{
-		auto npc = npcs[i];
-
-		NPCUnitData& data = p.npcs[i];
-		data.id = npc.id;
-		data.preg_id = npc.preg_id;
-		data.spouse_id = npc.spouse_id;
-		data.c = npc.customizing;
-		data.x = npc.x;
-		data.y = npc.y;
-		data.z = npc.z;
-		data.yaw = npc.yaw;
-		data.personality = npc.personality;
+		auto& npc = npcs[i];
+		npc_array[i].id = npc.id;
+		npc_array[i].preg_id = npc.preg_id;
+		npc_array[i].spouse_id = npc.spouse_id;
+		npc_array[i].c = npc.customizing;
+		npc_array[i].x = npc.x;
+		npc_array[i].y = npc.y;
+		npc_array[i].z = npc.z;
+		npc_array[i].yaw = npc.yaw;
+		npc_array[i].personality = npc.personality;
 	}
 
-	send(&p);
+	// 전송 후 버퍼 해제
+	send(buffer);
 	return true;
 }
+
 
 bool Player::send_spawn_npc_packet(int id) // 엔피씨 한마리 보내는 것
 {
