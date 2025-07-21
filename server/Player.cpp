@@ -45,13 +45,13 @@ bool Player::send_enter_game_packet()
 
 	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
 
-	// ÀÎº¥Åä¸® ÃÊ±âÈ­
+	// ï¿½Îºï¿½ï¿½ä¸® ï¿½Ê±ï¿½È­
 	for (int i = 0; i < ITEM_SIZE; ++i) {
 		if (true == player_item.contains(i)) p.items[i] = player_item[i];
 		else p.items[i] = 0;
 	}
 	
-	// Äù½ºÆ® ÃÊ±âÈ­
+	// ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­
 	for (int i = 0; i < QUEST_MAX; ++i) {
 		if (quests.size() <= i) {
 			p.giver_id[i] = -1;
@@ -106,9 +106,9 @@ bool Player::send_chat_packet(std::wstring name, std::wstring chat, unsigned int
 	p.type = SC_CHAT;
 	p.from_id = id;
 
-	// ¾ÈÀüÇÏ°Ô ¹®ÀÚ¿­ º¹»ç
-	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name º¹»ç
-	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE); // chat º¹»ç
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name ï¿½ï¿½ï¿½ï¿½
+	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE); // chat ï¿½ï¿½ï¿½ï¿½
 
 	send(&p);
 	return true;
@@ -122,7 +122,7 @@ bool Player::send_update_item_packet(unsigned short id, unsigned short num)
 	p.id = id;
 	p.num = num;
 
-	std::cout << pinfo.id << "¿¡°Ô SC_UPDATE_ITEM_PACKET º¸³¿: " << id << "¹ø ¾ÆÀÌÅÛÀÌ " << num << "°³·Î º¯È­!" << std::endl;
+	std::cout << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ SC_UPDATE_ITEM_PACKET ï¿½ï¿½ï¿½ï¿½: " << id << "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " << num << "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È­!" << std::endl;
 	send(&p);
 	return true;
 }
@@ -133,7 +133,7 @@ bool Player::send_update_gold(int sc_gold)
 	p.size = sizeof(SC_UPDATE_GOLD_PACKET);
 	p.type = SC_UPDATE_GOLD;
 	p.gold = sc_gold;
-	std::cout << pinfo.id << "¿¡°Ô SC_GOLD_UPDATE º¸³¿: " << sc_gold<<"¿øÀÌ µÊ!" << std::endl;
+	std::cout << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ SC_GOLD_UPDATE ï¿½ï¿½ï¿½ï¿½: " << sc_gold<<"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½!" << std::endl;
 	send(&p);
 	return true;
 }
@@ -145,7 +145,7 @@ bool Player::send_get_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_GET_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	std::cout << pinfo.id << "¿¡°Ô SC_UPDATE_QUEST º¸³¿: " << gid << "¿¡°Ô " << n << "¹ø Äù½ºÆ®¸¦ ¹ÞÀ½" << std::endl;
+	std::cout << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ SC_UPDATE_QUEST ï¿½ï¿½ï¿½ï¿½: " << gid << "ï¿½ï¿½ï¿½ï¿½ " << n << "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½" << std::endl;
 	send(&p);
 	return true;
 }
@@ -157,7 +157,7 @@ bool Player::send_remove_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_REMOVE_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	std::cout << pinfo.id << "¿¡°Ô SC_UPDATE_QUEST º¸³¿: " << gid << "¿¡°Ô ¹ÞÀº" << n << "¹ø Äù½ºÆ®°¡ ¾ø¾îÁü" << std::endl;
+	std::cout << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ SC_UPDATE_QUEST ï¿½ï¿½ï¿½ï¿½: " << gid << "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½" << n << "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" << std::endl;
 	send(&p);
 	return true;
 }
@@ -171,7 +171,7 @@ bool Player::send_room_leave_packet()
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
 	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
-	std::cout << "½Ã°£: " << p.time << std::endl;
+	std::cout << "ï¿½Ã°ï¿½: " << p.time << std::endl;
 	p.x = 960;
 	p.y = 1650;
 	p.z = 3300;
@@ -188,7 +188,7 @@ bool Player::send_update_party_packet()
 {
 	SC_UPDATE_PARTY_PACKET p;
 	p.size = sizeof(SC_UPDATE_PARTY_PACKET);
-	p.type = SC_UPDATE_PARTY; // ÆÄÆ¼ ¸â¹ö ¼öÁ¤
+	p.type = SC_UPDATE_PARTY; // ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	p.act_type = PARTY_REQUEST::PARTY_UPDATE;
 	p.member_count = party->get_member_count();
 	for (int i = 0; i < MAX_PARTY_MEMBER; ++i) {
@@ -252,16 +252,16 @@ bool Player::send_spawn_npcs_packet()
 	int count = min(npc_count, MAX_NPC);
 	int packetSize = sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData) * count;
 
-	// µ¿Àû ¹öÆÛ ÇÒ´ç
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½
 	char* buffer = new char[packetSize];
 
-	// Çì´õ ¼³Á¤
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<SC_SPAWN_NPCS_PACKET*>(buffer);
 	p->type = SC_NPCS_SPAWN;
 	p->npc_count = count;
 	p->size = packetSize;
 
-	// µÚ¿¡ ºÙ´Â npc ¹è¿­ Ã¤¿ì±â
+	// ï¿½Ú¿ï¿½ ï¿½Ù´ï¿½ npc ï¿½è¿­ Ã¤ï¿½ï¿½ï¿½
 	NPCUnitData* npc_array = reinterpret_cast<NPCUnitData*>(buffer + sizeof(SC_SPAWN_NPCS_PACKET));
 	for (int i = 0; i < count; ++i)
 	{
@@ -278,13 +278,13 @@ bool Player::send_spawn_npcs_packet()
 		npc_array[i].is_kid = npc.is_kid;
 	}
 
-	// Àü¼Û ÈÄ ¹öÆÛ ÇØÁ¦
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	send(buffer);
 	return true;
 }
 
 
-bool Player::send_spawn_npc_packet(int id) // ¿£ÇÇ¾¾ ÇÑ¸¶¸® º¸³»´Â °Í
+bool Player::send_spawn_npc_packet(int id) // ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½Ñ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 {
 	auto target = npcs[id];
 
@@ -324,16 +324,16 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 {
 	switch (pkt.act_type)
 	{
-	case PARTY_REQUEST::PARTY_REQUEST_INVITE: // ÃÊ´ë
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE: // ï¿½Ê´ï¿½
 	{
 		if (party == nullptr) {
-			// ÆÄÆ¼ »ý¼º ·ÎÁ÷
+			// ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			party = new Party();
 			party->set_partyID(id);
 			party->add_member(this);
 			send_join_success_packet(id, name);
 		}
-		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; // ÃÊ´ëºÒ°¡ ÆÐÅ¶ Àü¼Û
+		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; // ï¿½Ê´ï¿½Ò°ï¿½ ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½
 
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
@@ -345,7 +345,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT:
 	{
-		// string id·Î ÇÃ·¹ÀÌ¾î¸¦ Ã£±â¶ó..
+		// string idï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¸¦ Ã£ï¿½ï¿½ï¿½..
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].party->add_member(this);
@@ -354,13 +354,13 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 			}
 		}
 
-		// ÆÄÆ¼ Ãß°¡µÈ °Í ¾÷µ¥ÀÌÆ® -> ¿©±â ¹ÂÅØ½º ´Þ¾Æ¾ß ÇÔ
+		// ï¿½ï¿½Æ¼ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½Þ¾Æ¾ï¿½ ï¿½ï¿½
 		for (auto& a : party->get_members()) {
 			a->send_update_party_packet();
 		}
 		break;
 	}
-	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT: // ÃÊ´ëÇÑ ÇÃ·¹ÀÌ¾î°¡ °ÅÀýÇß´Ù
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT: // ï¿½Ê´ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½
 	{
 		break;
 	}
@@ -446,7 +446,7 @@ void Player::recv()
 	}
 }
 
-void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â ÇÔ¼ö
+void Player::handle_packet(char* packet, unsigned short length) // ï¿½ï¿½Å¶ Ã³ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½
 {
     char type = packet[2];
 
@@ -456,15 +456,15 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	{
 		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
-		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_LOGIN_PACKET: " << id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 
 		bool is_new = false;
 		bool success = true;
 		
-		// 1. ½Å±ÔÀ¯Àú È®ÀÎ
+		// 1. ï¿½Å±ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		if (DBManager::checkLogin(p->id, p->pw, is_new)) {
 			if (false == is_new) {
-				// ±âÁ¸À¯Àú
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				DBManager::LoadPInfo(p->id, pinfo, name);
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
@@ -474,7 +474,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 				this->id = p->id;
 			}
 			else {
-				// ½Å±Ô À¯Àú
+				// ï¿½Å±ï¿½ ï¿½ï¿½ï¿½ï¿½
 				this->id = p->id;
 				player_setup();
 				rooms[p->id] = new Room();
@@ -484,11 +484,11 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 			}
 		}
 		else {
-			// ·Î±×ÀÎ ½ÇÆÐ
+			// ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			success = false;
 		}
 
-		// 2. Á¢¼ÓÁßÀÎ ÇÃ·¹ÀÌ¾îÀÎÁö È®ÀÎ
+		// 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
@@ -499,9 +499,9 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 		send_login_info_packet(success, is_new);
 		break;
     }
-	case CS_ENTER_GAME: // °ÔÀÓ Á¢¼Ó ¿äÃ»
+	case CS_ENTER_GAME: // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã»
 	{
-		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		if (this->name == L"") {
 			this->name = p->name;
@@ -519,14 +519,14 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			// ±âÁ¸À¯Àúµé¿¡°Ô ½ºÆù¿äÃ»
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			// ³ª¿¡°Ô ±âÁ¸À¯Àú ½ºÆù
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
@@ -537,14 +537,14 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	}
     case CS_CHAT:
     {
-		std::cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		int id = pinfo.id;
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
 
-		// º¸³½ Ã¤ÆÃ È®ÀÎ¿ë
+		// ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ È®ï¿½Î¿ï¿½
 		std::wcout << p->name << ": " << p->msg << std::endl;
 
-		// Ã¤ÆÃ ºê·ÎµåÄ³½ºÆ®
+		// Ã¤ï¿½ï¿½ ï¿½ï¿½Îµï¿½Ä³ï¿½ï¿½Æ®
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
@@ -560,10 +560,10 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 
 		if (state != PLAYING) {
 			state = NONE;
-			break; // ·Î±×ÀÎ ¹ê ¸·±â
+			break; // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		}
 
-		// ³ª°£ ÇÃ·¹ÀÌ¾î Á¤º¸ ºê·ÎµåÄ³½ºÆÃ
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Îµï¿½Ä³ï¿½ï¿½ï¿½ï¿½
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
@@ -572,7 +572,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 			}
 		}
 		
-		std::cout << id << "°¡ Á¾·á!" << std::endl;
+		std::cout << id << "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		DBManager::SavePInfo(this->id, this->pinfo);
 
 		state = NONE;
@@ -586,8 +586,8 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 
-			// À§Ä¡Á¤º¸ ºê·ÎµåÄ³½ºÆÃ
-			if (this->location == HOME) // Áý¿¡ ÀÖÀ» ¶§ -> Áý¿¡ ÀÖ´Â ¾Öµé ³¢¸®
+			// ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Îµï¿½Ä³ï¿½ï¿½ï¿½ï¿½
+			if (this->location == HOME) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Öµï¿½ ï¿½ï¿½ï¿½ï¿½
 			{
 				for (int i = 0; i < room->players.size(); ++i) {
 					if (this != room->players[i]) {
@@ -595,7 +595,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 					}
 				}
 			}
-			else // Áý¿¡ ¾øÀ» ¶§ -> Áý¿¡ ¾ø´Â ¾Öµé ³¢¸®
+			else // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ -> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Öµï¿½ ï¿½ï¿½ï¿½ï¿½
 			{
 				for (int i = 0; i < players.size(); ++i) {
 					if (players[i].state == PLAYING and players[i].location == WORLD)
@@ -607,13 +607,13 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	}
 	case CS_GET_ITEM:
 	{
-		std::cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		int id = pinfo.id;
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		if (player_item.contains(p->id)) player_item[p->id] += p->num;
 		else player_item[p->id] = p->num;
 
-		// ÀÎº¥Åä¸® ¼¼ÀÌºê
+		// ï¿½Îºï¿½ï¿½ä¸® ï¿½ï¿½ï¿½Ìºï¿½
 		save_db_pInventory();
 
 		send_update_item_packet(p->id, player_item[p->id]);
@@ -621,7 +621,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	}
 	case CS_UPDATE_CUSTOM:
 	{
-		std::cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
@@ -638,7 +638,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	}
 	case CS_GET_QUEST:
 	{
-		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		this->quests.emplace_back(p->giver_id, p->num);
 		Quest q{ p->giver_id, p->num };
@@ -651,7 +651,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	}
 	case CS_REMOVE_QUEST:
 	{
-		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 
 		for (int i = 0; i < this->quests.size(); ++i) {
@@ -669,21 +669,21 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	case CS_ROOM_ENTER:
 	{
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
-		std::cout << "CS_ENTER_ROOM: " << pinfo.id << "°¡ " << p->id <<"ÀÇ ¹æ¿¡ ÁøÀÔ, ÇöÀç ÀÎ¿ø: " << rooms[p->id]->players.size() << "¸í" << std::endl;
+		std::cout << "CS_ENTER_ROOM: " << pinfo.id << "ï¿½ï¿½ " << p->id <<"ï¿½ï¿½ ï¿½æ¿¡ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½: " << rooms[p->id]->players.size() << "ï¿½ï¿½" << std::endl;
 
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
 		strcpy_s(pkt.id, M_ID_SIZE, p->id);
-		rooms[p->id]->packet_setup(pkt); // p->id << ÇÃ·¹ÀÌ¾îÀÇ ¹æ ¼Â¾÷
+		rooms[p->id]->packet_setup(pkt); // p->id << ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Â¾ï¿½
 		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
 		
 		if (location != HOME) {
 			location = HOME;
 
-			// todo: ¿©±â Å×½ºÆ® ¹× Å¬¶ó ¼öÁ¤ ÇÊ¿ä
+			// todo: ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½
 			room = rooms[p->id];
 
-			// ¸ðµç ÇÃ·¹ÀÌ¾î¿¡°Ô µð½ºÆù º¸³»±â
+			// ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				std::lock_guard<std::mutex> lock(players_mutex);
 				for (int i = 0; i < players.size(); ++i) {
@@ -694,19 +694,19 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 
 			room->AddPlayer(this);
 
-			// ÇöÀç ¹æ¿¡ ÀÖ´Â ÇÃ·¹ÀÌ¾îµé¿¡°Ô ³ª º¸³»±â
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½æ¿¡ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				for (int i = 0; i < room->players.size(); ++i) {
-					if (room->players[i] != this) // ³ªÁ¦¿Ü
+					if (room->players[i] != this) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
 				}
 			}
 
 			{
-				// ³ª¿¡°Ô ÇöÀç ¹æ¿¡ ÀÖ´Â ÇÃ·¹ÀÌ¾îµé º¸³»±â
+				// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½æ¿¡ ï¿½Ö´ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				std::lock_guard ll{ room->m };
 				for (int i = 0; i < room->players.size(); ++i) {
-					if (room->players[i] != this) // ³ªÁ¦¿Ü
+					if (room->players[i] != this) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						room->players[i]->send_spawn_packet(this->pinfo, this->custom);
 				}
 			}
@@ -715,7 +715,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 		send(&pkt);
 		break;
 	}
-	case CS_PLACE_BUILD: // todo: Áö±Ý ³ª°¥¶§¸¸ ÀúÀåÇÏµµ·Ï ¼öÁ¤ÇØ¼­ ³ªÁß¿¡ °íÃÄ¾ß ÇÔ
+	case CS_PLACE_BUILD: // todo: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½ï¿½ï¿½Ä¾ï¿½ ï¿½ï¿½
 	{
 		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
 		Object obj;
@@ -732,7 +732,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	case CS_REMOVE_BUILD:
 	{
 		CS_REMOVE_BUILD_PACKET* p = reinterpret_cast<CS_REMOVE_BUILD_PACKET*>(packet);
-		std::cout << "°Ç¹° »èÁ¦ ¿äÃ» ¹ÞÀ½! À§Ä¡: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
+		std::cout << "ï¿½Ç¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½! ï¿½ï¿½Ä¡: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
 
 		room->RemoveObjectByPosition(p->x, p->y, p->z);
 		break;
@@ -740,7 +740,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	case CS_UPDATE_BUILD:
 	{
 		CS_UPDATE_BUILD_PACKET* p = reinterpret_cast<CS_UPDATE_BUILD_PACKET*>(packet);
-		std::cout << "°Ç¹° ¼öÁ¤ ¿äÃ» ¹ÞÀ½! À§Ä¡: (" << p->old_x << ", " << p->old_y << ", " << p->old_z << ") ¡æ ("
+		std::cout << "ï¿½Ç¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½! ï¿½ï¿½Ä¡: (" << p->old_x << ", " << p->old_y << ", " << p->old_z << ") ï¿½ï¿½ ("
 			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
 
 		room->UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
@@ -750,7 +750,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	{
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
 
-		// Áý¿¡¼­ ³ª°¥¶§ ÀüÃ¼ »èÁ¦ ÈÄ ´Ù½Ã ÀúÀå, ³» ¹æÀÏ ¶§¸¸
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		if (this->id == room->ownerID)
 		{
 			DBManager::DeleteRoomObjects(id);
@@ -758,7 +758,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 		}
 
 		this->location = WORLD;
-		std::cout << "CS_ROOM_LEAVE_PACKET: " << pinfo.id << "°¡ " << room->ownerID << "ÀÇ ¹æ¿¡¼­ ³ª°¨, ÇöÀç ÀÎ¿ø: " << room->players.size() - 1 << "¸í" << std::endl;
+		std::cout << "CS_ROOM_LEAVE_PACKET: " << pinfo.id << "ï¿½ï¿½ " << room->ownerID << "ï¿½ï¿½ ï¿½æ¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Î¿ï¿½: " << room->players.size() - 1 << "ï¿½ï¿½" << std::endl;
 
 		{
 			std::lock_guard ll{ room->m };
@@ -769,21 +769,21 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 					p->send_despawn_packet(pinfo.id);
 			}
 		}
-		room->RemovePlyer(pinfo.id); // ¹æ¿¡¼­ ÇÃ·¹ÀÌ¾î Á¦°Å
-		this->room = nullptr; // ¹æ Á¤º¸ ÃÊ±âÈ­
+		room->RemovePlyer(pinfo.id); // ï¿½æ¿¡ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+		this->room = nullptr; // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 
 		send_room_leave_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			// ±âÁ¸À¯Àúµé¿¡°Ô ½ºÆù¿äÃ»
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			// ³ª¿¡°Ô ±âÁ¸À¯Àú ½ºÆù
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
@@ -810,16 +810,17 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
 	case CS_ADD_KID: 
 	{
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
-		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		Kid temp_kid(*p);
-		temp_kid.is_kid = true; // ÀÚ½ÄÀ¸·Î ¼³Á¤
+		temp_kid.id = npcs.size();
+		temp_kid.is_kid = true; // ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		DBManager::SaveKidInfo(temp_kid);
 		break;
 	}
 	case CS_DOOR_UPDATE:
 	{
 		CS_UPDATE_DOOR_PACKET* p = reinterpret_cast<CS_UPDATE_DOOR_PACKET*>(packet);
-		std::cout << "REC	V-CS_DOOR_UPDATE_PACKET: " << pinfo.id << "¿¡°Ô " << length << "¸¸Å­ ¹ÞÀ½!" << std::endl;
+		std::cout << "RECV-CS_DOOR_UPDATE_PACKET: " << pinfo.id << "ï¿½ï¿½ï¿½ï¿½ " << length << "ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½!" << std::endl;
 		doors[p->door_id].is_open = p->is_open;
 
 		SC_UPDATE_DOOR_PACKET pkt;
@@ -840,7 +841,7 @@ void Player::handle_packet(char* packet, unsigned short length) // ÆÐÅ¶ Ã³¸®ÇÏ´Â
     }
 }
 
-void Player::player_setup() // ½Å±Ô ÇÃ·¹ÀÌ¾î À§Ä¡ µî ¼Â¾÷
+void Player::player_setup() // ï¿½Å±ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ ï¿½Â¾ï¿½
 {
 	pinfo.x = 960 + Utility::GetRandom(100.0f, 200.0f);
 	pinfo.y = 1650 + Utility::GetRandom(100.0f, 200.0f);

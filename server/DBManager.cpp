@@ -776,7 +776,6 @@ void DBManager::DeleteQuest(const std::string& userID, Quest& data)
 void DBManager::SaveKidInfo(const Kid& kid)
 {
     if (!DB_ON) return;
-
     try {
         auto conn = GetConnection();
         std::unique_ptr<sql::PreparedStatement> pstmt(conn->prepareStatement(R"(
@@ -790,13 +789,43 @@ void DBManager::SaveKidInfo(const Kid& kid)
                 MOUTH_WIDTH, MOUTH_THICK, MOUTH_SLOPE,
                 CHIN, JAW, HEAVY, FACE_WIDTH, EYEBROWS, GLASSES,
                 x, y, z, yaw, name, is_Kid
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
                 PREG_ID = VALUES(PREG_ID),
                 SPOUSE_ID = VALUES(SPOUSE_ID),
                 PERSONALITY = VALUES(PERSONALITY),
                 HELLO_MSG = VALUES(HELLO_MSG),
-                x = VALUES(x), y = VALUES(y), z = VALUES(z),
+                SKIN = VALUES(SKIN),
+                SHIRT = VALUES(SHIRT),
+                PANTS = VALUES(PANTS),
+                SHOES = VALUES(SHOES),
+                R_EYE_COLOR_HUE = VALUES(R_EYE_COLOR_HUE),
+                R_EYE_COLOR_SAT = VALUES(R_EYE_COLOR_SAT),
+                L_EYE_COLOR_HUE = VALUES(L_EYE_COLOR_HUE),
+                L_EYE_COLOR_SAT = VALUES(L_EYE_COLOR_SAT),
+                EYE_SCALE = VALUES(EYE_SCALE),
+                PUPIL_SCALE = VALUES(PUPIL_SCALE),
+                HAIR = VALUES(HAIR),
+                HAIR_COLOR_R = VALUES(HAIR_COLOR_R),
+                HAIR_COLOR_G = VALUES(HAIR_COLOR_G),
+                HAIR_COLOR_B = VALUES(HAIR_COLOR_B),
+                EYE_WIDTH = VALUES(EYE_WIDTH),
+                EYE_THICK = VALUES(EYE_THICK),
+                EYE_SLOPE = VALUES(EYE_SLOPE),
+                NOSE_WIDTH = VALUES(NOSE_WIDTH),
+                NOSE_HEIGHT = VALUES(NOSE_HEIGHT),
+                MOUTH_WIDTH = VALUES(MOUTH_WIDTH),
+                MOUTH_THICK = VALUES(MOUTH_THICK),
+                MOUTH_SLOPE = VALUES(MOUTH_SLOPE),
+                CHIN = VALUES(CHIN),
+                JAW = VALUES(JAW),
+                HEAVY = VALUES(HEAVY),
+                FACE_WIDTH = VALUES(FACE_WIDTH),
+                EYEBROWS = VALUES(EYEBROWS),
+                GLASSES = VALUES(GLASSES),
+                x = VALUES(x), 
+                y = VALUES(y), 
+                z = VALUES(z),
                 yaw = VALUES(yaw),
                 name = VALUES(name),
                 is_Kid = VALUES(is_Kid)
@@ -809,7 +838,6 @@ void DBManager::SaveKidInfo(const Kid& kid)
         pstmt->setString(5, WStringToUTF8(kid.hello_msg));
 
         const Customizing& c = kid.customizing;
-
         pstmt->setDouble(6, c.skin);
         pstmt->setInt(7, c.shirt);
         pstmt->setInt(8, c.pants);
@@ -829,22 +857,21 @@ void DBManager::SaveKidInfo(const Kid& kid)
         pstmt->setDouble(22, c.eye_slope);
         pstmt->setDouble(23, c.nose_width);
         pstmt->setDouble(24, c.nose_height);
-        pstmt->setDouble(25, c.mouse_width);
-        pstmt->setDouble(26, c.mouse_thick);
-        pstmt->setDouble(27, c.mouse_slope);
+        pstmt->setDouble(25, c.mouse_width); 
+        pstmt->setDouble(26, c.mouse_thick); 
+        pstmt->setDouble(27, c.mouse_slope); 
         pstmt->setDouble(28, c.chin);
         pstmt->setDouble(29, c.jaw);
         pstmt->setDouble(30, c.heavy);
         pstmt->setDouble(31, c.face_width);
         pstmt->setInt(32, c.eyebrows);
         pstmt->setInt(33, c.glasses);
-
         pstmt->setDouble(34, kid.x);
         pstmt->setDouble(35, kid.y);
         pstmt->setDouble(36, kid.z);
         pstmt->setDouble(37, kid.yaw);
         pstmt->setString(38, WStringToUTF8(kid.name));
-        pstmt->setInt(39, kid.is_kid);  // bool이면 0/1로 전달
+        pstmt->setInt(39, kid.is_kid);  // 39번째 파라미터로 수정
 
         pstmt->executeUpdate();
     }
@@ -872,8 +899,7 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
             outKid.spouse_id = res->getUInt("SPOUSE_ID");
             outKid.personality = static_cast<char>(res->getInt("PERSONALITY"));
 
-            std::wstring msg = UTF8ToWString(res->getString("HELLO_MSG"));
-            wcsncpy_s(outKid.hello_msg, msg.c_str(), CHAT_SIZE);
+            outKid.hello_msg = UTF8ToWString(res->getString("HELLO_MSG"));
 
             Customizing& c = outKid.customizing;
             c.skin = static_cast<float>(res->getDouble("SKIN"));
@@ -905,7 +931,6 @@ bool DBManager::LoadKidInfo(unsigned int id, Kid& outKid)
             c.eyebrows = res->getInt("EYEBROWS");
             c.glasses = res->getInt("GLASSES");
 
-            // 새로 추가된 필드
             outKid.x = static_cast<float>(res->getDouble("x"));
             outKid.y = static_cast<float>(res->getDouble("y"));
             outKid.z = static_cast<float>(res->getDouble("z"));
@@ -992,8 +1017,7 @@ bool DBManager::LoadAllKidsFromDB()
             kid.spouse_id = res->getUInt("SPOUSE_ID");
             kid.personality = static_cast<char>(res->getInt("PERSONALITY"));
 
-            std::wstring msg = UTF8ToWString(res->getString("HELLO_MSG"));
-            wcsncpy_s(kid.hello_msg, msg.c_str(), CHAT_SIZE);
+            kid.hello_msg = UTF8ToWString(res->getString("HELLO_MSG"));
 
             Customizing& c = kid.customizing;
             c.skin = static_cast<float>(res->getDouble("SKIN"));
