@@ -275,6 +275,7 @@ bool Player::send_spawn_npcs_packet()
 		npc_array[i].z = npc.z;
 		npc_array[i].yaw = npc.yaw;
 		npc_array[i].personality = npc.personality;
+		npc_array[i].is_kid = npc.is_kid;
 	}
 
 	// 전송 후 버퍼 해제
@@ -299,6 +300,7 @@ bool Player::send_spawn_npc_packet(int id) // 엔피씨 한마리 보내는 것
 	p.z = target.z;
 	p.yaw = target.yaw;
 	p.personality = target.personality;
+	p.is_kid = target.is_kid;
 
 	send(&p);
 	return true;
@@ -810,6 +812,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		Kid temp_kid(*p);
+		temp_kid.is_kid = true; // 자식으로 설정
 		DBManager::SaveKidInfo(temp_kid);
 		break;
 	}
