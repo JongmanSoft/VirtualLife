@@ -478,6 +478,7 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 				rooms[p->id] = new Room();
 				room = rooms[p->id];
 				room->SaveToDB(p->id);
+				room->RemoveObjectByPosition(0.0f, 0.0f, 0.0f);
 			}
 		}
 		else {
@@ -672,38 +673,40 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		pkt.type = SC_ROOM_SETUP;
 		strcpy_s(pkt.id, M_ID_SIZE, p->id);
 		rooms[p->id]->packet_setup(pkt); // p->id << 플레이어의 방 셋업
-		pkt.size = sizeof(pkt) - sizeof(pkt.objs) + sizeof(Object) * pkt.count;
+		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
 		
-		location = HOME;
-		
-		// todo: 여기 테스트 및 클라 수정 필요
-		room = rooms[p->id];
+		if (location != HOME) {
+			location = HOME;
 
-		// 모든 플레이어에게 디스폰 보내기
-		{
-			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < players.size(); ++i) {
-				if (players[i].state == PLAYING and i != pinfo.id and players[i].location == WORLD)
-					players[i].send_despawn_packet(pinfo.id);
+			// todo: 여기 테스트 및 클라 수정 필요
+			room = rooms[p->id];
+
+			// 모든 플레이어에게 디스폰 보내기
+			{
+				std::lock_guard<std::mutex> lock(players_mutex);
+				for (int i = 0; i < players.size(); ++i) {
+					if (players[i].state == PLAYING and i != pinfo.id and players[i].location == WORLD)
+						players[i].send_despawn_packet(pinfo.id);
+				}
 			}
-		}
 
-		room->AddPlayer(this);
-		
-		// 현재 방에 있는 플레이어들에게 나 보내기
-		{
-			for (int i = 0; i < room->players.size(); ++i) {
-				if (room->players[i] != this) // 나제외
-					send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
+			room->AddPlayer(this);
+
+			// 현재 방에 있는 플레이어들에게 나 보내기
+			{
+				for (int i = 0; i < room->players.size(); ++i) {
+					if (room->players[i] != this) // 나제외
+						send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
+				}
 			}
-		}
 
-		{
-			// 나에게 현재 방에 있는 플레이어들 보내기
-			std::lock_guard ll{ room->m };
-			for (int i = 0; i < room->players.size(); ++i) {
-				if (room->players[i] != this) // 나제외
-					room->players[i]->send_spawn_packet(this->pinfo, this->custom);
+			{
+				// 나에게 현재 방에 있는 플레이어들 보내기
+				std::lock_guard ll{ room->m };
+				for (int i = 0; i < room->players.size(); ++i) {
+					if (room->players[i] != this) // 나제외
+						room->players[i]->send_spawn_packet(this->pinfo, this->custom);
+				}
 			}
 		}
 

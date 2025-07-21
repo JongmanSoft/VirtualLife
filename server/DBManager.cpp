@@ -610,6 +610,7 @@ bool DBManager::LoadRoomObjects(const std::string& userID, std::vector<Object>& 
             obj.scale = static_cast<float>(res->getDouble("SCALE"));
             obj.yaw = static_cast<float>(res->getDouble("YAW"));
 
+            if (obj.item_id == DUMMY_OBJECT_ID) continue;
             outObjects.emplace_back(obj);
         }
 
