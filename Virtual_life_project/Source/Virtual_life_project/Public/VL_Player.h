@@ -61,6 +61,8 @@ public:
 	UCapsuleComponent* cap;//의존성주입해야함
 
 	void interact_action();
+
+	void not_move(); //목적지를 현재위치로 설정
 private:
 	std::mutex m;
 public:

@@ -356,6 +356,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 	// 3. NPC 스폰
 	for (auto& Pair : OtherNPCs) // TMap<uint32, NPCUnitData>
 	{
+		if(!Pair.Value.data.is_kid)
 		{
 			//자식이 아닐경우
 			const NPCUnitData& npcData = Pair.Value.data;
@@ -369,12 +370,12 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 			ACharacter* SpawnedNPC = World->SpawnActor<ACharacter>(PlayerClass, Location, Rotation, SpawnParams);
 			Um_CustomizableSkeletalComponent* Other_actor_m_custom = SpawnedNPC->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 			Other_actor_m_custom->custom_data_update(npcData.c);
-
+			
+			auto spawn_c = Cast<AVL_Player>(SpawnedNPC);
+			spawn_c->not_move();
 			Pair.Value.character = SpawnedNPC; // 스폰된 NPC를 TMap에 저장
 		}
-		
-
-		if(false){
+		else{
 			//자식일경우
 			const NPCUnitData& npcData = Pair.Value.data;
 			FSoftClassPath BlueprintPath(TEXT("/Game/VirtualLife_Character/KID_npc.KID_npc"));
