@@ -56,7 +56,7 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 	UCustomizableObject* parentCO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
 	if (parentCO)
 	{
-		UCustomizableObjectInstance* instance = NewObject<UCustomizableObjectInstance>(this, UCustomizableObjectInstance::StaticClass());
+		instance = NewObject<UCustomizableObjectInstance>(this, UCustomizableObjectInstance::StaticClass());
 		instance->SetObject(parentCO);
 		this->SetCustomizableObjectInstance(instance);
 

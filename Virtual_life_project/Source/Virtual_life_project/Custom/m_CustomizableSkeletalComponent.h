@@ -27,6 +27,9 @@ class VIRTUAL_LIFE_PROJECT_API Um_CustomizableSkeletalComponent : public UCustom
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	UCustomizableObjectInstance* instance = nullptr; // 커스터마이징 인스턴스
+
 	Um_CustomizableSkeletalComponent();
 	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
