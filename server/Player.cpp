@@ -470,15 +470,25 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
 				pinfo.gold = DBManager::LoadGold(p->id);
-				room = rooms[p->id];
+				auto it = rooms.find(p->id);
+				if (it != rooms.end()) {
+					return;
+				}
+				auto room_ptr = it->second;
+				room = room_ptr;
 				this->id = p->id;
 			}
 			else {
 				// ű 
 				this->id = p->id;
 				player_setup();
-				rooms[p->id] = new Room();
-				room = rooms[p->id];
+				rooms.insert({ p->id, new Room() });
+				auto it = rooms.find(p->id);
+				if (it != rooms.end()) {
+					return;
+				}
+				auto room_ptr = it->second;
+				room = room_ptr;
 				room->SaveToDB(p->id);
 				room->RemoveObjectByPosition(0.0f, 0.0f, 0.0f);
 			}
