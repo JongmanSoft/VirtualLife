@@ -53,6 +53,7 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 	UCustomizableObject* parentCO = LoadObject<UCustomizableObject>(nullptr, TEXT("/Game/custom_system/CO_metahuman.CO_metahuman"));
 	if (parentCO)
 	{

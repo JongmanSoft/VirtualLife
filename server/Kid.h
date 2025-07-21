@@ -5,24 +5,24 @@
 class Kid 
 {
 public:
-	unsigned int id; // ¾ÆÀÌµð
-	unsigned int preg_id; // ºÎ¸ð ¾ÆÀÌµð
-	unsigned int spouse_id; // ¹è¿ìÀÚ ¾ÆÀÌµð
-	Customizing customizing; // Ä¿½ºÅÍ¸¶ÀÌÂ¡ Á¤º¸
-	char personality; // ¼º°Ý
-	float x = 0, y = 0, z = 0, yaw = 0; // À§Ä¡ Á¤º¸
-	bool is_kid = true;
-	std::wstring hello_msg = L""; // ÀÌ¸§
-	std::wstring name = L""; // ÀÌ¸§
+	unsigned int id; // ï¿½ï¿½ï¿½Ìµï¿½
+	unsigned int preg_id; // ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
+	unsigned int spouse_id; // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
+	Customizing customizing; // Ä¿ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½Â¡ ï¿½ï¿½ï¿½ï¿½
+	char personality; // ï¿½ï¿½ï¿½ï¿½
+	float x = 0, y = 0, z = 0, yaw = 0; // ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
+	bool is_kid = false;
+	std::wstring hello_msg = L""; // ï¿½Ì¸ï¿½
+	std::wstring name = L""; // ï¿½Ì¸ï¿½
 
 	Kid(unsigned int id, unsigned int preg_id, unsigned int spouse_id, const wchar_t* name,
 		const Customizing& cus, char personality, const wchar_t* msg);
 	Kid(const CS_ADD_KID_PACKET& pkt);
 	Kid() : id(0), preg_id(0), spouse_id(0), personality(0) {
-		hello_msg = L'\0'; // ÃÊ±âÈ­
-		customizing = Customizing(); // ±âº» Ä¿½ºÅÍ¸¶ÀÌÂ¡ Á¤º¸ ÃÊ±âÈ­
-		x = 0.0f; y = 0.0f; z = 0.0f; yaw = 0.0f; // À§Ä¡ ÃÊ±âÈ­
-		name = L'\0'; // ÀÌ¸§ ÃÊ±âÈ­
+		hello_msg = L'\0'; // ï¿½Ê±ï¿½È­
+		customizing = Customizing(); // ï¿½âº» Ä¿ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½Â¡ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+		x = 0.0f; y = 0.0f; z = 0.0f; yaw = 0.0f; // ï¿½ï¿½Ä¡ ï¿½Ê±ï¿½È­
+		name = L'\0'; // ï¿½Ì¸ï¿½ ï¿½Ê±ï¿½È­
 	}
 };
 
