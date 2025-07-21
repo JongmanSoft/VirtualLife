@@ -810,13 +810,14 @@ void Player::handle_packet(char* packet, unsigned short length) // 패킷 처리하는
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		Kid temp_kid(*p);
+		temp_kid.id = npcs.size();
 		DBManager::SaveKidInfo(temp_kid);
 		break;
 	}
 	case CS_DOOR_UPDATE:
 	{
 		CS_UPDATE_DOOR_PACKET* p = reinterpret_cast<CS_UPDATE_DOOR_PACKET*>(packet);
-		std::cout << "REC	V-CS_DOOR_UPDATE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
+		std::cout << "RECV-CS_DOOR_UPDATE_PACKET: " << pinfo.id << "에게 " << length << "만큼 받음!" << std::endl;
 		doors[p->door_id].is_open = p->is_open;
 
 		SC_UPDATE_DOOR_PACKET pkt;
