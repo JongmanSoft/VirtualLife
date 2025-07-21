@@ -42,7 +42,7 @@ struct SpawnInfo
 struct NPCInfo
 {
 	NPCUnitData data;                  // 서버에서 온 순수 데이터
-	ACharacter* character = nullptr;  // 실제 월드에 스폰된 NPC 액터
+	AActor* character = nullptr;  // 실제 월드에 스폰된 NPC 액터
 };
 
 UCLASS()
