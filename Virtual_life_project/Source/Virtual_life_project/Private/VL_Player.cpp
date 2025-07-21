@@ -297,6 +297,11 @@ void AVL_Player::interact_action()
 	}
 }
 
+void AVL_Player::not_move()
+{
+	destInfo = curInfo;
+}
+
 void AVL_Player::EndPlay(const EEndPlayReason::Type EndPlayReason) // 종료시 오디오캡쳐 끄는 것
 {
 	Super::EndPlay(EndPlayReason);

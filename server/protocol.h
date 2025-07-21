@@ -107,6 +107,7 @@ struct NPCUnitData
 	char personality;
 	wchar_t name[M_ID_SIZE]; // 자식 이름
 	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
+	bool is_kid = true; // 자식인지 아닌지 구분용
 };
 
 // Packet ID
@@ -415,6 +416,7 @@ struct CS_ADD_KID_PACKET {
 	char personality; // 자식 성격
 	wchar_t name[M_ID_SIZE]; // 자식 이름
 	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
+	bool is_kid; // 자식인지 아닌지 구분용
 };
 
 // NPC 한마리 스폰하는 패킷
@@ -429,7 +431,7 @@ struct SC_SPAWN_NPC_PACKET {
 	char personality; // npc 성격
 	wchar_t name[M_ID_SIZE]; // 자식 이름
 	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
-
+	bool is_kid; // 자식인지 아닌지 구분용
 };
 
 // NPC 여러마리 스폰하는 패킷
