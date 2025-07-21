@@ -5,7 +5,7 @@ std::array<Player, MAX_PLAYER> players{};
 std::array<Kid, MAX_NPC> npcs{};
 std::mutex players_mutex;
 std::array<Door, MAX_DOOR> doors{};
-concurrency::concurrent_unordered_map<std::string, Room*> rooms{};
+concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 float f_time;
 std::chrono::high_resolution_clock::time_point startTime;
 
