@@ -344,4 +344,8 @@ public:
 public:
 	unsigned short current_door_id[13]; 
 	bool current_is_open[13]; 
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	UTexture2D* CapturedProfileTexture;
 };
