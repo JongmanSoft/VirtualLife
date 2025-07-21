@@ -1,6 +1,18 @@
 #include "Room.h"
 #include "DBManager.h"
 
+Room::Room()
+{
+    Object obj;
+    obj.item_id = DUMMY_OBJECT_ID;
+    obj.x = 0;
+    obj.y = 0;
+    obj.z = 0;
+    obj.yaw = 0;
+    obj.scale = 0;
+    AddObject(obj);
+}
+
 void Room::AddPlayer(Player* player)
 {
 	std::lock_guard<std::mutex> lock(m);
