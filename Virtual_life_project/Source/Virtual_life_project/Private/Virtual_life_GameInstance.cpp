@@ -994,13 +994,14 @@ void UVirtual_life_GameInstance::SpawnCachedRoomObjects()
 		FVector SpawnLoc(obj.x, obj.y, obj.z);
 		FRotator SpawnRot(0.f, obj.yaw, 0.f);
 		FVector SpawnScale = FVector(obj.scale);
+		FVector DefaultScale = FVector(1.0f, 1.0f, 1.0f);
 
 		if (Info->InteractableActorClass)
 		{
 			AInteractableActor* SpawnedActor = World->SpawnActor<AInteractableActor>(Info->InteractableActorClass, SpawnLoc, SpawnRot);
 			if (SpawnedActor)
 			{
-				SpawnedActor->SetActorScale3D(SpawnScale);
+				SpawnedActor->SetActorScale3D(DefaultScale);
 				SpawnedActor->SetRowID(RowName);
 
 				if (Info->Mesh)
