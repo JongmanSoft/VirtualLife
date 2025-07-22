@@ -323,7 +323,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		}
 		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; 
 
-		for (int i = 0; i < players.size(); ++i) {
+		for (int i = 0; i < g_player_count; ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].send_invite_call_packet(id, name);
 				break;
@@ -333,7 +333,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT:
 	{
-		for (int i = 0; i < players.size(); ++i) {
+		for (int i = 0; i < g_player_count; ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].party->add_member(this);
 				party = players[i].party;
@@ -472,7 +472,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 			success = false;
 		}
 
-		for (int i = 0; i < players.size(); ++i) {
+		for (int i = 0; i < g_player_count; ++i) {
 			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
 				break;
@@ -504,13 +504,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
 				}
@@ -527,7 +527,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
 					players[i].send_chat_packet(p->name, p->msg, p->from_id);
 			}
@@ -545,7 +545,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].state == PLAYING and i != pinfo.id)
 					players[i].send_despawn_packet(pinfo.id);
 			}
@@ -575,7 +575,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 			}
 			else 
 			{
-				for (int i = 0; i < players.size(); ++i) {
+				for (int i = 0; i < g_player_count; ++i) {
 					if (players[i].state == PLAYING and players[i].location == WORLD)
 						players[i].send_move_packet(p->pl);
 				}
@@ -656,7 +656,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 			{
 				std::lock_guard<std::mutex> lock(players_mutex);
-				for (int i = 0; i < players.size(); ++i) {
+				for (int i = 0; i < g_player_count; ++i) {
 					if (players[i].state == PLAYING and i != pinfo.id and players[i].location == WORLD)
 						players[i].send_despawn_packet(pinfo.id);
 				}
@@ -739,13 +739,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			for (int i = 0; i < players.size(); ++i) {
+			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
 				}
@@ -788,7 +788,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		pkt.door_id = p->door_id;
 		pkt.is_open = p->is_open;
 
-		for (int i = 0; i < players.size(); ++i) {
+		for (int i = 0; i < g_player_count; ++i) {
 			if (players[i].get_state() == PLAYING and players[i].id != this->id) {
 				players[i].send(&pkt);
 			}
@@ -813,7 +813,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 			}
 			else
 			{
-				for (int i = 0; i < players.size(); ++i) {
+				for (int i = 0; i < g_player_count; ++i) {
 					if (players[i].state == PLAYING and players[i].location == WORLD)
 						players[i].send_move_packet(p->pl);
 				}
