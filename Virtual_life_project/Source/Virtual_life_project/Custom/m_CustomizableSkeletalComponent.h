@@ -30,9 +30,13 @@ public:
 	UPROPERTY()
 	UCustomizableObjectInstance* instance = nullptr; // 커스터마이징 인스턴스
 
+
+
+
 	Um_CustomizableSkeletalComponent();
 	virtual void InitializeComponent() override;
 	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
 public:
 	//매핑정보
 	//상의

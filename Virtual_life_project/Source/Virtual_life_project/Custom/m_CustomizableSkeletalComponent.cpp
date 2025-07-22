@@ -70,6 +70,18 @@ void Um_CustomizableSkeletalComponent::BeginPlay()
 
 }
 
+void Um_CustomizableSkeletalComponent::BeginDestroy()
+{
+	Super::BeginDestroy();
+	// 인스턴스가 존재하면 해제
+	if (instance)
+	{
+		instance->ConditionalBeginDestroy();
+		instance = nullptr;
+	}
+	
+}
+
 void Um_CustomizableSkeletalComponent::instance_import()
 {
 	UVirtual_life_GameInstance* game_inst = Cast<UVirtual_life_GameInstance>(GetWorld()->GetGameInstance());

@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
+#include "../Custom/m_CustomizableSkeletalComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "../interface/CPI_interface.h"
@@ -252,6 +253,14 @@ void AVL_Player::setState(int st)
 	state = st;
 }
 
+void AVL_Player::setFeel(int feel)
+{
+	if (false == isMyPlayer || false == myPlayer()) {
+		auto m_custom = FindComponentByClass<Um_CustomizableSkeletalComponent>();
+		m_custom->feel_change(feel);
+	}
+}
+
 bool AVL_Player::myPlayer()
 {
 	UWorld* World = GetWorld();
@@ -300,6 +309,44 @@ void AVL_Player::interact_action()
 void AVL_Player::not_move()
 {
 	destInfo = curInfo;
+}
+
+void AVL_Player::player_action(int action)
+{
+	auto m_skeltal = FindComponentByClass<USkeletalMeshComponent>();
+	
+	TCHAR montage_path[4][150] = {
+		TEXT(""),
+		TEXT(""),
+		TEXT(""),
+		TEXT("")
+	};
+	int action_state[4] = {
+	};
+	
+	if (m_skeltal) {
+		UAnimInstance* AnimInstance = m_skeltal->GetAnimInstance();
+		if (AnimInstance)
+		{
+			AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, montage_path[action]) , 1.0f);
+		}
+	}
+
+	setMyState(action_state[action]);
+}
+
+void AVL_Player::player_feel(int feel_state)
+{
+	auto m_custom = FindComponentByClass<Um_CustomizableSkeletalComponent>();
+
+	m_custom->feel_change(feel_state);
+	auto GameInstance = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance) {
+		std::lock_guard ll{ m };
+		feel = feel_state;
+		//gameInstance->set_feel(feel_state);
+	}
+	
 }
 
 void AVL_Player::EndPlay(const EEndPlayReason::Type EndPlayReason) // 종료시 오디오캡쳐 끄는 것
