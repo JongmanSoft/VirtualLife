@@ -45,13 +45,11 @@ bool Player::send_enter_game_packet()
 
 	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
 
-	// κ丮 ʱȭ
 	for (int i = 0; i < ITEM_SIZE; ++i) {
 		if (true == player_item.contains(i)) p.items[i] = player_item[i];
 		else p.items[i] = 0;
 	}
 	
-	// Ʈ ʱȭ
 	for (int i = 0; i < QUEST_MAX; ++i) {
 		if (quests.size() <= i) {
 			p.giver_id[i] = -1;
@@ -106,7 +104,6 @@ bool Player::send_chat_packet(std::wstring name, std::wstring chat, unsigned int
 	p.type = SC_CHAT;
 	p.from_id = id;
 
-	// ϰ ڿ 
 	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name 
 	wcsncpy_s(p.msg, sizeof(p.msg) / sizeof(wchar_t), chat.c_str(), _TRUNCATE); // chat 
 
@@ -122,7 +119,6 @@ bool Player::send_update_item_packet(unsigned short id, unsigned short num)
 	p.id = id;
 	p.num = num;
 
-	std::cout << pinfo.id << " SC_UPDATE_ITEM_PACKET : " << id << "  " << num << " ȭ!" << std::endl;
 	send(&p);
 	return true;
 }
@@ -133,7 +129,6 @@ bool Player::send_update_gold(int sc_gold)
 	p.size = sizeof(SC_UPDATE_GOLD_PACKET);
 	p.type = SC_UPDATE_GOLD;
 	p.gold = sc_gold;
-	std::cout << pinfo.id << " SC_GOLD_UPDATE : " << sc_gold<<" !" << std::endl;
 	send(&p);
 	return true;
 }
@@ -145,7 +140,6 @@ bool Player::send_get_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_GET_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	std::cout << pinfo.id << " SC_UPDATE_QUEST : " << gid << " " << n << " Ʈ " << std::endl;
 	send(&p);
 	return true;
 }
@@ -157,7 +151,6 @@ bool Player::send_remove_quest_packet(unsigned short gid, unsigned short n)
 	p.type = SC_REMOVE_QUEST;
 	p.giver_id = gid;
 	p.num = n;
-	std::cout << pinfo.id << " SC_UPDATE_QUEST : " << gid << " " << n << " Ʈ " << std::endl;
 	send(&p);
 	return true;
 }
@@ -171,7 +164,6 @@ bool Player::send_room_leave_packet()
 	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
 
 	p.time = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
-	std::cout << "ð: " << p.time << std::endl;
 	p.x = 960;
 	p.y = 1650;
 	p.z = 3300;
@@ -188,7 +180,7 @@ bool Player::send_update_party_packet()
 {
 	SC_UPDATE_PARTY_PACKET p;
 	p.size = sizeof(SC_UPDATE_PARTY_PACKET);
-	p.type = SC_UPDATE_PARTY; // Ƽ  
+	p.type = SC_UPDATE_PARTY; 
 	p.act_type = PARTY_REQUEST::PARTY_UPDATE;
 	p.member_count = party->get_member_count();
 	for (int i = 0; i < MAX_PARTY_MEMBER; ++i) {
@@ -252,16 +244,13 @@ bool Player::send_spawn_npcs_packet()
 	int count = min(npc_count, MAX_NPC);
 	int packetSize = sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData) * count;
 
-	//   Ҵ
 	char* buffer = new char[packetSize];
 
-	//  
 	SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<SC_SPAWN_NPCS_PACKET*>(buffer);
 	p->type = SC_NPCS_SPAWN;
 	p->npc_count = count;
 	p->size = packetSize;
 
-	// ڿ ٴ npc 迭 ä
 	NPCUnitData* npc_array = reinterpret_cast<NPCUnitData*>(buffer + sizeof(SC_SPAWN_NPCS_PACKET));
 	for (int i = 0; i < count; ++i)
 	{
@@ -278,13 +267,12 @@ bool Player::send_spawn_npcs_packet()
 		npc_array[i].is_kid = npc.is_kid;
 	}
 
-	//    
 	send(buffer);
 	return true;
 }
 
 
-bool Player::send_spawn_npc_packet(int id) // Ǿ Ѹ  
+bool Player::send_spawn_npc_packet(int id) 
 {
 	auto target = npcs[id];
 
@@ -324,16 +312,15 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 {
 	switch (pkt.act_type)
 	{
-	case PARTY_REQUEST::PARTY_REQUEST_INVITE: // ʴ
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE:
 	{
 		if (party == nullptr) {
-			// Ƽ  
 			party = new Party();
 			party->set_partyID(id);
 			party->add_member(this);
 			send_join_success_packet(id, name);
 		}
-		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; // ʴҰ Ŷ 
+		if (party->get_member_count() >= MAX_PARTY_MEMBER) return; 
 
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
@@ -345,7 +332,6 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT:
 	{
-		// string id ÷̾ ã..
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].party->add_member(this);
@@ -354,13 +340,12 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 			}
 		}
 
-		// Ƽ ߰  Ʈ ->  ؽ ޾ƾ 
 		for (auto& a : party->get_members()) {
 			a->send_update_party_packet();
 		}
 		break;
 	}
-	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT: // ʴ ÷̾ ߴ
+	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT:
 	{
 		break;
 	}
@@ -446,7 +431,7 @@ void Player::recv()
 	}
 }
 
-void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
+void Player::handle_packet(char* packet, unsigned short length)
 {
     char type = packet[2];
 
@@ -456,21 +441,37 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	{
 		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
-		std::cout << "RECV-CS_LOGIN_PACKET: " << id << " " << length << "ŭ !" << std::endl;
 
 		bool is_new = false;
 		bool success = true;
 		
-		// 1. ű Ȯ
 		if (DBManager::checkLogin(p->id, p->pw, is_new)) {
 			if (false == is_new) {
-				// 
 				DBManager::LoadPInfo(p->id, pinfo, name);
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
 				pinfo.gold = DBManager::LoadGold(p->id);
-				auto it = rooms.find(p->id);
+				std::string tmpstr = p->id;
+
+				std::cout << "rooms ptr: " << &rooms << std::endl;
+
+				try {
+					std::cout << "rooms count: " << rooms.size() << std::endl;
+					auto it = rooms.find(tmpstr);
+					if (it != rooms.end()) {
+						std::cout << "FOUND\n";
+					}
+					else {
+						std::cout << "NOT FOUND\n";
+					}
+				}
+				catch (...) {
+					std::cout << "[EXCEPTION] rooms is invalid internally!\n";
+				}
+
+
+				auto it = rooms.find(tmpstr);
 				if (it != rooms.end()) {
 					return;
 				}
@@ -479,7 +480,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 				this->id = p->id;
 			}
 			else {
-				// ű 
 				this->id = p->id;
 				player_setup();
 				rooms.insert({ p->id, new Room() });
@@ -494,11 +494,9 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 			}
 		}
 		else {
-			// α 
 			success = false;
 		}
 
-		// 2.  ÷̾ Ȯ
 		for (int i = 0; i < players.size(); ++i) {
 			if (players[i].get_state() != NONE && players[i].id == p->id) {
 				success = false;
@@ -509,9 +507,8 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 		send_login_info_packet(success, is_new);
 		break;
     }
-	case CS_ENTER_GAME: //   û
+	case CS_ENTER_GAME:
 	{
-		std::cout << "RECV-CS_ENTER_GAME_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		if (this->name == L"") {
 			this->name = p->name;
@@ -529,14 +526,12 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			// 鿡 û
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			//   
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
@@ -547,14 +542,11 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	}
     case CS_CHAT:
     {
-		std::cout << "RECV-CS_CHAT_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		int id = pinfo.id;
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
 
-		//  ä Ȯο
 		std::wcout << p->name << ": " << p->msg << std::endl;
 
-		// ä εĳƮ
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
@@ -570,10 +562,9 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 
 		if (state != PLAYING) {
 			state = NONE;
-			break; // α  
+			break;
 		}
 
-		//  ÷̾  εĳ
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < players.size(); ++i) {
@@ -596,8 +587,7 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 
-			// ġ εĳ
-			if (this->location == HOME) //    ->  ִ ֵ 
+			if (this->location == HOME) 
 			{
 				for (int i = 0; i < room->players.size(); ++i) {
 					if (this != room->players[i]) {
@@ -605,7 +595,7 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 					}
 				}
 			}
-			else //    ->   ֵ 
+			else 
 			{
 				for (int i = 0; i < players.size(); ++i) {
 					if (players[i].state == PLAYING and players[i].location == WORLD)
@@ -617,13 +607,11 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	}
 	case CS_GET_ITEM:
 	{
-		std::cout << "RECV-CS_GET_ITEM_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		int id = pinfo.id;
 		CS_GET_ITEM_PACKET* p = reinterpret_cast<CS_GET_ITEM_PACKET*>(packet);
 		if (player_item.contains(p->id)) player_item[p->id] += p->num;
 		else player_item[p->id] = p->num;
 
-		// κ丮 ̺
 		save_db_pInventory();
 
 		send_update_item_packet(p->id, player_item[p->id]);
@@ -631,7 +619,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	}
 	case CS_UPDATE_CUSTOM:
 	{
-		std::cout << "RECV-CS_UPDATE_CUSTOM_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		CS_UPDATE_CUSTOM_PACKET* p = reinterpret_cast<CS_UPDATE_CUSTOM_PACKET*>(packet);
 		this->custom = p->c;
 
@@ -648,7 +635,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	}
 	case CS_GET_QUEST:
 	{
-		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 		this->quests.emplace_back(p->giver_id, p->num);
 		Quest q{ p->giver_id, p->num };
@@ -661,7 +647,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	}
 	case CS_REMOVE_QUEST:
 	{
-		std::cout << "RECV-CS_GET_QUEST_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		CS_UPDATE_QUEST_PACKET* p = reinterpret_cast<CS_UPDATE_QUEST_PACKET*>(packet);
 
 		for (int i = 0; i < this->quests.size(); ++i) {
@@ -679,21 +664,18 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	case CS_ROOM_ENTER:
 	{
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
-		std::cout << "CS_ENTER_ROOM: " << pinfo.id << " " << p->id <<" 濡 ,  ο: " << rooms[p->id]->players.size() << "" << std::endl;
 
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
 		strcpy_s(pkt.id, M_ID_SIZE, p->id);
-		rooms[p->id]->packet_setup(pkt); // p->id << ÷̾  ¾
+		rooms[p->id]->packet_setup(pkt);
 		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
 		
 		if (location != HOME) {
 			location = HOME;
 
-			// todo:  ׽Ʈ  Ŭ  ʿ
 			room = rooms[p->id];
 
-			//  ÷̾  
 			{
 				std::lock_guard<std::mutex> lock(players_mutex);
 				for (int i = 0; i < players.size(); ++i) {
@@ -704,19 +686,17 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 
 			room->AddPlayer(this);
 
-			//  濡 ִ ÷̾鿡  
 			{
 				for (int i = 0; i < room->players.size(); ++i) {
-					if (room->players[i] != this) // 
+					if (room->players[i] != this)
 						send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
 				}
 			}
 
 			{
-				//   濡 ִ ÷̾ 
 				std::lock_guard ll{ room->m };
 				for (int i = 0; i < room->players.size(); ++i) {
-					if (room->players[i] != this) // 
+					if (room->players[i] != this)
 						room->players[i]->send_spawn_packet(this->pinfo, this->custom);
 				}
 			}
@@ -725,7 +705,7 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 		send(&pkt);
 		break;
 	}
-	case CS_PLACE_BUILD: // todo:   ϵ ؼ ߿ ľ 
+	case CS_PLACE_BUILD:
 	{
 		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
 		Object obj;
@@ -742,7 +722,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	case CS_REMOVE_BUILD:
 	{
 		CS_REMOVE_BUILD_PACKET* p = reinterpret_cast<CS_REMOVE_BUILD_PACKET*>(packet);
-		std::cout << "ǹ  û ! ġ: (" << p->x << ", " << p->y << ", " << p->z << ")\n";
 
 		room->RemoveObjectByPosition(p->x, p->y, p->z);
 		break;
@@ -750,8 +729,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	case CS_UPDATE_BUILD:
 	{
 		CS_UPDATE_BUILD_PACKET* p = reinterpret_cast<CS_UPDATE_BUILD_PACKET*>(packet);
-		std::cout << "ǹ  û ! ġ: (" << p->old_x << ", " << p->old_y << ", " << p->old_z << ")  ("
-			<< p->new_x << ", " << p->new_y << ", " << p->new_z << "), Yaw: " << p->new_yaw << "\n";
 
 		room->UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
 		break;
@@ -760,7 +737,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	{
 		CS_ROOM_LEAVE_PACKET* p = reinterpret_cast<CS_ROOM_LEAVE_PACKET*>(packet);
 
-		//   ü   ٽ ,   
 		if (this->id == room->ownerID)
 		{
 			DBManager::DeleteRoomObjects(id);
@@ -768,7 +744,6 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 		}
 
 		this->location = WORLD;
-		std::cout << "CS_ROOM_LEAVE_PACKET: " << pinfo.id << " " << room->ownerID << " 濡 ,  ο: " << room->players.size() - 1 << "" << std::endl;
 
 		{
 			std::lock_guard ll{ room->m };
@@ -779,21 +754,19 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 					p->send_despawn_packet(pinfo.id);
 			}
 		}
-		room->RemovePlyer(pinfo.id); // 濡 ÷̾ 
-		this->room = nullptr; //   ʱȭ
+		room->RemovePlyer(pinfo.id); 
+		this->room = nullptr; 
 
 		send_room_leave_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
-			// 鿡 û
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					players[i].send_spawn_packet(pinfo, custom);
 				}
 			}
 
-			//   
 			for (int i = 0; i < players.size(); ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
 					send_spawn_packet(players[i].pinfo, players[i].custom);
@@ -820,17 +793,15 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
 	case CS_ADD_KID: 
 	{
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
-		std::cout << "RECV-CS_ADD_KID_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		Kid temp_kid(*p);
 		temp_kid.id = npcs.size();
-		temp_kid.is_kid = true; // ڽ 
+		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
 		break;
 	}
 	case CS_DOOR_UPDATE:
 	{
 		CS_UPDATE_DOOR_PACKET* p = reinterpret_cast<CS_UPDATE_DOOR_PACKET*>(packet);
-		std::cout << "RECV-CS_DOOR_UPDATE_PACKET: " << pinfo.id << " " << length << "ŭ !" << std::endl;
 		doors[p->door_id].is_open = p->is_open;
 
 		SC_UPDATE_DOOR_PACKET pkt;
@@ -851,7 +822,7 @@ void Player::handle_packet(char* packet, unsigned short length) // Ŷ óϴ Լ
     }
 }
 
-void Player::player_setup() // ű ÷̾ ġ  ¾
+void Player::player_setup() 
 {
 	pinfo.x = 960 + Utility::GetRandom(100.0f, 200.0f);
 	pinfo.y = 1650 + Utility::GetRandom(100.0f, 200.0f);

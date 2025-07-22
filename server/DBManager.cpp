@@ -14,9 +14,15 @@ std::string WStringToUTF8(const std::wstring& wstr)
 
 std::wstring UTF8ToWString(const std::string& str)
 {
+    if (str.empty()) return L"";
+
     int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-    std::wstring result(size_needed - 1, 0); // null 제외
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, result.data(), size_needed);
+    if (size_needed <= 0) return L"[Invalid UTF-8]";
+
+    std::wstring result(size_needed, 0);  
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
+
+    result.resize(size_needed - 1);
     return result;
 }
 
@@ -269,7 +275,7 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
 
         std::unique_ptr<sql::PreparedStatement> stmt(
             conn->prepareStatement(R"(
-                SELECT NAME, POS_X, POS_Y, POS_Z, YAW
+                SELECT name, POS_X, POS_Y, POS_Z, YAW
                 FROM player_info
                 WHERE ID = ?
             )"));
@@ -283,7 +289,7 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
         }
 
         // 문자열 변환 (UTF-8 → wstring)
-        std::string name_utf8 = res->getString("NAME");
+        std::string name_utf8 = res->getString("name");
         outName = UTF8ToWString(name_utf8);
 
         outInfo.x = static_cast<float>(res->getDouble("POS_X"));
@@ -969,7 +975,7 @@ bool DBManager::LoadAllRoomsFromDB()
 
             // Room이 없다면 새로 생성
             if (rooms.find(userID) == rooms.end()) {
-                rooms[userID] = new Room();
+                rooms.insert({ userID, new Room() });
                 rooms[userID]->ownerID = userID;
             }
 
