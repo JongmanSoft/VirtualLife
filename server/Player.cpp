@@ -795,6 +795,42 @@ void Player::handle_packet(char* packet, unsigned short length)
 		}
 		break;
 	}
+	case CS_TEST_MOVE:
+	{
+		CS_TEST_MOVE_PACKET* p = reinterpret_cast<CS_TEST_MOVE_PACKET*>(packet);
+		pinfo = p->pl;
+
+		{
+			std::lock_guard<std::mutex> lock(players_mutex);
+
+			if (this->location == HOME)
+			{
+				for (int i = 0; i < room->players.size(); ++i) {
+					if (this != room->players[i]) {
+						room->players[i]->send_move_packet(p->pl);
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < players.size(); ++i) {
+					if (players[i].state == PLAYING and players[i].location == WORLD)
+						players[i].send_move_packet(p->pl);
+				}
+			}
+		}
+
+		SC_TEST_MOVE_PACKET resp{};
+		resp.size = sizeof(SC_TEST_MOVE_PACKET);
+		resp.type = SC_TEST_MOVE;
+		resp.client_send_time = p->client_send_time;
+		resp.server_send_time = std::chrono::duration_cast<std::chrono::microseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()).count();  // 서버 현재 시간 추가
+		resp.pl = pinfo;
+
+		send(&resp); // 클라로 응답
+		break;
+	}
     default:
         break;
     }

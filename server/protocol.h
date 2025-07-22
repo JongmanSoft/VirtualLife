@@ -136,6 +136,7 @@ enum PACKETID : char
 	CS_UPDATE_PARTY, // TYPE: JOIN(0), LEAVE(1), CREATE(2)
 	CS_ADD_KID, //자식이 생겻져요!
 	CS_DOOR_UPDATE,
+	CS_TEST_MOVE,
 
 	// server to client
 	SC_LOGININFO,
@@ -160,7 +161,8 @@ enum PACKETID : char
 	SC_DOOR_UPDATE,
 	SC_DOORS_UPDATE,
 	SC_NPC_SPAWN,
-	SC_NPCS_SPAWN
+	SC_NPCS_SPAWN,
+	SC_TEST_MOVE
 };
 
 
@@ -440,6 +442,23 @@ struct SC_SPAWN_NPCS_PACKET {
 	PACKETID type;            // 패킷 ID
 	unsigned short npc_count; // NPC 개수
 };
+
+// 스트레스 테스트 용
+struct CS_TEST_MOVE_PACKET {
+	unsigned short size;
+	PACKETID type;
+	PlayerInfo pl;
+	long long client_send_time;
+};
+
+struct SC_TEST_MOVE_PACKET {
+	unsigned short size;
+	unsigned short type;
+	long long client_send_time;
+	long long server_send_time; // NEW!
+	PlayerInfo pl;
+};
+
 
 // 미완 ----------------------------
 struct CS_NPC_CHAT_PACKET {
