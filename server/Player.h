@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Object.h"
 #include "Quest.h"
 #include "Room.h"
 #include "Party.h"
@@ -9,7 +8,7 @@
 // todo: 락 혹은 concurrency로 모두모두 변경해야 함
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
 enum LOCATION { WORLD = 0, HOME = 1 };
-class Player : public HumanObject
+class Player
 {
 	// 네트워크 통신 관련
 	EXT_OVER over;
@@ -21,13 +20,16 @@ class Player : public HumanObject
 	std::string id; // 접속용 id
 	STATES state; // 세션상태
 	LOCATION location = WORLD; // 현재 위치
+	PlayerInfo pinfo; // 플레이어 정보
+	Customizing custom; // 커스터마이징 정보
+	std::wstring name = L""; // 플레이어 이름
 
 	std::unordered_map<unsigned short, unsigned short> player_item;
 	std::vector<Quest> quests;
 	Room* room;
 
 	// 동기화 관련
-	std::mutex m;
+	std::mutex info_lock;
 
 	// 파티
 	Party* party = nullptr; // 파티 정보

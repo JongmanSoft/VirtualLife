@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DBManager.h"
+#include "RoomManager.h"
 #include "Player.h"
 
 Player::Player(SOCKET s, int id)
@@ -447,48 +448,22 @@ void Player::handle_packet(char* packet, unsigned short length)
 		
 		if (DBManager::checkLogin(p->id, p->pw, is_new)) {
 			if (false == is_new) {
-				DBManager::LoadPInfo(p->id, pinfo, name);
+				std::lock_guard ll{ info_lock };
+				DBManager::LoadPInfo(p->id, pinfo, this->name);
 				DBManager::LoadCustomizing(p->id, this->custom);
 				DBManager::LoadItem(p->id, player_item);
 				DBManager::LoadQuest(p->id, quests);
 				pinfo.gold = DBManager::LoadGold(p->id);
 				std::string tmpstr = p->id;
-
-				std::cout << "rooms ptr: " << &rooms << std::endl;
-
-				try {
-					std::cout << "rooms count: " << rooms.size() << std::endl;
-					auto it = rooms.find(tmpstr);
-					if (it != rooms.end()) {
-						std::cout << "FOUND\n";
-					}
-					else {
-						std::cout << "NOT FOUND\n";
-					}
-				}
-				catch (...) {
-					std::cout << "[EXCEPTION] rooms is invalid internally!\n";
-				}
-
-
-				auto it = rooms.find(tmpstr);
-				if (it != rooms.end()) {
-					return;
-				}
-				auto room_ptr = it->second;
-				room = room_ptr;
+				room = RoomManager::Get()[tmpstr];
 				this->id = p->id;
 			}
 			else {
+				std::lock_guard ll{ info_lock };
 				this->id = p->id;
 				player_setup();
-				rooms.insert({ p->id, new Room() });
-				auto it = rooms.find(p->id);
-				if (it != rooms.end()) {
-					return;
-				}
-				auto room_ptr = it->second;
-				room = room_ptr;
+				RoomManager::Get().insert({ p->id, new Room() });
+				room = RoomManager::Get()[p->id];
 				room->SaveToDB(p->id);
 				room->RemoveObjectByPosition(0.0f, 0.0f, 0.0f);
 			}
@@ -511,7 +486,10 @@ void Player::handle_packet(char* packet, unsigned short length)
 	{
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
 		if (this->name == L"") {
-			this->name = p->name;
+			{
+				std::lock_guard ll{ info_lock };
+				this->name = p->name;
+			}
 			DBManager::SavePname(this->id, this->name);
 		}
 		state = PLAYING;
@@ -668,13 +646,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 		SC_ROOM_SETUP_PACKET pkt;
 		pkt.type = SC_ROOM_SETUP;
 		strcpy_s(pkt.id, M_ID_SIZE, p->id);
-		rooms[p->id]->packet_setup(pkt);
+		RoomManager::Get()[p->id]->packet_setup(pkt);
 		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
 		
 		if (location != HOME) {
 			location = HOME;
 
-			room = rooms[p->id];
+			room = RoomManager::Get()[p->id];
 
 			{
 				std::lock_guard<std::mutex> lock(players_mutex);

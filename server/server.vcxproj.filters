@@ -26,9 +26,7 @@
     <ClCompile Include="Kid.cpp">
       <Filter>Games</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Games</Filter>
-    </ClCompile>
+    <ClCompile Include="RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="utils">
@@ -67,8 +65,6 @@
     <ClInclude Include="Kid.h">
       <Filter>Games</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Games</Filter>
-    </ClInclude>
+    <ClInclude Include="RoomManager.h" />
   </ItemGroup>
 </Project>
