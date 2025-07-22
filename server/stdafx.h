@@ -122,7 +122,6 @@ struct Door
     std::atomic_bool is_open;
 };
 
-#include "Object.h"
 #include "Kid.h"
 #include "Player.h"
 extern std::array<Player, MAX_PLAYER> players;
@@ -130,7 +129,6 @@ extern unsigned short g_player_count; // 현재 접속중인 플레이어 수
 extern unsigned short npc_count; // 엔피씨 수
 extern std::array<Kid, MAX_NPC> npcs; // 엔피씨들
 extern std::array<Door, MAX_DOOR> doors; // 문들
-extern concurrency::concurrent_unordered_map<std::string, Room*> rooms;
 extern std::mutex players_mutex;
 extern float f_time;
 extern std::chrono::high_resolution_clock::time_point startTime;

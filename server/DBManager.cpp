@@ -1,4 +1,5 @@
 #include "DBManager.h"
+#include "RoomManager.h"
 
 sql::mysql::MySQL_Driver* DBManager::g_driver = nullptr;
 thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
@@ -14,10 +15,41 @@ std::string WStringToUTF8(const std::wstring& wstr)
 
 std::wstring UTF8ToWString(const std::string& str)
 {
+    if (str.empty()) return L"";
+
+    // 1차 호출: 필요한 크기 계산
     int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
-    std::wstring result(size_needed - 1, 0); // null 제외
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, result.data(), size_needed);
-    return result;
+
+    // 안전성 검사 추가!
+    if (size_needed <= 0) {
+        std::cerr << "[UTF8ToWString] MultiByteToWideChar failed, error: " << GetLastError() << std::endl;
+        return L"[Invalid UTF-8]";
+    }
+
+    // 비정상적으로 큰 크기 방지
+    if (size_needed > 10000) {  // 적절한 최대값 설정
+        std::cerr << "[UTF8ToWString] Size too large: " << size_needed << std::endl;
+        return L"[Too Large]";
+    }
+
+    try {
+        std::wstring result(size_needed, 0);  // 여기서 터질 수 있음!
+
+        // 2차 호출: 실제 변환
+        int converted = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &result[0], size_needed);
+        if (converted <= 0) {
+            std::cerr << "[UTF8ToWString] Conversion failed, error: " << GetLastError() << std::endl;
+            return L"[Conversion Failed]";
+        }
+
+        result.resize(size_needed - 1);  // null terminator 제거
+        return result;
+
+    }
+    catch (const std::exception& e) {
+        std::cerr << "[UTF8ToWString] Exception: " << e.what() << std::endl;
+        return L"[Exception]";
+    }
 }
 
 void DBManager::Init() 
@@ -269,7 +301,7 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
 
         std::unique_ptr<sql::PreparedStatement> stmt(
             conn->prepareStatement(R"(
-                SELECT NAME, POS_X, POS_Y, POS_Z, YAW
+                SELECT name, POS_X, POS_Y, POS_Z, YAW
                 FROM player_info
                 WHERE ID = ?
             )"));
@@ -282,9 +314,15 @@ bool DBManager::LoadPInfo(const std::string& userID, PlayerInfo& outInfo, std::w
             return false;
         }
 
-        // 문자열 변환 (UTF-8 → wstring)
-        std::string name_utf8 = res->getString("NAME");
-        outName = UTF8ToWString(name_utf8);
+        std::string name_utf8 = res->getString("name");
+        try {
+            std::wstring str = UTF8ToWString(name_utf8);
+            outName = str;
+           // outName = 
+        }
+        catch (...) {
+            outName = L"Unknown";  // 또는 기본값
+        }
 
         outInfo.x = static_cast<float>(res->getDouble("POS_X"));
         outInfo.y = static_cast<float>(res->getDouble("POS_Y"));
@@ -968,9 +1006,9 @@ bool DBManager::LoadAllRoomsFromDB()
             std::string userID = res->getString("ID");
 
             // Room이 없다면 새로 생성
-            if (rooms.find(userID) == rooms.end()) {
-                rooms[userID] = new Room();
-                rooms[userID]->ownerID = userID;
+            if (RoomManager::Get().find(userID) == RoomManager::Get().end()) {
+                RoomManager::Get().insert({ userID, new Room() });
+                RoomManager::Get()[userID]->ownerID = userID;
             }
 
             // Object 생성
@@ -983,10 +1021,10 @@ bool DBManager::LoadAllRoomsFromDB()
             obj.yaw = static_cast<float>(res->getDouble("YAW"));
 
             // Room에 추가
-            rooms[userID]->AddObject(obj);
+            RoomManager::Get()[userID]->AddObject(obj);
         }
 
-        std::cout << "[INFO] Loaded " << rooms.size() << " rooms from DB." << std::endl;
+        std::cout << "[INFO] Loaded " << RoomManager::Get().size() << " rooms from DB." << std::endl;
         return true;
     }
     catch (const sql::SQLException& e) {
