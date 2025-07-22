@@ -270,19 +270,6 @@ bool Player::send_spawn_npcs_packet()
 		wcsncpy_s(npc_array[i].hello_msg, sizeof(npc_array[i].hello_msg) / sizeof(wchar_t), npc.hello_msg.c_str(), _TRUNCATE);	
 	}
 
-
-	printf("[send_spawn_npcs_packet] Sending NPC packet (%d bytes):\n", packetSize);
-	for (int i = 0; i < packetSize; ++i) {
-		printf("%02X ", static_cast<unsigned char>(buffer[i]));
-		if ((i + 1) % 16 == 0)
-			printf("\n");
-	}
-	printf("\n");
-
-	std::cout << "sizeof(Customizing): " << sizeof(Customizing) << std::endl;
-	std::cout << "sizeof(NPCUnitData): " << sizeof(NPCUnitData) << std::endl;
-	std::cout << "offsetof(NPCUnitData, c): " << offsetof(NPCUnitData, c) << std::endl;
-
 	send(buffer);
 	return true;
 }
@@ -658,7 +645,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}
-	case CS_ROOM_ENTER:
+	case CS_ROOM_ENTER: // todo: 가구 편집할 때 다른 플레이어들한테 브로드캐스팅
 	{
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
 
@@ -702,7 +689,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		send(&pkt);
 		break;
 	}
-	case CS_PLACE_BUILD:
+	case CS_PLACE_BUILD: // todo: 여기 테스트
 	{
 		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
 		Object obj;
@@ -714,6 +701,20 @@ void Player::handle_packet(char* packet, unsigned short length)
 		obj.scale = p->build.scale;
 
 		room->AddObject(obj);
+
+		SC_ROOM_SETUP_PACKET pkt;
+		pkt.type = SC_ROOM_SETUP;
+		strcpy_s(pkt.id, M_ID_SIZE, room->ownerID.c_str());
+		room->packet_setup(pkt);
+		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
+
+		{
+			std::lock_guard ll{ room->m };
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i] != this)
+					room->players[i]->send(&pkt);
+			}
+		}
 		break;
 	}
 	case CS_REMOVE_BUILD:
@@ -791,7 +792,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 	{
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		Kid temp_kid(*p);
-		temp_kid.id = npcs.size();
+		temp_kid.id = npc_count++;
 		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
 		break;

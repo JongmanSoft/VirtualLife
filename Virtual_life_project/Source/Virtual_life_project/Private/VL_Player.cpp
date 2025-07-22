@@ -199,38 +199,58 @@ void AVL_Player::Tick(float DeltaTime)
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
 				}
 			}
-			}
-		// todo: 애니메이션 동기화 해야 함.
-
-		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
-		FVector CurrentLocation = GetActorLocation();
-
-		// 이동 방향 계산 (정규화)
-		FVector Direction = (TargetLocation - CurrentLocation);
-		Direction.Z = 0.f; // 수직 방향 제거
-		float Distance = Direction.Size();
-
-		if (Distance > 10.f) // 너무 가까우면 이동 안 해도 됨
-		{
-			Direction.Normalize();
-
-			// 이동 입력 (이렇게 하면 애니메이션 블루프린트에도 반영됨)
-			AddMovementInput(Direction, 1.0f);
 		}
 
-		// 회전 보간 처리
-		FRotator TargetRotation(0.f, destInfo.yaw, 0.f);
-		FRotator CurrentRotation = GetActorRotation();
-		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
+		if (bIsMovingToTarget)
+		{
+			FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
+			FVector CurrentLocation = GetActorLocation();
 
-		SetActorRotation(NewRotation);
+			// 이동 방향 계산 (정규화)
+			FVector Direction = (TargetLocation - CurrentLocation);
+			Direction.Z = 0.f; // 수직 방향 제거
+			float Distance = Direction.Size();
+
+			if (Distance > 10.f) // 너무 가까우면 이동 안 해도 됨
+			{
+				Direction.Normalize();
+
+				// 이동 입력 (이렇게 하면 애니메이션 블루프린트에도 반영됨)
+				AddMovementInput(Direction, 1.0f);
+
+				MoveElapsed += DeltaTime;
+
+				if (MoveElapsed >= MoveTimeout)
+				{
+					// 순간이동 처리
+					SetActorLocation(TargetLocation);
+					bIsMovingToTarget = false;
+				}
+			}
+			else
+			{
+				// 목적지 도착
+				bIsMovingToTarget = false;
+				MoveElapsed = 0.0f;
+			}
+
+			// 회전 보간 처리
+			FRotator TargetRotation(0.f, destInfo.yaw, 0.f);
+			FRotator CurrentRotation = GetActorRotation();
+			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f);
+
+			SetActorRotation(NewRotation);
+		}
 	}
 	else // 내가 조종하는 캐릭터
 	{
 		auto curLocation = GetActorLocation();
 		if (curLocation.Z < 1000.f)
 		{
+			// 초기위치 이동
 			curLocation.Z = 4000.0f;
+			curLocation.Y = 0.0f;
+			curLocation.X = 0.0f;
 			SetActorLocation(curLocation);
 		}
 	}
@@ -273,7 +293,7 @@ void AVL_Player::setCurInfo(PlayerInfo& v) // 현재 위치로 강제 이동
 
 void AVL_Player::setDestInfo(PlayerInfo& v) // 다음에 이동할 위치 설정
 {
-	// Dest에 최종 상태 복사.
+	bIsMovingToTarget = true;
 	destInfo = v;
 }
 
