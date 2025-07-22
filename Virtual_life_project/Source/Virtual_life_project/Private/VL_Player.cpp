@@ -160,6 +160,46 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
+		else if (state == HELLO) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+				}
+			}
+		}
+		else if (state == GANGNAMSTYLE) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/one_gangnam.one_gangnam")), 1.0f);
+				}
+			}
+			}
+		else if (state == WAVE) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/HipHopDancing_UE_Montage.HipHopDancing_UE_Montage")), 1.0f);
+				}
+			}
+		}
+		else if (state == DANCE) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp) {
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance)
+				{
+					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
+				}
+			}
+			}
 		// todo: 애니메이션 동기화 해야 함.
 
 		FVector TargetLocation(destInfo.x, destInfo.y, destInfo.z);
@@ -253,11 +293,11 @@ void AVL_Player::setState(int st)
 	state = st;
 }
 
-void AVL_Player::setFeel(int feel)
+void AVL_Player::setFeel(int _feel)
 {
 	if (false == isMyPlayer || false == myPlayer()) {
 		auto m_custom = FindComponentByClass<Um_CustomizableSkeletalComponent>();
-		m_custom->feel_change(feel);
+		m_custom->feel_change(_feel);
 	}
 }
 
@@ -316,12 +356,16 @@ void AVL_Player::player_action(int action)
 	auto m_skeltal = FindComponentByClass<USkeletalMeshComponent>();
 	
 	TCHAR montage_path[4][150] = {
-		TEXT(""),
-		TEXT(""),
-		TEXT(""),
-		TEXT("")
+		TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage"),
+		TEXT("/Game/animation/dance/one_gangnam.one_gangnam"),
+		TEXT("/Game/animation/dance/HipHopDancing_UE_Montage.HipHopDancing_UE_Montage"),
+		TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")
 	};
 	int action_state[4] = {
+		HELLO,
+		GANGNAMSTYLE,
+		WAVE,
+		DANCE
 	};
 	
 	if (m_skeltal) {
@@ -344,7 +388,7 @@ void AVL_Player::player_feel(int feel_state)
 	if (GameInstance) {
 		std::lock_guard ll{ m };
 		feel = feel_state;
-		//gameInstance->set_feel(feel_state);
+		GameInstance->set_feel(feel_state);
 	}
 	
 }

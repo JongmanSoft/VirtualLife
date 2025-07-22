@@ -769,6 +769,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			if (pl != nullptr) {
 				pl->setDestInfo(p.pl);
 				pl->setState(p.pl.st);
+				pl->setFeel(p.pl.feel);
 			}
 			break;
 		}

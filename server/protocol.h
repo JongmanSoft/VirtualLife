@@ -29,7 +29,16 @@ enum PARTY_REQUEST : char
 };
 
 enum STATE : char { IDLE = 0, WALK = 1, RUN = 2, JUMP = 3, MINE = 4, FISH = 5, SEED = 6,  
-	SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
+	SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12,
+	HELLO = 13, GANGNAMSTYLE = 14, WAVE = 15, DANCE = 16};
+
+enum FEEL_STATE : char
+{
+	FREE_F = 0,
+	SMILE_F = 1,
+	ANGRY_F = 2,
+	SAD_F = 3
+};
 
 // sitting1 : 그냥 앉음 lying : 누움 sitting2 : 머리에 손 올리고 앉음
 // sitting3 : 앉아서 말함 sitting4 : 머리에 손 올리고 눕다싶이 누움
@@ -42,6 +51,7 @@ struct PlayerInfo
 	float z;
 	float yaw; // 회전값
 	STATE st; // 애니메이션 동기화용?
+	FEEL_STATE feel;
 	int gold = 500;
 };
 

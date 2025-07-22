@@ -302,6 +302,7 @@ private:
 public :
 	void set_name(FString _name) { name = _name; };
 	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
+	void set_feel(int state) { MyPlayerInfo.feel = static_cast<FEEL_STATE>(state); }
 	virtual void Init() override;
 
 // 메인 맵 -> 집 들어갈 때 위치 저장용
