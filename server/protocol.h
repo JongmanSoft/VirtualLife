@@ -55,6 +55,7 @@ struct PlayerInfo
 	int gold = 500;
 };
 
+#pragma pack (push, 1)
 struct Customizing
 {
 	float skin; // 피부색
@@ -95,6 +96,7 @@ struct Customizing
 	unsigned short eyebrows;
 	unsigned short glasses;
 };
+#pragma pack (pop)
 
 struct Object // 건축 오브젝트
 {
@@ -109,14 +111,14 @@ struct Object // 건축 오브젝트
 // 직렬화때문에 만듦
 struct NPCUnitData
 {
+	wchar_t name[M_ID_SIZE]; // 자식 이름
+	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
 	unsigned int preg_id;
 	unsigned int spouse_id;
 	unsigned int id;
 	Customizing c;
 	float x, y, z, yaw;
 	char personality;
-	wchar_t name[M_ID_SIZE]; // 자식 이름
-	wchar_t	hello_msg[CHAT_SIZE];//자식인사말
 	bool is_kid = true; // 자식인지 아닌지 구분용
 };
 
