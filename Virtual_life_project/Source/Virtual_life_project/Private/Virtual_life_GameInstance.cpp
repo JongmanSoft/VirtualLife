@@ -377,8 +377,9 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		}
 		else {
 			//자식일경우
+			UE_LOG(LogTemp, Error, TEXT("start make kid"));
 			const NPCUnitData& npcData = Pair.Value.data;
-			auto BlueprintClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc'"));
+			auto BlueprintClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc'"));
 			if (BlueprintClass)
 			{
 				FActorSpawnParameters SpawnParams;
