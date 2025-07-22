@@ -99,8 +99,11 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
                 APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
                 PlayerController->SetViewTargetWithBlend(preview_kid, 2.0f);
 
+                preview_kid->SetActorHiddenInGame(false);
+
                 make_finish_widget(name, per_value, hello);
                 kid_set_animation(per_value);
+
             }
 		}
 
