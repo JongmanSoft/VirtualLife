@@ -266,7 +266,22 @@ bool Player::send_spawn_npcs_packet()
 		npc_array[i].yaw = npc.yaw;
 		npc_array[i].personality = npc.personality;
 		npc_array[i].is_kid = npc.is_kid;
+		wcsncpy_s(npc_array[i].name, sizeof(npc_array[i].name) / sizeof(wchar_t), npc.name.c_str(), _TRUNCATE);
+		wcsncpy_s(npc_array[i].hello_msg, sizeof(npc_array[i].hello_msg) / sizeof(wchar_t), npc.hello_msg.c_str(), _TRUNCATE);	
 	}
+
+
+	printf("[send_spawn_npcs_packet] Sending NPC packet (%d bytes):\n", packetSize);
+	for (int i = 0; i < packetSize; ++i) {
+		printf("%02X ", static_cast<unsigned char>(buffer[i]));
+		if ((i + 1) % 16 == 0)
+			printf("\n");
+	}
+	printf("\n");
+
+	std::cout << "sizeof(Customizing): " << sizeof(Customizing) << std::endl;
+	std::cout << "sizeof(NPCUnitData): " << sizeof(NPCUnitData) << std::endl;
+	std::cout << "offsetof(NPCUnitData, c): " << offsetof(NPCUnitData, c) << std::endl;
 
 	send(buffer);
 	return true;
@@ -485,6 +500,9 @@ void Player::handle_packet(char* packet, unsigned short length)
 	case CS_ENTER_GAME:
 	{
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
+
+		std::cout << "[DEBUG] Player " << id << " is entering the game." << std::endl;
+
 		if (this->name == L"") {
 			{
 				std::lock_guard ll{ info_lock };
@@ -538,6 +556,8 @@ void Player::handle_packet(char* packet, unsigned short length)
     {
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
 
+		std::cout << "[DEBUG] Player " << id << " is leaving the game." << std::endl;
+
 		if (state != PLAYING) {
 			state = NONE;
 			break;
@@ -551,7 +571,6 @@ void Player::handle_packet(char* packet, unsigned short length)
 			}
 		}
 		
-		std::cout << id << " !" << std::endl;
 		DBManager::SavePInfo(this->id, this->pinfo);
 
 		state = NONE;

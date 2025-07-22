@@ -378,7 +378,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		else {
 			//자식일경우
 			const NPCUnitData& npcData = Pair.Value.data;
-			auto BlueprintClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc'"));
+			auto BlueprintClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc_C'"));
 			if (BlueprintClass)
 			{
 				FActorSpawnParameters SpawnParams;
@@ -851,18 +851,66 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			const uint8* raw = PacketData.GetData();
 			const SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<const SC_SPAWN_NPCS_PACKET*>(raw);
 
-			// npc 배열은 패킷 뒤에 붙어 있음
-			const NPCUnitData* npcs = reinterpret_cast<const NPCUnitData*>(raw + sizeof(SC_SPAWN_NPCS_PACKET));
-
-			for (int i = 0; i < p->npc_count; ++i)
+			if (true == loaded)
 			{
-				const NPCUnitData& unit = npcs[i];
+				// npc 배열은 패킷 뒤에 붙어 있음
+				for (int i = 0; i < p->npc_count; ++i)
+				{
+					NPCUnitData unit;
+					memcpy(&unit, raw + sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData) * i, sizeof(NPCUnitData));
 
-				NPCInfo npc;
-				npc.data = unit;
-				npc.character = nullptr;
+					NPCInfo npc;
+					npc.data = unit;
+					npc.character = nullptr;
+					
+					auto BlueprintClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc_C'"));
+					if (BlueprintClass)
+					{
+						FActorSpawnParameters SpawnParams;
+						FVector SpawnLocation = FVector(npc.data.x, npc.data.y, npc.data.z);
+						FRotator SpawnRotation = FRotator(0.0f, npc.data.yaw, 0.0f);
+						SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+						AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(BlueprintClass, SpawnLocation, SpawnRotation, SpawnParams);
 
-				OtherNPCs.Add(unit.id, npc);
+						if (SpawnedActor)
+						{
+							SpawnedActor->SetActorHiddenInGame(false);
+							SpawnedActor->SetActorEnableCollision(true);
+							SpawnedActor->SetActorTickEnabled(true);
+							Akid_npc_actor* KidNPC = Cast<Akid_npc_actor>(SpawnedActor);
+							if (KidNPC)
+							{
+								KidNPC->set_new_custom(npc.data.c);
+								wchar_t safeName[M_ID_SIZE + 1] = {};
+								wcsncpy(safeName, unit.name, M_ID_SIZE);
+								FString NameStr = FString(safeName); // null terminated
+
+								wchar_t safeHello[CHAT_SIZE + 1] = {};
+								wcsncpy(safeHello, unit.hello_msg, CHAT_SIZE);
+								FString HelloStr = FString(safeHello);
+
+								KidNPC->set_kid_info(NameStr, HelloStr, npc.data.personality);
+							}
+							npc.character = SpawnedActor;
+						}
+					}
+					OtherNPCs.Add(unit.id, npc);
+				}
+			}
+			else 
+			{
+				// npc 배열은 패킷 뒤에 붙어 있음
+				for (int i = 0; i < p->npc_count; ++i)
+				{
+					NPCUnitData unit;
+					memcpy(&unit, raw + sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData) * i, sizeof(NPCUnitData));
+
+					NPCInfo npc;
+					npc.data = unit;
+					npc.character = nullptr;
+
+					OtherNPCs.Add(unit.id, npc);
+				}
 			}
 			break;
 		}

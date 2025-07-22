@@ -57,7 +57,7 @@ void Room::RemoveObjectByPosition(float x, float y, float z)
         }),
         objs.end());
 
-    std::cout << "°Ç¹° »èÁ¦µÊ\n";
+    //std::cout << "°Ç¹° »èÁ¦µÊ\n";
 }
 
 void Room::UpdateObjectTransform(float old_x, float old_y, float old_z, float new_x, float new_y, float new_z, float new_yaw)

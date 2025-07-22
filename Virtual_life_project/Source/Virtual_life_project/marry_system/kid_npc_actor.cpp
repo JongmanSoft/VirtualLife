@@ -7,7 +7,7 @@ Akid_npc_actor::Akid_npc_actor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-    m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
+   // m_custom = CreateDefaultSubobject<UCustom_data>(TEXT("Custom_data"));
  
    
 }
@@ -16,9 +16,13 @@ Akid_npc_actor::Akid_npc_actor()
 void Akid_npc_actor::BeginPlay()
 {
 	Super::BeginPlay();
-
+    if (!m_custom) // m_custom이 아직 생성되지 않았다면
+    {
+        m_custom = NewObject<UCustom_data>(this, TEXT("Custom_data"));
+   
+    }
     find_hair_groom();
-    apply_custom();
+
 
 }
 
