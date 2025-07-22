@@ -791,7 +791,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 	{
 		CS_ADD_KID_PACKET* p = reinterpret_cast<CS_ADD_KID_PACKET*>(packet);
 		Kid temp_kid(*p);
-		temp_kid.id = npcs.size();
+		temp_kid.id = npc_count++;
 		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
 		break;
