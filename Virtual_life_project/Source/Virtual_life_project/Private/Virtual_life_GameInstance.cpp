@@ -378,8 +378,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		else {
 			//자식일경우
 			const NPCUnitData& npcData = Pair.Value.data;
-			UClass* BlueprintClass = LoadClass<AActor>(nullptr, TEXT("/Game/VirtualLife_Character/KID_npc.KID_npc"));
-		
+			auto BlueprintClass = StaticLoadClass(ACharacter::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc'"));
 			if (BlueprintClass)
 			{
 				FActorSpawnParameters SpawnParams;
@@ -408,6 +407,9 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 					UE_LOG(LogTemp, Error, TEXT("Failed to spawn kid actor!"));
 				}
 
+			}
+			else {
+				UE_LOG(LogTemp, Error, TEXT("Failed to find kid actor!"));
 			}
 		}
 	}
