@@ -43,6 +43,8 @@ public:
 	
 	void setState(int st);
 
+	void setFeel(int feel);
+
 	bool isMyPlayer = false;
 
 	bool myPlayer();
@@ -56,6 +58,7 @@ protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
 	int state;
+	int feel;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UCapsuleComponent* cap;//의존성주입해야함
@@ -63,6 +66,12 @@ public:
 	void interact_action();
 
 	void not_move(); //목적지를 현재위치로 설정
+
+	UFUNCTION(BlueprintCallable)
+	void player_action(int action);
+
+	UFUNCTION(BlueprintCallable)
+	void player_feel(int feel_state);
 private:
 	std::mutex m;
 public:
