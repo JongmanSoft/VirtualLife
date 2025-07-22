@@ -76,4 +76,7 @@ private:
 	std::mutex m;
 public:
 
+	float MoveTimeout = 3.0f; // 3√ 
+	float MoveElapsed = 0.0f;
+	bool bIsMovingToTarget = false;
 };

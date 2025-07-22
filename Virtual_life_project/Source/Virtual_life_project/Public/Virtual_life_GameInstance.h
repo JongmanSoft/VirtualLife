@@ -312,6 +312,17 @@ public:
 
 	bool bReturnFromRoom = false;
 
+	UFUNCTION(BlueprintCallable)
+	void SetCachedMapLocation()
+	{
+		// 현재 플레이어 위치 저장
+		if (ACharacter* MyChar = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+		{
+			LastMainMapLocation = MyChar->GetActorLocation();
+			LastMainMapRotation = MyChar->GetActorRotation();
+		}
+	}
+
 // 음성 채팅
 public: 
 	FString StrID;

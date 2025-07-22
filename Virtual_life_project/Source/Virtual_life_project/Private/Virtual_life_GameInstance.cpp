@@ -1020,12 +1020,7 @@ void UVirtual_life_GameInstance::OnStart()
 
 void UVirtual_life_GameInstance::SendEnterRoom(FString roomID)
 {
-	// 현재 플레이어 위치 저장
-	if (ACharacter* MyChar = Cast<ACharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
-	{
-		LastMainMapLocation = MyChar->GetActorLocation();
-		LastMainMapRotation = MyChar->GetActorRotation();
-	}
+	void SetCachedMapLocation();
 
 	// 초기화.
 	ResetPlayers();
