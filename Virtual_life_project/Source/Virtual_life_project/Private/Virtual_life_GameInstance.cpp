@@ -266,7 +266,7 @@ void UVirtual_life_GameInstance::SendLoginInfoPacket(FString s, FString pw)
 	strcpy_s(p.id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
 	strcpy_s(p.pw, M_ID_SIZE, TCHAR_TO_ANSI(*pw));
 	p.type = CS_LOGIN;
-
+	strcpy_s(user_id, M_ID_SIZE, TCHAR_TO_ANSI(*s));
 	SendEnqueue(&p, p.size);
 }
 
@@ -1058,6 +1058,8 @@ void UVirtual_life_GameInstance::HandleRoomSetup(const SC_ROOM_SETUP_PACKET& p)
 		UE_LOG(LogTemp, Log, TEXT("Object[%d] - ID: %d, Pos: (%.1f, %.1f, %.1f), Yaw: %.1f"),
 			i, p.objs[i].item_id, p.objs[i].x, p.objs[i].y, p.objs[i].z, p.objs[i].yaw);
 	}
+	
+	strcpy_s(current_room, p.id);
 
 	UGameplayStatics::OpenLevel(this, MyRoomMapName);
 }
