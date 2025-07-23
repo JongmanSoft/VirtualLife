@@ -520,13 +520,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
-					players[i].send_spawn_packet(pinfo, custom);
+					players[i].send_spawn_packet(pinfo, custom, name);
 				}
 			}
 
 			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
-					send_spawn_packet(players[i].pinfo, players[i].custom);
+					send_spawn_packet(players[i].pinfo, players[i].custom, players[i].name);
 				}
 			}
 		}
@@ -682,7 +682,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 			{
 				for (int i = 0; i < room->players.size(); ++i) {
 					if (room->players[i] != this)
-						send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom);
+						send_spawn_packet(room->players[i]->pinfo, room->players[i]->custom, room->players[i]->name);
 				}
 			}
 
@@ -690,7 +690,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 				std::lock_guard ll{ room->m };
 				for (int i = 0; i < room->players.size(); ++i) {
 					if (room->players[i] != this)
-						room->players[i]->send_spawn_packet(this->pinfo, this->custom);
+						room->players[i]->send_spawn_packet(this->pinfo, this->custom, this->name);
 				}
 			}
 		}
@@ -798,13 +798,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
-					players[i].send_spawn_packet(pinfo, custom);
+					players[i].send_spawn_packet(pinfo, custom, this->name);
 				}
 			}
 
 			for (int i = 0; i < g_player_count; ++i) {
 				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == WORLD) {
-					send_spawn_packet(players[i].pinfo, players[i].custom);
+					send_spawn_packet(players[i].pinfo, players[i].custom, players[i].name);
 				}
 			}
 		}
