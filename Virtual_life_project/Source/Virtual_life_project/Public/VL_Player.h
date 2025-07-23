@@ -45,8 +45,10 @@ public:
 
 	void setFeel(int feel);
 
+	
 	bool isMyPlayer = false;
 
+	UFUNCTION(BlueprintCallable)
 	bool myPlayer();
 
 	UFUNCTION(BlueprintCallable)

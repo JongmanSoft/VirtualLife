@@ -342,6 +342,8 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		ACharacter* Actor = World->SpawnActor<ACharacter>(
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
 
+	
+
 		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 		Other_actor_m_custom->custom_data_update(Info.cinfo);
 
@@ -351,6 +353,8 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		if (pl != nullptr) {
 			pl->set_my_id(Info.pinfo.id);
 		}
+
+		
 	}
 
 	// 3. NPC 스폰
@@ -677,6 +681,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				ts.character = nullptr;
 				ts.cinfo = p.c;
 				ts.pinfo = p.pl;
+				wcscpy_s(ts.name, p.name);
 				OtherPlayers.Add(p.pl.id, ts);
 			}
 			else {
@@ -688,6 +693,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				ts.cinfo = p.c;
 				ts.pinfo = p.pl;
 				ts.character = nullptr;
+				wcscpy_s(ts.name, p.name);
 				OtherPlayers.Add(p.pl.id, ts);
 
 				FVector L(p.pl.x, p.pl.y, p.pl.z);

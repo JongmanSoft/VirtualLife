@@ -37,6 +37,7 @@ struct SpawnInfo
 	PlayerInfo pinfo;
 	Customizing cinfo;
 	ACharacter* character;
+	wchar_t name[M_ID_SIZE];
 };
 
 struct NPCInfo
