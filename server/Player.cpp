@@ -444,6 +444,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 	{
 		int id = pinfo.id;
 		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(packet);
+		std::cout << "[DEBUG] Player " << p->id << " is trying to log in." << std::endl;
 
 		bool is_new = false;
 		bool success = true;
@@ -487,7 +488,6 @@ void Player::handle_packet(char* packet, unsigned short length)
 	case CS_ENTER_GAME:
 	{
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
-
 		std::cout << "[DEBUG] Player " << id << " is entering the game." << std::endl;
 
 		if (this->name == L"") {

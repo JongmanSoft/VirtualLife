@@ -455,7 +455,7 @@ struct SC_SPAWN_NPCS_PACKET {
 	unsigned short npc_count; // NPC 개수
 };
 
-// 스트레스 테스트 용
+// 스트레스 테스트 용 ------------------
 struct CS_TEST_MOVE_PACKET {
 	unsigned short size;
 	PACKETID type;
@@ -465,12 +465,11 @@ struct CS_TEST_MOVE_PACKET {
 
 struct SC_TEST_MOVE_PACKET {
 	unsigned short size;
-	unsigned short type;
+	PACKETID type;
 	long long client_send_time;
 	long long server_send_time; // NEW!
 	PlayerInfo pl;
 };
-
 
 // 미완 ----------------------------
 struct CS_NPC_CHAT_PACKET {
