@@ -100,6 +100,8 @@ public:
 	FName MyRoomMapName = TEXT("RoomPlayMap");
 	TArray<Object> CachedRoomObjects; // 서버에서 받은 내 방 건물들
 
+	char current_room[M_ID_SIZE] = {"other"}; //현재 있는 룸 주인 아이디
+
 	UFUNCTION(BlueprintCallable)
 	void SendEnterRoom(FString roomID); // 서버에 방 진입 요청
 
@@ -291,15 +293,18 @@ public:
 private:
 	class RecvManager* RecvThread = nullptr;
 	class SendManager* SendThread = nullptr;
-	int id;
+public:
+	int id; //스폰용아이디
+	char user_id[M_ID_SIZE] = {"other"};//실제 아이디
 	FString name = TEXT("김겜공");
 
 	PlayerInfo MyPlayerInfo;  // 서버로부터 받은 위치 정보를 저장
-
+private:
 	// 패킷 처리 함수
 	void ProcessRecvPackets();
 	float TimeAccumulator = 0.0f;  // 위치 전송 간격 관리
 public :
+	
 	void set_name(FString _name) { name = _name; };
 	void set_state(int state) { MyPlayerInfo.st = static_cast<STATE>(state); }
 	void set_feel(int state) { MyPlayerInfo.feel = static_cast<FEEL_STATE>(state); }
