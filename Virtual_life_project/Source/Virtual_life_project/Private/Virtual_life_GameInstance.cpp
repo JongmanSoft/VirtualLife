@@ -6,6 +6,8 @@
 #include "Sockets.h"
 #include <Common/TcpSocketBuilder.h>
 #include "../Custom/m_CustomizableSkeletalComponent.h"
+#include "Components/WidgetComponent.h"
+#include "display_user_name.h"
 #include "Kismet/GameplayStatics.h"
 #include <Serialization/ArrayWriter.h>
 #include "Networking.h"
@@ -342,8 +344,11 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		ACharacter* Actor = World->SpawnActor<ACharacter>(
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
 
-	
-
+		// 이름 출력
+		UWidgetComponent* WidgetComp = Actor->FindComponentByClass<UWidgetComponent>();
+		auto name_widget = Cast<Udisplay_user_name>(WidgetComp->GetUserWidgetObject());
+		name_widget->set_name(FText::FromString(FString(Info.name)));
+		//커스텀반영
 		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 		Other_actor_m_custom->custom_data_update(Info.cinfo);
 
@@ -451,6 +456,10 @@ void UVirtual_life_GameInstance::SpawnPlayerInRoom()
 
 		ACharacter* Actor = World->SpawnActor<ACharacter>(
 			PlayerClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+		UWidgetComponent* WidgetComp = Actor->FindComponentByClass<UWidgetComponent>();
+		auto name_widget = Cast<Udisplay_user_name>(WidgetComp->GetUserWidgetObject());
+		name_widget->set_name(FText::FromString(FString(Info.name)));
 
 		Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
 		Other_actor_m_custom->custom_data_update(Info.cinfo);
@@ -707,6 +716,10 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 				SpawnParams.OverrideLevel = World->PersistentLevel;
 
 				ACharacter* Actor = World->SpawnActor<ACharacter>(PlayerClass, L, R, SpawnParams);
+
+				UWidgetComponent* WidgetComp = Actor->FindComponentByClass<UWidgetComponent>();
+				auto name_widget = Cast<Udisplay_user_name>(WidgetComp->GetUserWidgetObject());
+				name_widget->set_name(FText::FromString(FString(ts.name)));
 
 				//스폰된 액터의 커스텀정보 반영
 				Um_CustomizableSkeletalComponent* Other_actor_m_custom = Actor->FindComponentByClass<Um_CustomizableSkeletalComponent>();
