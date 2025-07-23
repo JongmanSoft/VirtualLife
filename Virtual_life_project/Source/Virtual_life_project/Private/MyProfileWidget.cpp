@@ -9,9 +9,10 @@
 void UMyProfileWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    auto  m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
+    m_inst->OnGoldUpdated.AddDynamic(this, &UMyProfileWidget::SetCoin);
 
-    Cast<UVirtual_life_GameInstance>(GetGameInstance())->OnGoldUpdated.AddDynamic(this, &UMyProfileWidget::SetCoin);
-
+    ID_TEXT->SetText(FText::FromString(FString(UTF8_TO_TCHAR(m_inst->user_id))));
     SetHP(100, 100);
     SetMP(100, 100);
 
