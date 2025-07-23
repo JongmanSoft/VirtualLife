@@ -67,13 +67,14 @@ bool Player::send_enter_game_packet()
 	return true;
 }
 
-bool Player::send_spawn_packet(PlayerInfo pi, Customizing cus)
+bool Player::send_spawn_packet(PlayerInfo pi, Customizing cus, std::wstring name)
 {
 	SC_SPAWN_PACKET p;
 	p.size = sizeof(SC_SPAWN_PACKET);
 	p.type = SC_SPAWN;
 	p.pl = pi;
 	p.c = cus;
+	wcsncpy_s(p.name, sizeof(p.name) / sizeof(wchar_t), name.c_str(), _TRUNCATE); // name
 	send(&p);
 	return true;
 }
@@ -174,6 +175,14 @@ bool Player::send_room_leave_packet()
 
 bool Player::send_time_sync_packet()
 {
+	SC_TIME_SYNC_PACKET p;
+	auto now = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime);
+	p.curtime = static_cast<float>(std::fmod(f_time + (elapsed.count() * 0.0001f), 24));
+	p.size = sizeof(SC_TIME_SYNC_PACKET);
+	p.type = SC_TIME_SYNC;
+	
+	send(&p);
 	return true;
 }
 
@@ -505,7 +514,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 
 		send_enter_game_packet();
 		send_doors_state_packet();
-		//send_spawn_npcs_packet();
+		send_spawn_npcs_packet();
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -722,6 +731,20 @@ void Player::handle_packet(char* packet, unsigned short length)
 		CS_REMOVE_BUILD_PACKET* p = reinterpret_cast<CS_REMOVE_BUILD_PACKET*>(packet);
 
 		room->RemoveObjectByPosition(p->x, p->y, p->z);
+
+		SC_ROOM_SETUP_PACKET pkt;
+		pkt.type = SC_ROOM_SETUP;
+		strcpy_s(pkt.id, M_ID_SIZE, room->ownerID.c_str());
+		room->packet_setup(pkt);
+		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
+
+		{
+			std::lock_guard ll{ room->m };
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i] != this)
+					room->players[i]->send(&pkt);
+			}
+		}
 		break;
 	}
 	case CS_UPDATE_BUILD:
@@ -729,6 +752,20 @@ void Player::handle_packet(char* packet, unsigned short length)
 		CS_UPDATE_BUILD_PACKET* p = reinterpret_cast<CS_UPDATE_BUILD_PACKET*>(packet);
 
 		room->UpdateObjectTransform(p->old_x, p->old_y, p->old_z, p->new_x, p->new_y, p->new_z, p->new_yaw);
+
+		SC_ROOM_SETUP_PACKET pkt;
+		pkt.type = SC_ROOM_SETUP;
+		strcpy_s(pkt.id, M_ID_SIZE, room->ownerID.c_str());
+		room->packet_setup(pkt);
+		pkt.size = sizeof(SC_ROOM_SETUP_PACKET);
+
+		{
+			std::lock_guard ll{ room->m };
+			for (int i = 0; i < room->players.size(); ++i) {
+				if (room->players[i] != this)
+					room->players[i]->send(&pkt);
+			}
+		}
 		break;
 	}
 	case CS_ROOM_LEAVE:
@@ -779,13 +816,6 @@ void Player::handle_packet(char* packet, unsigned short length)
 		CS_UPDATE_PARTY_PACKET* p = reinterpret_cast<CS_UPDATE_PARTY_PACKET*>(packet);
 
 		handle_party_packet(*p);
-		break;
-	}
-	case CS_TIME_SYNC:
-	{
-		CS_TIME_SYNC_PACKET* p = reinterpret_cast<CS_TIME_SYNC_PACKET*>(packet);
-		
-
 		break;
 	}
 	case CS_ADD_KID: 
