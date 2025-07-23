@@ -17,6 +17,8 @@ class VIRTUAL_LIFE_PROJECT_API URoomPlayWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+
+
 	UPROPERTY(meta = (BindWidget))
 	UMyProfileWidget* MyProfile_UI;
 
@@ -29,6 +31,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* edit_text;
+
+	UPROPERTY()
+	bool is_my_room = false;
 
 private:
 	UFUNCTION()
@@ -36,4 +43,9 @@ private:
 
 	UFUNCTION()
 	void OnQuitClicked();
+
+	UFUNCTION(BlueprintCallable)
+	void disable_enter_building();
+
+
 };

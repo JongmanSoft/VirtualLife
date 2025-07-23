@@ -37,7 +37,7 @@ class Player
 	// 패킷 send 함수
 	bool send_login_info_packet(bool res, bool isnew);
 	bool send_enter_game_packet();
-	bool send_spawn_packet(PlayerInfo pi, Customizing cus);
+	bool send_spawn_packet(PlayerInfo pi, Customizing cus, std::wstring name);
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
 	bool send_chat_packet(std::wstring name, std::wstring chat, unsigned int id);
@@ -46,7 +46,6 @@ class Player
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
 	bool send_room_leave_packet();
-	bool send_time_sync_packet();
 	bool send_update_party_packet();
 	bool send_invite_call_packet(std::string& id, std::wstring& name);
 	bool send_reject_call_packet(std::string& id);
@@ -59,6 +58,8 @@ class Player
 	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);
 
 public:
+	bool send_time_sync_packet();
+
 
 	Player() : socket(0), state(NONE) {}
 	Player(SOCKET s, int id);

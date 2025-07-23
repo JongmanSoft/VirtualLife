@@ -106,8 +106,8 @@ void workerThread(HANDLE iocp_hd)
             // 모든 아이들에게 현재 시간 전송
             for (Player& player : players) 
             {
-                if (player.get_state() != PLAYING)
-                    continue;
+                if (player.get_state() != PLAYING) continue;
+                player.send_time_sync_packet();
             }
         }
     }

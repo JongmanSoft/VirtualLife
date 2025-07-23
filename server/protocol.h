@@ -221,6 +221,7 @@ struct SC_SPAWN_PACKET {
 	PACKETID	type;
 	PlayerInfo pl;
 	Customizing c;
+	wchar_t name[M_ID_SIZE];
 };
 
 struct SC_DESPAWN_PACKET {
@@ -471,6 +472,14 @@ struct SC_TEST_MOVE_PACKET {
 	PlayerInfo pl;
 };
 
+// 시간 ----------------------------
+struct SC_TIME_SYNC_PACKET {
+	unsigned short size;
+	PACKETID type;
+	float curtime;
+};
+
+
 // 미완 ----------------------------
 struct CS_NPC_CHAT_PACKET {
 	unsigned short size;
@@ -479,18 +488,7 @@ struct CS_NPC_CHAT_PACKET {
 	wchar_t	msg[CHAT_SIZE];
 };
 
-struct CS_TIME_SYNC_PACKET {
-	unsigned short size;
-	PACKETID type;
-	float ping;
-};
 
-struct SC_TIME_SYNC_PACKET {
-	unsigned short size;
-	PACKETID type;
-	float curtime;
-	float time;
-};
 
 struct SC_NPC_RESPONSE_PACKET {
 	unsigned short size;

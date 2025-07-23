@@ -38,6 +38,9 @@ protected:
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* Name_TXT;
 
+    UPROPERTY(meta = (BindWidget))
+    class UTextBlock* ID_TEXT;
+
    /* UPROPERTY(meta = (BindWidget))
     class UTextBlock* Job_TXT;
 
