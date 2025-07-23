@@ -26,20 +26,20 @@ void UMyProfileWidget::NativeDestruct()
 
 void UMyProfileWidget::SetHP(int32 Current, int32 Max)
 {
-    if (HP_TXT)
+   /* if (HP_TXT)
         HP_TXT->SetText(FText::Format(FText::FromString("HP ({0})"), Current));
 
     if (HP_Bar && Max > 0)
-        HP_Bar->SetPercent(static_cast<float>(Current) / Max);
+        HP_Bar->SetPercent(static_cast<float>(Current) / Max);*/
 }
 
 void UMyProfileWidget::SetMP(int32 Current, int32 Max)
 {
-    if (MP_TXT)
+   /* if (MP_TXT)
         MP_TXT->SetText(FText::Format(FText::FromString("MP ({0})"), Current));
 
     if (MP_Bar && Max > 0)
-        MP_Bar->SetPercent(static_cast<float>(Current) / Max);
+        MP_Bar->SetPercent(static_cast<float>(Current) / Max);*/
 }
 
 void UMyProfileWidget::SetCoin(const int32& updated_coin)
