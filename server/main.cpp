@@ -44,7 +44,7 @@ void workerThread(HANDLE iocp_hd)
         if (ext_over->ov == TASK_TYPE::ACCEPT) {
             int client_id = setid();
             CreateIoCompletionPort(reinterpret_cast<HANDLE>(g_client), iocp_hd, client_id, 0);
-            std::cout << "[ACCEPT] 클라이언트 ID " << client_id << " 연결됨" << std::endl;
+            std::cout << "[ACCEPT] Client ID " << client_id << " Connected" << std::endl;
             
             {
 				std::lock_guard<std::mutex> lock(players_mutex);
@@ -71,7 +71,7 @@ void workerThread(HANDLE iocp_hd)
         }
         else if (ext_over->ov == TASK_TYPE::DB_POS_UPDATE)
         {
-            std::cout << "[EVENT] DB_UPDATE - 플레이어 위치 저장" << std::endl;
+            std::cout << "[EVENT] DB_UPDATE - Save Player Position" << std::endl;
 
             {
                 std::lock_guard<std::mutex> lock(players_mutex);
@@ -87,7 +87,7 @@ void workerThread(HANDLE iocp_hd)
         }
         else if (ext_over->ov == TASK_TYPE::DB_INVENTORY_UPDATE)
         {
-            std::cout << "[EVENT] DB_INVENTORY_UPDATE - 플레이어 인벤토리 저장" << std::endl;
+            std::cout << "[EVENT] DB_INVENTORY_UPDATE - Save Player inventory" << std::endl;
 
             {
                 std::lock_guard<std::mutex> lock(players_mutex);
@@ -101,14 +101,18 @@ void workerThread(HANDLE iocp_hd)
 
             push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
         }
-        else if (ext_over->ov == TASK_TYPE::TIME_UPDATE) // todo
+        else if (ext_over->ov == TASK_TYPE::TIME_UPDATE)
         {
-            // 모든 아이들에게 현재 시간 전송
-            for (Player& player : players) 
+            std::cout << "[EVENT] TIME_UPDATE_TIME - Sync Time" << std::endl;
             {
-                if (player.get_state() != PLAYING) continue;
-                player.send_time_sync_packet();
+                std::lock_guard<std::mutex> lock(players_mutex);
+                for (Player& player : players)
+                {
+                    if (player.get_state() != PLAYING) continue;
+                    player.send_time_sync_packet();
+                }
             }
+            push_evt_queue(-1, -1, TASK_TYPE::TIME_UPDATE, TIME_UPDATE_TIME);
         }
     }
 }
@@ -159,6 +163,7 @@ int main()
 
         push_evt_queue(-1, -1, TASK_TYPE::DB_POS_UPDATE, DB_POS_UPDATE_TIME);
         push_evt_queue(-1, -1, TASK_TYPE::DB_INVENTORY_UPDATE, DB_INVENTORY_UPDATE_TIME);
+		push_evt_queue(-1, -1, TASK_TYPE::TIME_UPDATE, TIME_UPDATE_TIME);
         room_setup();
         npc_setup();
     }
