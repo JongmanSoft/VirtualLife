@@ -142,6 +142,14 @@ void check_evt(HANDLE iocp_hd)
 
 int main()
 {
+    std::string id, pw;
+    std::cout << "Enter ID: ";
+    std::cin >> id;
+	std::cout << "Enter PW: ";
+	std::cin >> pw;
+	DBManager::id = id;
+	DBManager::pw = pw;
+
     // 서버 초기화
     initialize_server();
 
