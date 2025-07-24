@@ -20,6 +20,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void SetTimeText(int32 Hours, int32 Minutes);
 
+    UFUNCTION(BlueprintCallable)
+    void UpdateFromGameInstance();
+
 protected:
     virtual void NativeConstruct() override;
 

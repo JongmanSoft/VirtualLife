@@ -17,6 +17,7 @@ class VIRTUAL_LIFE_PROJECT_API ITimeOfDayInterface
     GENERATED_BODY()
 
 public:
+
     // 블루프린트에서 오버라이드 가능 + C++ 구현도 가능
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "TimeOfDay")
     void NotifySunrise();
