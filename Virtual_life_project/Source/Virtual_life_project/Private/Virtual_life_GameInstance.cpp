@@ -964,14 +964,35 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			}
 			else if (p.act_type == PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT) // 상대방이 파티에 참여
 			{
+				party_members_name.Add(FString(p.name));
 				// todo: 여기 알림 메시지 추가
 				int k = 0;
+				OnParty_update.Broadcast();
 			}
 			else if (p.act_type == PARTY_REQUEST::PARTY_JOIN_SUCCESS) // 파티 참가 성공 -> 음성채팅 참가
 			{
+				//내가 방 만든거임
+				inParty = true;
+				party_members_name.Add(FString(name));
 				FString str = p.channel_id;
 				JoinChannel(str);
+				OnParty_update.Broadcast();
 			}
+			break;
+		}
+		case SC_UPDATE_PARTY: {
+			SC_UPDATE_PARTY_PACKET p;
+			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_PARTY_PACKET));
+			if (p.act_type == PARTY_REQUEST::PARTY_UPDATE) {
+				party_members_name.Empty();
+				party_members_name.Add(FString(name)); // 자기 자신 추가
+				for (int cnt = 0; cnt < p.member_count; cnt++) {
+					party_members_name.Add(FString(p.membersName[cnt]));
+				}
+				inParty = true; 
+				OnParty_update.Broadcast();
+			}
+			break;
 		}
 		}
 	}

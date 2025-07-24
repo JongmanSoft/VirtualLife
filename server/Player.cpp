@@ -196,10 +196,10 @@ bool Player::send_update_party_packet()
 	for (int i = 0; i < MAX_PARTY_MEMBER; ++i) {
 		if (i < party->get_member_count()) {
 			if (party->get_members()[i] == this) continue;
-			p.membersID[i] = party->get_members()[i]->pinfo.id;
+			wcscpy_s(p.membersName[i], sizeof(p.membersName[i]) / sizeof(wchar_t), party->get_members()[i]->name.c_str());
 		}
 		else {
-			p.membersID[i] = 0; 
+			wcscpy_s(p.membersName[i], sizeof(p.membersName[i]) / sizeof(wchar_t), L"");
 		}
 	}
 
@@ -348,6 +348,8 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].party->add_member(this);
 				party = players[i].party;
+				//TODO 초대를 보낸놈한테 수락됏다고 알려줘야하지않나?
+
 				break;
 			}
 		}
