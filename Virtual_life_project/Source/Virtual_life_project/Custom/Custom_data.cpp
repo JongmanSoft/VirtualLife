@@ -17,8 +17,8 @@ UCustom_data::UCustom_data()
 	pupil_scale= 0.9;
 	hair=0;
 	hair_color_R=0;
-	hair_color_G=0;
-	hair_color_B=0;
+	hair_color_G=1;
+	hair_color_B=1;
 
 	eye_width = 0;
 	eye_thick = 0;
