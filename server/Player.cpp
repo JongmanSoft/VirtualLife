@@ -561,6 +561,21 @@ void Player::handle_packet(char* packet, unsigned short length)
 			break;
 		}
 
+		//{
+		//	if (party != nullptr) {
+		//		party->remove_member(this);
+		//		if (party->get_member_count() == 0) {
+		//			delete party;
+		//			party = nullptr;
+		//		}
+		//		else {
+		//			for (auto& a : party->get_members()) {
+		//				a->send_update_party_packet();
+		//			}
+		//		}
+		//	}
+		//}
+
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < g_player_count; ++i) {
@@ -577,7 +592,16 @@ void Player::handle_packet(char* packet, unsigned short length)
 	case CS_MOVEP:
 	{
 		CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(packet);
-		pinfo = p->pl;
+		
+		{
+			std::lock_guard<std::mutex> lock(info_lock);
+			pinfo.feel = p->pl.feel;
+			pinfo.x = p->pl.x;
+			pinfo.y = p->pl.y;
+			pinfo.z = p->pl.z;
+			pinfo.yaw = p->pl.yaw;
+			pinfo.st = p->pl.st;
+		}
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -623,6 +647,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 	case CS_UPDATE_GOLD:
 	{
 		CS_UPDATE_GOLD_PACKET* p = reinterpret_cast<CS_UPDATE_GOLD_PACKET*>(packet);
+		std::cout << "[DEBUG] Player " << this->id << "Prev: " << this->pinfo.gold << " Curr: " << this->pinfo.gold + p->gold_offset<< std::endl;
 		this->pinfo.gold += p->gold_offset;
 		DBManager::SaveGold(this->id, this->pinfo.gold);
 		send_update_gold(this->pinfo.gold);
