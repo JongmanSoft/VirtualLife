@@ -66,7 +66,7 @@ void DBManager::Init()
     }
 }
 
-sql::Connection* DBManager::GetConnection() 
+sql::Connection* DBManager::GetConnection()
 {
     try {
         if (!g_driver) {
@@ -74,7 +74,7 @@ sql::Connection* DBManager::GetConnection()
             return nullptr;
         }
 
-        if (!t_conn) {
+        if (!t_conn || t_conn->isClosed()) {
             t_conn = std::unique_ptr<sql::Connection>(
                 g_driver->connect("tcp://127.0.0.1:3306", DBManager::id, DBManager::pw));
             t_conn->setSchema("VL_DB");
@@ -82,20 +82,14 @@ sql::Connection* DBManager::GetConnection()
 
         return t_conn.get();
     }
-    catch (sql::SQLException& e) {
+    catch (const sql::SQLException& e) {
         std::cerr << "[DB Error - GetConnection] " << e.what() << std::endl;
         std::cerr << "SQLState: " << e.getSQLStateCStr() << ", ErrorCode: " << e.getErrorCode() << std::endl;
-        return nullptr;
-    }
-    catch (std::exception& e) {
-        std::cerr << "[DB Error - GetConnection] std::exception: " << e.what() << std::endl;
-        return nullptr;
-    }
-    catch (...) {
-        std::cerr << "[DB Error - GetConnection] 알 수 없는 예외 발생!" << std::endl;
+        t_conn.reset(); // 연결 실패 시 null 처리
         return nullptr;
     }
 }
+
 
 bool DBManager::checkLogin(const std::string& id, const std::string& pw, bool& is_new)
 {
