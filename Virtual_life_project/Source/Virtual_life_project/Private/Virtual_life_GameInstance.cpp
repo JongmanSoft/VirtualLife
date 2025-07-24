@@ -986,7 +986,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_PARTY_PACKET));
 			if (p.act_type == PARTY_REQUEST::PARTY_UPDATE) {
 				party_members_name.Empty();
-				party_members_name.Add(FString(name)); // 자기 자신 추가
 				for (int cnt = 0; cnt < p.member_count; cnt++) {
 					party_members_name.Add(FString(p.membersName[cnt]));
 				}
