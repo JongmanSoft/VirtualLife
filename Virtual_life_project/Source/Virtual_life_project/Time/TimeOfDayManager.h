@@ -19,9 +19,6 @@ class VIRTUAL_LIFE_PROJECT_API ATimeOfDayManager : public AActor
 public:	
 	ATimeOfDayManager();
 
-	UFUNCTION(BlueprintCallable)
-	void SetServerTime(float InTime);
-
 protected:
 	virtual void BeginPlay() override;
 
