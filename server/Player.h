@@ -1,47 +1,47 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Quest.h"
 #include "Room.h"
 #include "Party.h"
 #include "Kid.h"
 
-// todo: ¶ô È¤Àº concurrency·Î ¸ğµÎ¸ğµÎ º¯°æÇØ¾ß ÇÔ
+// todo: ë½ í˜¹ì€ concurrencyë¡œ ëª¨ë‘ëª¨ë‘ ë³€ê²½í•´ì•¼ í•¨
 enum STATES { NONE = 0, CONNECTING = 1, PLAYING = 2 };
 enum LOCATION { WORLD = 0, HOME = 1 };
 class Player
 {
-	// ³×Æ®¿öÅ© Åë½Å °ü·Ã
+	// ë„¤íŠ¸ì›Œí¬ í†µì‹  ê´€ë ¨
 	EXT_OVER over;
 	SOCKET socket;
 	std::mutex socket_lock;
-	std::vector<char> packet_data; // deque¸¦ »ç¿ëÇÒ±î?
+	std::vector<char> packet_data; // dequeë¥¼ ì‚¬ìš©í• ê¹Œ?
 	
-	// ÇÃ·¹ÀÌ¾î Á¤º¸
-	std::string id; // Á¢¼Ó¿ë id
-	STATES state; // ¼¼¼Ç»óÅÂ
-	LOCATION location = WORLD; // ÇöÀç À§Ä¡
-	PlayerInfo pinfo; // ÇÃ·¹ÀÌ¾î Á¤º¸
-	Customizing custom; // Ä¿½ºÅÍ¸¶ÀÌÂ¡ Á¤º¸
-	std::wstring name = L""; // ÇÃ·¹ÀÌ¾î ÀÌ¸§
+	// í”Œë ˆì´ì–´ ì •ë³´
+	std::string id; // ì ‘ì†ìš© id
+	STATES state; // ì„¸ì…˜ìƒíƒœ
+	LOCATION location = WORLD; // í˜„ì¬ ìœ„ì¹˜
+	PlayerInfo pinfo; // í”Œë ˆì´ì–´ ì •ë³´
+	Customizing custom; // ì»¤ìŠ¤í„°ë§ˆì´ì§• ì •ë³´
+	std::wstring name = L""; // í”Œë ˆì´ì–´ ì´ë¦„
 
 	std::unordered_map<unsigned short, unsigned short> player_item;
 	std::vector<Quest> quests;
 	Room* room;
 
-	// µ¿±âÈ­ °ü·Ã
+	// ë™ê¸°í™” ê´€ë ¨
 	std::mutex info_lock;
 
-	// ÆÄÆ¼
-	Party* party = nullptr; // ÆÄÆ¼ Á¤º¸
+	// íŒŒí‹°
+	Party* party = nullptr; // íŒŒí‹° ì •ë³´
 
-	// ÆĞÅ¶ send ÇÔ¼ö
+	// íŒ¨í‚· send í•¨ìˆ˜
 	bool send_login_info_packet(bool res, bool isnew);
 	bool send_enter_game_packet();
 	bool send_spawn_packet(PlayerInfo pi, Customizing cus, std::wstring name);
 	bool send_despawn_packet(int id);
 	bool send_move_packet(PlayerInfo pi);
 	bool send_chat_packet(std::wstring name, std::wstring chat, unsigned int id);
-	bool send_update_item_packet(unsigned short id, unsigned short num); // ÇØ´ç ¾ÆÀÌÅÛÀÌ num°³·Î ¾÷µ¥ÀÌÆ®
+	bool send_update_item_packet(unsigned short id, unsigned short num); // í•´ë‹¹ ì•„ì´í…œì´ numê°œë¡œ ì—…ë°ì´íŠ¸
 	bool send_update_gold(int sc_gold_offset);
 	bool send_get_quest_packet(unsigned short gid, unsigned short n);
 	bool send_remove_quest_packet(unsigned short gid, unsigned short n);
@@ -54,7 +54,7 @@ class Player
 	bool send_spawn_npcs_packet();
 	bool send_spawn_npc_packet(int id);
 
-	// ÇÚµé·¯ ÇÔ¼ö
+	// í•¸ë“¤ëŸ¬ í•¨ìˆ˜
 	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);
 
 public:
@@ -96,7 +96,7 @@ public:
 	bool save_db_pinfo();
 	bool save_db_pInventory();
 
-	// Ãß°¡ÀûÀÎ ±â´ÉÀ» À§ÇØ getter¿Í setter¸¦ Ãß°¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+	// ì¶”ê°€ì ì¸ ê¸°ëŠ¥ì„ ìœ„í•´ getterì™€ setterë¥¼ ì¶”ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 	SOCKET get_socket() const { return socket; }
 	void set_socket(SOCKET sock) { socket = sock; }
 
