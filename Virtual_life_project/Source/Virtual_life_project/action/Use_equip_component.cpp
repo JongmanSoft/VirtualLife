@@ -297,5 +297,5 @@ void UUse_equip_component::State_update(int st)
 
 void UUse_equip_component::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-    State_update(IDLE);
+   State_update(IDLE);
 }
