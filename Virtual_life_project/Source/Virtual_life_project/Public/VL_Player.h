@@ -55,6 +55,11 @@ public:
 	int32 get_my_id();
 
 	void set_my_id(const unsigned int& new_id);
+
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 protected:
 	unsigned int m_id;
 	PlayerInfo curInfo; // 현재 위치
