@@ -65,6 +65,7 @@ protected:
 	PlayerInfo curInfo; // 현재 위치
 	PlayerInfo destInfo; // 목적지
 	int state;
+	int prev_state;
 	int feel;
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

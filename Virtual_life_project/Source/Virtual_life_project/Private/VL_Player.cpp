@@ -74,7 +74,19 @@ void AVL_Player::Tick(float DeltaTime)
 
 	if (false == isMyPlayer || false == myPlayer()) // 내가 조종하는 캐릭터가 아니라면
 	{
-		if (state == IDLE)
+		if (prev_state && prev_state != state) {
+			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
+			if (SkeletalMeshComp)
+			{
+				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+				if (AnimInstance && AnimInstance->IsAnyMontagePlaying())
+				{
+					AnimInstance->Montage_Stop(0.5f);
+				}
+			}
+			prev_state = 0;
+		}
+		/*if (state == IDLE)
 		{
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp)
@@ -85,8 +97,8 @@ void AVL_Player::Tick(float DeltaTime)
 				    AnimInstance->Montage_Stop(0.5f);
 				}
 			}
-		}
-		else if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
+		}*/
+		if (state == JUMP and GetCharacterMovement()->IsMovingOnGround()) // 점프 상태이고 바닥에 있으면
 		{
 			Jump();
 		}
@@ -130,6 +142,7 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting1_mon.Sitting1_mon")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
@@ -140,6 +153,7 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/LyingIdle_Montage.LyingIdle_Montage")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
@@ -150,6 +164,7 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting2_mon.Sitting2_mon")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
@@ -160,6 +175,7 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting3_mon.Sitting3_mon")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
@@ -170,6 +186,7 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/Interact_animation/Sitting4_mon.Sitting4_mon")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
