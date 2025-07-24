@@ -124,7 +124,7 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == FISH)
+		else if (state == FISH && prev_state != state)
 		{
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
@@ -132,10 +132,11 @@ void AVL_Player::Tick(float DeltaTime)
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/metahuman_fishing_Montage.metahuman_fishing_Montage")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
-		else if (state == SITTING) {  // SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
+		else if (state == SITTING && prev_state != state) {  // SITTING = 8, LYING = 9, SITTING2 = 10, SITTING3 = 11, SITTING4 = 12 };
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
@@ -146,7 +147,7 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == LYING) {
+		else if (state == LYING && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
@@ -157,7 +158,7 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == SITTING2 ) {
+		else if (state == SITTING2 && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
@@ -168,7 +169,7 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == SITTING3 ) {
+		else if (state == SITTING3 && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
@@ -179,7 +180,7 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == SITTING4 ) {
+		else if (state == SITTING4 && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
@@ -190,43 +191,47 @@ void AVL_Player::Tick(float DeltaTime)
 				}
 			}
 		}
-		else if (state == HELLO) {
+		else if (state == HELLO && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/StandingGreeting_UE5_Montage.StandingGreeting_UE5_Montage")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
-		else if (state == GANGNAMSTYLE) {
+		else if (state == GANGNAMSTYLE && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/one_gangnam.one_gangnam")), 1.0f);
+					prev_state = state;
 				}
 			}
 			}
-		else if (state == WAVE) {
+		else if (state == WAVE && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/HipHopDancing_UE_Montage.HipHopDancing_UE_Montage")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
-		else if (state == DANCE) {
+		else if (state == DANCE && prev_state != state) {
 			USkeletalMeshComponent* SkeletalMeshComp = this->FindComponentByClass<USkeletalMeshComponent>();
 			if (SkeletalMeshComp) {
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
 				if (AnimInstance)
 				{
 					AnimInstance->Montage_Play(LoadObject<UAnimMontage>(nullptr, TEXT("/Game/animation/dance/RumbaDancing_UE_Montage.RumbaDancing_UE_Montage")), 1.0f);
+					prev_state = state;
 				}
 			}
 		}
