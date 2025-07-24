@@ -998,6 +998,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		{
 			SC_TIME_SYNC_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_TIME_SYNC_PACKET));
+			UE_LOG(LogTemp, Warning, TEXT("[Time Sync 시간 받음 !!!!!!!! : %.f]"), p.curtime);
 
 			// 받은 시간을 클라이언트 변수에 저장
 			currentSyncedTime = p.curtime;

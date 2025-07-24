@@ -20,24 +20,6 @@ ATimeOfDayManager::ATimeOfDayManager()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void ATimeOfDayManager::SetServerTime(float InTime)
-{
-    ServerTime = FMath::Fmod(InTime, 24.0f);
-
-    // 즉시 조명 반영
-    SeverUpdateSun();
-
-    // 낮/밤 상태 갱신 및 인터페이스 알림
-    bool bWasDaytime = bIsDaytime;
-    bIsDaytime = (ServerTime >= 6.0f && ServerTime < 18.0f);
-
-    if (bIsDaytime != bWasDaytime)
-    {
-        NotifyListeners(bIsDaytime);
-        if (bIsDaytime) OnSunrise(); else OnSunset();
-    }
-}
-
 void ATimeOfDayManager::BeginPlay()
 {
 	Super::BeginPlay();
@@ -49,7 +31,7 @@ void ATimeOfDayManager::IncrementTime()
     UVirtual_life_GameInstance* GI = Cast<UVirtual_life_GameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GI) return;
 
-    ServerTime = FMath::Fmod(ServerTime + 0.01f, 24.0f);
+    ServerTime = FMath::Fmod(GI->currentSyncedTime, 24.0f);
 
     if (bIsTimerRunning)
         SeverUpdateSun();
