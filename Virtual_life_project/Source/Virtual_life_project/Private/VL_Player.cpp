@@ -46,6 +46,19 @@ void AVL_Player::BeginPlay()
 		}
 	}
 	
+
+	// SkeletalMesh 찾아서 OnMontageEnded 바인딩
+	USkeletalMeshComponent* SkeletalMeshComp = FindComponentByClass<USkeletalMeshComponent>();
+	if (SkeletalMeshComp)
+	{
+		UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
+		if (AnimInstance && !AnimInstance->OnMontageEnded.IsAlreadyBound(this, &AVL_Player::OnMontageEnded))
+		{
+			AnimInstance->OnMontageEnded.AddDynamic(this, &AVL_Player::OnMontageEnded);
+		}
+	}
+
+
 }
 
 void AVL_Player::CaptureVoiceFrame()
@@ -69,7 +82,7 @@ void AVL_Player::Tick(float DeltaTime)
 				UAnimInstance* AnimInstance = SkeletalMeshComp->GetAnimInstance();
 				if (AnimInstance && AnimInstance->IsAnyMontagePlaying())
 				{
-					AnimInstance->Montage_Stop(0.5f);
+				    AnimInstance->Montage_Stop(0.5f);
 				}
 			}
 		}
@@ -350,6 +363,11 @@ int32 AVL_Player::get_my_id()
 void AVL_Player::set_my_id(const unsigned int& new_id)
 {
 	m_id = new_id;
+}
+
+void AVL_Player::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	setMyState(IDLE);
 }
 
 void AVL_Player::interact_action()
