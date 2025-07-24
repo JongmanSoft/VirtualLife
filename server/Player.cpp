@@ -827,6 +827,8 @@ void Player::handle_packet(char* packet, unsigned short length)
 		temp_kid.id = npc_count++;
 		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
+
+		// todo: 다시 엔피씨들 넣기.
 		break;
 	}
 	case CS_DOOR_UPDATE:

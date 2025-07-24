@@ -964,7 +964,8 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			}
 			else if (p.act_type == PARTY_REQUEST::PARTY_REQUEST_INVITE_ACCEPT) // 상대방이 파티에 참여
 			{
-				party_members_name.Add(FString(p.name));
+
+				//party_members_name.Add(FString(p.name));
 				// todo: 여기 알림 메시지 추가
 				int k = 0;
 				OnParty_update.Broadcast();
