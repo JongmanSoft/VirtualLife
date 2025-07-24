@@ -50,6 +50,9 @@ public:
     static bool LoadAllRoomsFromDB();
     static bool LoadAllKidsFromDB();
 
+    static std::string id;
+	static std::string pw;
+
 private:
     static sql::mysql::MySQL_Driver* g_driver;
     static thread_local std::unique_ptr<sql::Connection> t_conn;

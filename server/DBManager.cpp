@@ -1,6 +1,8 @@
 #include "DBManager.h"
 #include "RoomManager.h"
 
+std::string DBManager::id = "";
+std::string DBManager::pw = "";
 sql::mysql::MySQL_Driver* DBManager::g_driver = nullptr;
 thread_local std::unique_ptr<sql::Connection> DBManager::t_conn = nullptr;
 bool DBManager::DB_ON = true;  // 또는 true, 기본값 지정
@@ -74,7 +76,7 @@ sql::Connection* DBManager::GetConnection()
 
         if (!t_conn) {
             t_conn = std::unique_ptr<sql::Connection>(
-                g_driver->connect("tcp://127.0.0.1:3306", "root", "12345678"));
+                g_driver->connect("tcp://127.0.0.1:3306", DBManager::id, DBManager::pw));
             t_conn->setSchema("VL_DB");
         }
 
