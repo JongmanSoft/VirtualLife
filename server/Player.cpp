@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "DBManager.h"
 #include "RoomManager.h"
 #include "Player.h"
@@ -348,7 +348,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
 				players[i].party->add_member(this);
 				party = players[i].party;
-				//TODO ÃÊ´ë¸¦ º¸³½³ğÇÑÅ× ¼ö¶ô‰Ñ´Ù°í ¾Ë·ÁÁà¾ßÇÏÁö¾Ê³ª?
+				//TODO ì´ˆëŒ€ë¥¼ ë³´ë‚¸ë†ˆí•œí…Œ ìˆ˜ë½ëë‹¤ê³  ì•Œë ¤ì¤˜ì•¼í•˜ì§€ì•Šë‚˜?
 
 				break;
 			}
@@ -656,7 +656,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		send_remove_quest_packet(p->giver_id, p->num);
 		break;
 	}
-	case CS_ROOM_ENTER: // todo: °¡±¸ ÆíÁıÇÒ ¶§ ´Ù¸¥ ÇÃ·¹ÀÌ¾îµéÇÑÅ× ºê·ÎµåÄ³½ºÆÃ
+	case CS_ROOM_ENTER: // todo: ê°€êµ¬ í¸ì§‘í•  ë•Œ ë‹¤ë¥¸ í”Œë ˆì´ì–´ë“¤í•œí…Œ ë¸Œë¡œë“œìºìŠ¤íŒ…
 	{
 		CS_ROOM_ENTER_PACKET* p = reinterpret_cast<CS_ROOM_ENTER_PACKET*>(packet);
 
@@ -700,7 +700,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		send(&pkt);
 		break;
 	}
-	case CS_PLACE_BUILD: // todo: ¿©±â Å×½ºÆ®
+	case CS_PLACE_BUILD: // todo: ì—¬ê¸° í…ŒìŠ¤íŠ¸
 	{
 		CS_PLACE_BUILD_PACKET* p = reinterpret_cast<CS_PLACE_BUILD_PACKET*>(packet);
 		Object obj;
@@ -828,7 +828,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
 
-		// todo: ´Ù½Ã ¿£ÇÇ¾¾µé ³Ö±â.
+		// todo: ë‹¤ì‹œ ì—”í”¼ì”¨ë“¤ ë„£ê¸°.
 		break;
 	}
 	case CS_DOOR_UPDATE:
@@ -859,7 +859,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		resp.type = SC_TEST_MOVE;
 		resp.client_send_time = p->client_send_time;
 		resp.server_send_time = std::chrono::duration_cast<std::chrono::microseconds>(
-			std::chrono::steady_clock::now().time_since_epoch()).count();  // ¼­¹ö ÇöÀç ½Ã°£ Ãß°¡
+			std::chrono::steady_clock::now().time_since_epoch()).count();  // ì„œë²„ í˜„ì¬ ì‹œê°„ ì¶”ê°€
 		resp.pl = pinfo;
 
 		{
@@ -871,7 +871,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 			}
 		}
 
-		send(&resp); // Å¬¶ó·Î ÀÀ´ä
+		send(&resp); // í´ë¼ë¡œ ì‘ë‹µ
 		break;
 	}
     default:
