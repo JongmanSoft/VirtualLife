@@ -95,6 +95,7 @@ void UVirtual_life_GameInstance::SendUpdateGoldPacket(int cs_gold_offset)
 	p.size = sizeof(CS_UPDATE_GOLD_PACKET);
 	p.type = CS_UPDATE_GOLD;
 	p.gold_offset = cs_gold_offset;
+	UE_LOG(LogTemp, Warning, TEXT("send_gold_offset : %d"), p.gold_offset);
 	SendEnqueue(&p, p.size);
 	OnGoldChanged.Broadcast(p.gold_offset);
 }
@@ -806,6 +807,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		{
 			SC_UPDATE_GOLD_PACKET	p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_GOLD_PACKET));
+			UE_LOG(LogTemp, Warning, TEXT("recv gold value : %d"), p.gold);
 			MyPlayerInfo.gold = p.gold;
 			OnGoldUpdated.Broadcast(MyPlayerInfo.gold);
 			break;
