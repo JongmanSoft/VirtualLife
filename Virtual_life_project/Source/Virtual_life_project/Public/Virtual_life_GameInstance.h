@@ -260,6 +260,11 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "time")
 	float enter_time =0.0f;
+
+public:
+	//시간 싱크
+	UPROPERTY(BlueprintReadOnly)
+	float currentSyncedTime = 0.f;
 public:
 	
 	UPROPERTY()
