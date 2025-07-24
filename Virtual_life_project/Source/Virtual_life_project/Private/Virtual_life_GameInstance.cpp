@@ -836,7 +836,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 		case SC_DOORS_UPDATE: {
 			SC_UPDATE_DOORS_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_UPDATE_DOORS_PACKET));
-			constexpr int Door_num = 13;
+			constexpr int Door_num = MAX_DOOR;
 			for (int num = 0; num < Door_num; num++) {
 				current_door_id[num] = p.door_id[num] ;
 			    current_is_open[num] = p.is_open[num];

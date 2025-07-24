@@ -31,6 +31,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, const uint8&, I
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, const int32&, gold_offset);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldUpdated, const int32&, Final_gold);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuestUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPartyUpdated);
 
 struct SpawnInfo
 {
@@ -82,6 +83,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FUpdateDoor UpdateDoor;
+
+	UPROPERTY(BlueprintAssignable)
+	FPartyUpdated OnParty_update;
 
 public:
 
@@ -358,10 +362,19 @@ public:
 
 	bool bLoggedIn = false;
 
+	//파티 맴버관리용
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FString> party_members_name;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool inParty =false;
+	
+
+
 // 문 동기화 관련
 public:
-	unsigned short current_door_id[13]; 
-	bool current_is_open[13]; 
+	unsigned short current_door_id[MAX_DOOR]; 
+	bool current_is_open[MAX_DOOR]; 
 
 public:
 	UPROPERTY(BlueprintReadWrite)
