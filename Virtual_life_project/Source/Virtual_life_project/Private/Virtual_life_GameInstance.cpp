@@ -209,6 +209,16 @@ void UVirtual_life_GameInstance::SendPartyRejectPacket(const FString& Id_str)
 	SendEnqueue(&p, p.size);
 }
 
+void UVirtual_life_GameInstance::SendPartyLeavePacket()
+{
+	CS_UPDATE_PARTY_PACKET p;
+	p.size = sizeof(CS_UPDATE_PARTY_PACKET);
+	p.type = CS_UPDATE_PARTY;
+	p.act_type = PARTY_REQUEST::PARTY_EXIT;
+	strcpy_s(p.id, M_ID_SIZE, user_id);
+	SendEnqueue(&p, p.size);
+}
+
 void UVirtual_life_GameInstance::SendDoorStatePacket(const uint8& door_id, bool is_open)
 {
 	CS_UPDATE_DOOR_PACKET p;

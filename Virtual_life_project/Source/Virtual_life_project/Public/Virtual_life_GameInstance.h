@@ -185,6 +185,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SendPartyRejectPacket(const FString& Id_str);
 
+	UFUNCTION(BlueprintCallable)
+	void SendPartyLeavePacket();
+
 	//문열고 닫음 ㅠㅠ
 	UFUNCTION(BlueprintCallable)
 	void SendDoorStatePacket(const uint8& door_id, bool is_open);

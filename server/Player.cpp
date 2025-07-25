@@ -359,6 +359,21 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		}
 		break;
 	}
+	case PARTY_REQUEST::PARTY_EXIT:
+	{
+		if (party == nullptr) return;
+		party->remove_member(this);
+		if (party->get_member_count() == 0) {
+			delete party;
+			party = nullptr;
+		}
+		else {
+			for (auto& a : party->get_members()) {
+				a->send_update_party_packet();
+			}
+		}
+		break;
+	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT:
 	{
 		break;

@@ -18,5 +18,13 @@ public:
 		std::lock_guard<std::mutex> lock(party_lock);
 		members.push_back(player);
 	}
+	void remove_member(Player* player)
+	{
+		std::lock_guard<std::mutex> lock(party_lock);
+		auto it = std::remove(members.begin(), members.end(), player);
+		if (it != members.end()) {
+			members.erase(it, members.end());
+		}
+	}	
 };
 
