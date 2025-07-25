@@ -19,7 +19,7 @@ void AWallPlacementActor::Tick(float DeltaTime)
         if (PC->WasInputKeyJustPressed(EKeys::LeftMouseButton))
         {
             SetStartPoint(CachedMousePosition());
-            UE_LOG(LogTemp, Warning, TEXT("Start Pos : % s"), *StartPoint.ToString());
+            //UE_LOG(LogTemp, Warning, TEXT("Start Pos : % s"), *StartPoint.ToString());
         }
         else
         {

@@ -83,7 +83,7 @@ void UBuildingHUBWidget::OnSaveThemeClicked()
     //    const FString FileName = CharacterName + TEXT("Theme.json"); //////////////////////////
     //    ExportCurrentThemeToJson(FileName);
     //}
-    UE_LOG(LogTemp, Log, TEXT("JSON Button Clicked"));
+    // UE_LOG(LogTemp, Log, TEXT("JSON Button Clicked"));
 
     const FString FileName = TEXT("Theme.json");
     ExportCurrentThemeToJson(FileName);
@@ -114,7 +114,7 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
 {
     UWorld* World = GetWorld();
     if (!World) {
-        UE_LOG(LogTemp, Log, TEXT("JSON - No World"));
+        // UE_LOG(LogTemp, Log, TEXT("JSON - No World"));
 
         return;
     }
@@ -153,14 +153,7 @@ void UBuildingHUBWidget::ExportCurrentThemeToJson(const FString& FileName)
     FString SavePath = FPaths::ProjectSavedDir() + "Themes/" + FileName;
     FPlatformFileManager::Get().GetPlatformFile().CreateDirectoryTree(*FPaths::GetPath(SavePath)); // 폴더 미리 생성
 
-    if (FFileHelper::SaveStringToFile(OutputString, *SavePath))
-    {
-        UE_LOG(LogTemp, Log, TEXT("JSON Saved Completed: %s"), *SavePath);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("JSON Saved Failed!"));
-    }
+    FFileHelper::SaveStringToFile(OutputString, *SavePath);
 }
 
 void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
@@ -194,7 +187,7 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
     FString JsonRaw;
     if (!FFileHelper::LoadFileToString(JsonRaw, *FullPath))
     {
-        UE_LOG(LogTemp, Error, TEXT("Cannot Load Theme File : %s"), *FullPath);
+        // UE_LOG(LogTemp, Error, TEXT("Cannot Load Theme File : %s"), *FullPath);
         return;
     }
 
@@ -203,7 +196,7 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
 
     if (!FJsonSerializer::Deserialize(Reader, JsonArray))
     {
-        UE_LOG(LogTemp, Error, TEXT("JSON Failed to parse array: %s"), *FullPath);
+        // UE_LOG(LogTemp, Error, TEXT("JSON Failed to parse array: %s"), *FullPath);
         return;
     }
 
@@ -238,7 +231,7 @@ void UBuildingHUBWidget::LoadThemeFromJson(const FString& FileName)
     }
     
 
-    UE_LOG(LogTemp, Log, TEXT("%d Object JSON Loaded."), LoadedObjects.Num());
+    // UE_LOG(LogTemp, Log, TEXT("%d Object JSON Loaded."), LoadedObjects.Num());
 }
 
 void UBuildingHUBWidget::OnFurnitureTabClicked()
@@ -283,12 +276,12 @@ void UBuildingHUBWidget::OnConfirmClicked()
 
     PC->ConfirmBuildPlacement();
 
-    UE_LOG(LogTemp, Warning, TEXT("확정 버튼 눌림! 건물 정보 전송."));
+    // UE_LOG(LogTemp, Warning, TEXT("확정 버튼 눌림! 건물 정보 전송."));
 
     auto GI = Cast<UVirtual_life_GameInstance>(GetGameInstance());
     if (GI)
     {
         GI->SendEnterMyRoom();
-        UE_LOG(LogTemp, Warning, TEXT("Enter My Room Send Completed"));
+        // UE_LOG(LogTemp, Warning, TEXT("Enter My Room Send Completed"));
     }
 }

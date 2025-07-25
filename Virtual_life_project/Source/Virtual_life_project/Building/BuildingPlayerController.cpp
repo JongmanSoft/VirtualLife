@@ -50,7 +50,7 @@ void ABuildingPlayerController::TrySelectBuildActor()
         {
             SelectedBuildActor = HitActor;
 
-            UE_LOG(LogTemp, Warning, TEXT("클릭된 액터: %s"), *HitActor->GetName());
+            // UE_LOG(LogTemp, Warning, TEXT("클릭된 액터: %s"), *HitActor->GetName());
 
             if (InteractionWidgetClass)
             {

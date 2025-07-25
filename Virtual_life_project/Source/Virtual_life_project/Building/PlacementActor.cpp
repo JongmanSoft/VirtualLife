@@ -97,13 +97,13 @@ void APlacementActor::SetMesh(UStaticMesh* NewMesh)
 
 void APlacementActor::PlaceBuild()
 {
-    UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() Start ===="));
+    //UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() Start ===="));
 
     if (auto* MyGI = Cast<UVirtual_life_GameInstance>(GetGameInstance()))
     {
         if (MyGI->GetCurrentGold() < BuildPrice)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Not enough gold: %d / %d"), MyGI->GetCurrentGold(), BuildPrice);
+            //UE_LOG(LogTemp, Warning, TEXT("Not enough gold: %d / %d"), MyGI->GetCurrentGold(), BuildPrice);
             return;
         }
 
@@ -117,7 +117,7 @@ void APlacementActor::PlaceBuild()
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance cast failed"));
+        //UE_LOG(LogTemp, Error, TEXT("GameInstance cast failed"));
         return;
     }
 
@@ -191,12 +191,8 @@ void APlacementActor::PlaceBuild()
 
         Destroy(); // ÇÁ¸®ºä Á¦°Å
     }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("SpawnedActor is NULL"));
-    }
 
-    UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() End ===="));
+    //UE_LOG(LogTemp, Warning, TEXT("==== PlaceBuild() End ===="));
 }
 
 
