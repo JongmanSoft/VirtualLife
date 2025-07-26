@@ -1392,9 +1392,12 @@ void UVirtual_life_GameInstance::Init()
 
 void UVirtual_life_GameInstance::LoginToVivox()
 {
-	VivoxCore = &FModuleManager::LoadModuleChecked<FVivoxCoreModule>("VivoxCore");
-	VivoxClient = &static_cast<FVivoxCoreModule*>(&FModuleManager::Get().LoadModuleChecked(TEXT("VivoxCore")))->VoiceClient();
-	VivoxClient->Initialize();
+	if (!VivoxClient)
+	{
+		VivoxCore = &FModuleManager::LoadModuleChecked<FVivoxCoreModule>("VivoxCore");
+		VivoxClient = &static_cast<FVivoxCoreModule*>(&FModuleManager::Get().LoadModuleChecked(TEXT("VivoxCore")))->VoiceClient();
+		VivoxClient->Initialize();
+	}
 
 	LoggedInAccountID = AccountId(VIVOX_VOICE_ISSUER, StrID, VIVOX_VOICE_DOMAIN);
 	ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
@@ -1410,15 +1413,18 @@ void UVirtual_life_GameInstance::LoginToVivox()
 				UE_LOG(LogTemp, Log, TEXT("Vivox login successful"));
 				bLoggedIn = true;
 			}
-			else if (Status == VxErrorInvalidState) // 1019
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Vivox login failed - already logged in. Attempting logout..."));
-				VivoxLogout();
-			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Login failed: %s"), ANSI_TO_TCHAR(FVivoxCoreModule::ErrorToString(Status)));
-				BindLoginSessionHandlers(false, LoginSession);
+				UE_LOG(LogTemp, Warning, TEXT("Vivox login failed (%s). Retrying..."), ANSI_TO_TCHAR(FVivoxCoreModule::ErrorToString(Status)));
+
+				// 비정상 상태일 경우 로그아웃 시도
+				VivoxLogout();
+
+				// 일정 시간 후 재시도 (0.5초)
+				FTimerHandle RetryTimer;
+				GetWorld()->GetTimerManager().SetTimer(RetryTimer, [this]() {
+					LoginToVivox();
+					}, 0.5f, false);
 			}
 		});
 
@@ -1426,6 +1432,7 @@ void UVirtual_life_GameInstance::LoginToVivox()
 	VivoxCoreError ret = LoginSession.BeginLogin(VIVOX_VOICE_SERVER, LoginToken, OnBeginLoginCompleteCallback);
 	UE_LOG(LogTemp, Log, TEXT("BeginLogin() called: %s"), ANSI_TO_TCHAR(FVivoxCoreModule::ErrorToString(ret)));
 }
+
 
 void UVirtual_life_GameInstance::BindLoginSessionHandlers(bool DoBind, ILoginSession& LoginSession)
 {
