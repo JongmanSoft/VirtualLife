@@ -48,7 +48,6 @@ class Player
 	bool send_room_leave_packet();
 	bool send_update_party_packet();
 	bool send_invite_call_packet(std::string& id, std::wstring& name);
-	bool send_reject_call_packet(std::string& id);
 	bool send_join_success_packet(std::string& id, std::wstring& name);
 	bool send_doors_state_packet();
 	bool send_spawn_npcs_packet();

@@ -195,7 +195,6 @@ bool Player::send_update_party_packet()
 	p.member_count = party->get_member_count();
 	for (int i = 0; i < MAX_PARTY_MEMBER; ++i) {
 		if (i < party->get_member_count()) {
-			if (party->get_members()[i] == this) continue;
 			wcscpy_s(p.membersName[i], sizeof(p.membersName[i]) / sizeof(wchar_t), party->get_members()[i]->name.c_str());
 		}
 		else {
@@ -306,20 +305,6 @@ bool Player::send_spawn_npc_packet(int id)
 	return true;
 }
 
-
-bool Player::send_reject_call_packet(std::string& id)
-{
-	SC_RESULT_PARTY_PACKET p;
-	p.type = SC_RESULT_PARTY;
-	strcpy_s(p.id, M_ID_SIZE, id.c_str());
-	p.act_type = PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT;
-	p.size = sizeof(SC_RESULT_PARTY_PACKET);
-
-	send(&p);
-	return true;
-}
-
-
 void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 {
 	switch (pkt.act_type)
@@ -346,20 +331,24 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	{
 		for (int i = 0; i < g_player_count; ++i) {
 			if (players[i].get_state() == PLAYING && strcmp(players[i].id.c_str(), pkt.id) == 0) {
-				players[i].party->add_member(this);
-				party = players[i].party;
-				//TODO 초대를 보낸놈한테 수락됏다고 알려줘야하지않나?
-
+				{
+					std::lock_guard<std::mutex> lock(players[i].party->party_lock); 
+					players[i].party->add_member(this);
+					party = players[i].party;
+				}
 				break;
 			}
 		}
-
-		for (auto& a : party->get_members()) {
-			a->send_update_party_packet();
+		{
+			std::lock_guard<std::mutex> lock(party->party_lock);
+			for (auto& a : party->get_members()) {
+				a->send_update_party_packet();
+			}
 		}
 		break;
 	}
 	case PARTY_REQUEST::PARTY_EXIT:
+<<<<<<< Updated upstream
 	{
 		if (party == nullptr) return;
 		party->remove_member(this);
@@ -375,7 +364,16 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		break;
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT:
+=======
+>>>>>>> Stashed changes
 	{
+		{
+			std::lock_guard<std::mutex> lock(party->party_lock);
+			party->remove_member(this);
+			for (auto& a : party->get_members()) {
+				a->send_update_party_packet();
+			}
+		}
 		break;
 	}
 	}
@@ -575,21 +573,14 @@ void Player::handle_packet(char* packet, unsigned short length)
 			state = NONE;
 			break;
 		}
-
-		//{
-		//	if (party != nullptr) {
-		//		party->remove_member(this);
-		//		if (party->get_member_count() == 0) {
-		//			delete party;
-		//			party = nullptr;
-		//		}
-		//		else {
-		//			for (auto& a : party->get_members()) {
-		//				a->send_update_party_packet();
-		//			}
-		//		}
-		//	}
-		//}
+		
+		{
+			std::lock_guard<std::mutex> lock(party->party_lock);
+			party->remove_member(this);
+			for (auto& a : party->get_members()) {
+				a->send_update_party_packet();
+			}
+		}
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
