@@ -217,6 +217,10 @@ void UVirtual_life_GameInstance::SendPartyLeavePacket()
 	p.act_type = PARTY_REQUEST::PARTY_EXIT;
 	strcpy_s(p.id, M_ID_SIZE, user_id);
 	SendEnqueue(&p, p.size);
+
+	inParty = false;
+	party_members_name.Empty();
+	OnParty_update.Broadcast();
 }
 
 void UVirtual_life_GameInstance::SendDoorStatePacket(const uint8& door_id, bool is_open)
