@@ -348,9 +348,9 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		break;
 	}
 	case PARTY_REQUEST::PARTY_EXIT:
-<<<<<<< Updated upstream
 	{
 		if (party == nullptr) return;
+		std::lock_guard<std::mutex> lock(party->party_lock);
 		party->remove_member(this);
 		if (party->get_member_count() == 0) {
 			delete party;
@@ -364,16 +364,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 		break;
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT:
-=======
->>>>>>> Stashed changes
 	{
-		{
-			std::lock_guard<std::mutex> lock(party->party_lock);
-			party->remove_member(this);
-			for (auto& a : party->get_members()) {
-				a->send_update_party_packet();
-			}
-		}
 		break;
 	}
 	}

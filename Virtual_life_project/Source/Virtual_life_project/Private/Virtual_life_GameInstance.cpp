@@ -218,6 +218,28 @@ void UVirtual_life_GameInstance::SendPartyLeavePacket()
 	strcpy_s(p.id, M_ID_SIZE, user_id);
 	SendEnqueue(&p, p.size);
 
+	// Vivox 채널 나가기
+	if (bLoggedIn && VivoxClient)
+	{
+		ILoginSession& LoginSession = VivoxClient->GetLoginSession(LoggedInAccountID);
+
+		if (LoginSession.ChannelSessions().Num() > 0)
+		{
+			for (auto& Elem : LoginSession.ChannelSessions())
+			{
+				auto ChannelSession = Elem.Value;
+				if (ChannelSession->ChannelState() == ConnectionState::Connected ||
+					ChannelSession->ChannelState() == ConnectionState::Connecting)
+				{
+					UE_LOG(LogTemp, Log, TEXT("Leaving Vivox channel: %s"), *ChannelSession->Channel().Name());
+					BindChannelSessionHandlers(false, *ChannelSession); // 핸들러 해제
+					ChannelSession->Disconnect(); // 채널 나가기
+				}
+			}
+			//LoginSession.ChannelSessions(); // 안전하게 클리어
+		}
+	}
+
 	inParty = false;
 	party_members_name.Empty();
 	OnParty_update.Broadcast();

@@ -19,18 +19,10 @@ public:
 	}
 	void remove_member(Player* player)
 	{
-<<<<<<< Updated upstream
-		std::lock_guard<std::mutex> lock(party_lock);
-=======
->>>>>>> Stashed changes
 		auto it = std::remove(members.begin(), members.end(), player);
 		if (it != members.end()) {
 			members.erase(it, members.end());
 		}
-<<<<<<< Updated upstream
-	}	
-=======
 	}
->>>>>>> Stashed changes
 };
 
