@@ -75,9 +75,16 @@ void Akid_map_script::custom_finish(float g_value, uint8 per_value, FString hell
         auto m_inst = Cast<UVirtual_life_GameInstance>(GetGameInstance());
 		if (m_inst)
 		{
-            auto you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo; //여기수정
             Customizing my_custom;
-			m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
+            m_inst->custom_packet_setup(my_custom, m_inst->m_custom);
+            auto you_custom = my_custom;
+
+            if (m_inst->OtherPlayers.Contains(m_inst->m_marry->you_id)) {
+
+                you_custom = m_inst->OtherPlayers[m_inst->m_marry->you_id].cinfo;
+            }
+           
+            
 
             if (g_value < 0.5) {
                 //얼굴이 나에 가깝다
