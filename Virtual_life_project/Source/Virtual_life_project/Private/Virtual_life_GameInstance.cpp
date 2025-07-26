@@ -237,6 +237,7 @@ void UVirtual_life_GameInstance::SendPartyLeavePacket()
 				}
 			}
 			//LoginSession.ChannelSessions(); // 안전하게 클리어
+			//LoginSession.DeleteChannelSession();
 		}
 	}
 
@@ -520,17 +521,6 @@ void UVirtual_life_GameInstance::DisconnectServer()
 void UVirtual_life_GameInstance::Tick(float DeltaTime)
 {
 	ProcessRecvPackets();
-
-	if (GEngine)
-	{
-		FString Status = loaded ? TEXT("loaded: true") : TEXT("loaded: false");
-		GEngine->AddOnScreenDebugMessage(
-			/*Key*/ 1,           // 고유 ID (같은 키면 덮어씀)
-			/*TimeToDisplay*/ 0.f, // 다음 프레임에도 계속 보이게
-			/*Color*/ FColor::Yellow,
-			/*Message*/ Status
-		);
-	}
 
 	if (true == loaded) {
 		TimeAccumulator += DeltaTime;

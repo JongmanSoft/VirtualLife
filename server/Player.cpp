@@ -313,6 +313,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 	{
 		if (party == nullptr) {
 			party = new Party();
+			std::lock_guard ll{ party->party_lock };
 			party->set_partyID(id);
 			party->add_member(this);
 			send_join_success_packet(id, name);
@@ -361,6 +362,7 @@ void Player::handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt)
 				a->send_update_party_packet();
 			}
 		}
+		this->party = nullptr;
 		break;
 	}
 	case PARTY_REQUEST::PARTY_REQUEST_INVITE_REJECT:
