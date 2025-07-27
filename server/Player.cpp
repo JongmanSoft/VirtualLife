@@ -525,13 +525,13 @@ void Player::handle_packet(char* packet, unsigned short length)
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < g_player_count; ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == HOME) {
 					players[i].send_spawn_packet(pinfo, custom, name);
 				}
 			}
 
 			for (int i = 0; i < g_player_count; ++i) {
-				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].pinfo.st < HOME) {
+				if (players[i].get_state() == PLAYING and players[i].id != this->id and players[i].location == HOME) {
 					send_spawn_packet(players[i].pinfo, players[i].custom, players[i].name);
 				}
 			}
