@@ -17,6 +17,6 @@ Kid::Kid(const CS_ADD_KID_PACKET& pkt)
 	name = pkt.name; // 이름 복사
 	x = pkt.x;
 	y = pkt.y;	
-	z = pkt.z;
+	z = 3600;
 	yaw = pkt.yaw; 
 }
