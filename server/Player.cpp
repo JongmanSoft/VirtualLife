@@ -283,25 +283,34 @@ bool Player::send_spawn_npcs_packet()
 }
 
 
-bool Player::send_spawn_npc_packet(int id) 
+bool Player::send_spawn_npc_packet(Kid k) 
 {
-	auto target = npcs[id];
+	int count = 1;
+	int packetSize = sizeof(SC_SPAWN_NPCS_PACKET) + sizeof(NPCUnitData);
 
-	SC_SPAWN_NPC_PACKET p;
-	p.size = sizeof(SC_SPAWN_NPC_PACKET);
-	p.type = SC_NPC_SPAWN;
-	p.id = id;
-	p.preg_id = target.preg_id;
-	p.spouse_id = target.spouse_id;
-	p.c = target.customizing;
-	p.x = target.x;
-	p.y = target.y;
-	p.z = target.z;
-	p.yaw = target.yaw;
-	p.personality = target.personality;
-	p.is_kid = target.is_kid;
+	char* buffer = new char[packetSize];
 
-	send(&p);
+	SC_SPAWN_NPCS_PACKET* p = reinterpret_cast<SC_SPAWN_NPCS_PACKET*>(buffer);
+	p->type = SC_NPCS_SPAWN;
+	p->npc_count = count;
+	p->size = packetSize;
+
+	NPCUnitData* npc_array = reinterpret_cast<NPCUnitData*>(buffer + sizeof(SC_SPAWN_NPCS_PACKET));
+	npc_array[0].id = k.id;
+	npc_array[0].preg_id = k.preg_id;
+	npc_array[0].spouse_id = k.spouse_id;
+	npc_array[0].c = k.customizing;
+	npc_array[0].x = k.x;
+	npc_array[0].y = k.y;
+	npc_array[0].z = k.z;
+	npc_array[0].yaw = k.yaw;
+	npc_array[0].personality = k.personality;
+	npc_array[0].is_kid = k.is_kid;
+	wcsncpy_s(npc_array[0].name, sizeof(npc_array[0].name) / sizeof(wchar_t), k.name.c_str(), _TRUNCATE);
+	wcsncpy_s(npc_array[0].hello_msg, sizeof(npc_array[0].hello_msg) / sizeof(wchar_t), k.hello_msg.c_str(), _TRUNCATE);
+	
+
+	send(buffer);
 	return true;
 }
 
@@ -390,9 +399,8 @@ void Player::send(void* packet)
 {
 	std::lock_guard ll{ socket_lock };
 
-	if (socket == INVALID_SOCKET)
-	{
-		printf("[send] Invalid socket. Send aborted.\n");
+	if (socket == INVALID_SOCKET) {
+		printf("[send] Invalid socket. Skipping send.\n");
 		return;
 	}
 
@@ -408,12 +416,9 @@ void Player::send(void* packet)
 		int error = WSAGetLastError();
 		if (error != WSA_IO_PENDING)
 		{
-			printf("WSASend failed with error: %d\n", error);
-
-			closesocket(socket);
-			socket = INVALID_SOCKET;
-
+			printf("[send] Error: %d. Closing connection.\n", error);
 			delete ov;
+			handle_disconnect(); 
 		}
 	}
 }
@@ -421,18 +426,13 @@ void Player::send(void* packet)
 void Player::recv()
 {
 	if (socket == INVALID_SOCKET) {
-		printf("Invalid socket\n");
+		printf("[recv] Invalid socket\n");
 		return;
 	}
 
 	ZeroMemory(&over.over, sizeof(over.over));
 	over.wsabuf.len = static_cast<ULONG>(BUFSIZE - packet_data.size());
 	over.wsabuf.buf = over.wb_buf + packet_data.size();
-
-	if (over.wsabuf.buf == nullptr) {
-		printf("Buffer is null\n");
-		return;
-	}
 
 	DWORD flags = 0;
 	DWORD bytesReceived = 0;
@@ -443,10 +443,8 @@ void Player::recv()
 		int error = WSAGetLastError();
 		if (error != WSA_IO_PENDING)
 		{
-			printf("WSARecv failed with error: %d\n", error);
-			std::lock_guard ll{ socket_lock };
-			closesocket(socket);
-			WSACleanup();
+			printf("[recv] Error: %d. Client forcibly disconnected?\n", error);
+			handle_disconnect(); 
 		}
 	}
 }
@@ -561,31 +559,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		CS_LEAVE_PACKET* p = reinterpret_cast<CS_LEAVE_PACKET*>(packet);
 
 		std::cout << "[DEBUG] Player " << id << " is leaving the game." << std::endl;
-
-		if (state != PLAYING) {
-			state = NONE;
-			break;
-		}
-		
-		{
-			std::lock_guard<std::mutex> lock(party->party_lock);
-			party->remove_member(this);
-			for (auto& a : party->get_members()) {
-				a->send_update_party_packet();
-			}
-		}
-
-		{
-			std::lock_guard<std::mutex> lock(players_mutex);
-			for (int i = 0; i < g_player_count; ++i) {
-				if (players[i].state == PLAYING and i != pinfo.id)
-					players[i].send_despawn_packet(pinfo.id);
-			}
-		}
-		
-		DBManager::SavePInfo(this->id, this->pinfo);
-
-		state = NONE;
+		handle_disconnect(); 
         break;
     }
 	case CS_MOVEP:
@@ -853,6 +827,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		DBManager::SaveKidInfo(temp_kid);
 
 		// todo: 다시 엔피씨들 넣기.
+		send_spawn_npc_packet(temp_kid);
 		break;
 	}
 	case CS_DOOR_UPDATE:
@@ -920,4 +895,42 @@ void Player::player_setup()
 	DBManager::SaveDefPInfo(this->id, pinfo);
 	DBManager::SaveDefCustomizing(this->id);
 	save_db_pInventory();
+}
+
+void Player::handle_disconnect()
+{
+	std::lock_guard ll(socket_lock);
+
+	if (socket != INVALID_SOCKET) {
+		closesocket(socket);
+		socket = INVALID_SOCKET;
+	}
+
+	if (state != PLAYING) return;
+
+	state = NONE;
+
+	// 파티 제거
+	if (party) {
+		std::lock_guard p_lock(party->party_lock);
+		party->remove_member(this);
+		for (auto& a : party->get_members()) {
+			a->send_update_party_packet();
+		}
+		party = nullptr;
+	}
+
+	// despawn 전파
+	{
+		std::lock_guard lock(players_mutex);
+		for (int i = 0; i < g_player_count; ++i) {
+			if (players[i].state == PLAYING && players[i].id != this->id)
+				players[i].send_despawn_packet(pinfo.id);
+		}
+	}
+
+	// DB 저장
+	DBManager::SavePInfo(this->id, this->pinfo);
+
+	printf("[disconnect] Player %s disconnected cleanly.\n", id.c_str());
 }

@@ -51,7 +51,8 @@ class Player
 	bool send_join_success_packet(std::string& id, std::wstring& name);
 	bool send_doors_state_packet();
 	bool send_spawn_npcs_packet();
-	bool send_spawn_npc_packet(int id);
+	bool send_spawn_npc_packet(Kid k);
+	void handle_disconnect();
 
 	// 핸들러 함수
 	void handle_party_packet(CS_UPDATE_PARTY_PACKET& pkt);
