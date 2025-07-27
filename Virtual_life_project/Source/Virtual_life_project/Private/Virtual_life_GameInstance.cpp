@@ -340,6 +340,8 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 				PlayerPawn->SetActorLocationAndRotation(LastMainMapLocation, LastMainMapRotation);
 
 				bReturnFromRoom = false; // 위치 복구 후 플래그 리셋
+
+				p->set_my_id(MyPlayerInfo.id);
 			}
 		}
 	}
@@ -364,6 +366,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 				PlayerPawn->SetActorLocationAndRotation(NewLocation, NewRotation);
 
 				p->set_my_id(MyPlayerInfo.id);
+				UE_LOG(LogTemp, Error, TEXT("spawn player func id :  %u"), MyPlayerInfo.id);
 			}
 		}
 	}
@@ -395,6 +398,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		auto pl = Cast<AVL_Player>(Info.character);
 		if (pl != nullptr) {
 			pl->set_my_id(Info.pinfo.id);
+			UE_LOG(LogTemp, Error, TEXT("from server id :  %u"), Info.pinfo.id);
 		}
 
 		
@@ -424,7 +428,7 @@ void UVirtual_life_GameInstance::SpawnPlayer()
 		}
 		else {
 			//자식일경우
-			UE_LOG(LogTemp, Error, TEXT("start make kid"));
+
 			const NPCUnitData& npcData = Pair.Value.data;
 			auto BlueprintClass = StaticLoadClass(AActor::StaticClass(), nullptr, TEXT("Blueprint'/Game/VirtualLife_Character/KID_npc.KID_npc_C'"));
 			if (BlueprintClass)
@@ -503,11 +507,11 @@ void UVirtual_life_GameInstance::SpawnPlayerInRoom()
 		Other_actor_m_custom->custom_data_update(Info.cinfo);
 
 		Info.character = Actor;
-
 		auto pl = Cast<AVL_Player>(Info.character);
 		if (pl != nullptr) {
 			pl->set_my_id(Info.pinfo.id);
 		}
+
 	}
 	
 
@@ -520,6 +524,7 @@ void UVirtual_life_GameInstance::DisconnectServer()
 
 void UVirtual_life_GameInstance::Tick(float DeltaTime)
 {
+	
 	ProcessRecvPackets();
 
 	if (true == loaded) {
@@ -754,7 +759,6 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 
 				// 스폰된 액터 저장
 				OtherPlayers[p.pl.id].character = Actor;
-
 				auto FoundPlayer = OtherPlayers.Find(p.pl.id);
 				ACharacter* PlayerActor = FoundPlayer->character;
 				auto pl = Cast<AVL_Player>(PlayerActor);
@@ -879,6 +883,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			SC_ROOM_SETUP_PACKET p;
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_SETUP_PACKET));
 
+		
 			HandleRoomSetup(p);
 
 			break;
@@ -889,6 +894,7 @@ void UVirtual_life_GameInstance::ProcessRecvPackets()
 			FMemory::Memcpy(&p, PacketData.GetData(), sizeof(SC_ROOM_LEAVE_PACKET));
 
 			ResetPlayers();
+			
 
 			enter_time = p.time;
 			UGameplayStatics::OpenLevel(this, FName(TEXT("OpenWorldMap")));
