@@ -503,7 +503,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 	case CS_ENTER_GAME:
 	{
 		CS_ENTER_GAME_PACKET* p = reinterpret_cast<CS_ENTER_GAME_PACKET*>(packet);
-		std::cout << "[DEBUG] Player " << id << " is entering the game." << std::endl;
+		std::cout << "[DEBUG] Player " << id << "(" << pinfo.id << ") is entering the game." << std::endl;
 
 		if (this->name == L"") {
 			{
@@ -540,15 +540,14 @@ void Player::handle_packet(char* packet, unsigned short length)
 	}
     case CS_CHAT:
     {
-		int id = pinfo.id;
         CS_CHAT_PACKET* p = reinterpret_cast<CS_CHAT_PACKET*>(packet);
 
-		std::wcout << p->name << ": " << p->msg << std::endl;
+		std::wcout << p->name << "("<< pinfo.id  << "): " << p->msg << std::endl;
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
 			for (int i = 0; i < g_player_count; ++i) {
-				if (players[i].state == PLAYING and i != id and players[i].pinfo.st != HOME)
+				if (players[i].state == PLAYING and i != pinfo.id and players[i].location == WORLD)
 					players[i].send_chat_packet(p->name, p->msg, p->from_id);
 			}
 		}
@@ -793,6 +792,7 @@ void Player::handle_packet(char* packet, unsigned short length)
 		this->room = nullptr; 
 
 		send_room_leave_packet();
+		std::cout << id << "(" << pinfo.id << ") has left the room." << std::endl;
 
 		{
 			std::lock_guard<std::mutex> lock(players_mutex);
@@ -826,8 +826,14 @@ void Player::handle_packet(char* packet, unsigned short length)
 		temp_kid.is_kid = true; 
 		DBManager::SaveKidInfo(temp_kid);
 
-		// todo: 다시 엔피씨들 넣기.
-		send_spawn_npc_packet(temp_kid);
+		{
+			std::lock_guard ll{ players_mutex };
+			for (int i = 0; i < g_player_count; ++i) {
+				if (players[i].get_state() == PLAYING && players[i].location == WORLD) {
+					players[i].send_spawn_npc_packet(temp_kid);
+				}
+			}
+		}
 		break;
 	}
 	case CS_DOOR_UPDATE:
