@@ -132,6 +132,8 @@ void Akid_npc_actor::set_groom()
         auto a = LoadObject<UGroomAsset>(nullptr, groom_asset_file[m_custom->hair]);
         m_hair_groom->SetGroomAsset(a);
         m_hair_groom->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->hair]));
+        m_hair_groom->SetForcedLOD(-1);
+        m_hair_groom->SetCullDistance(0.0f); // 컬링 비활성화
     }
 
    //눈썹

@@ -40,7 +40,7 @@ public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
 	void find_hair_groom();
 
-
+	UFUNCTION(BlueprintCallable)
 	void set_groom(); // 머리변경
 	void set_skeltal(); // 옷변경
 	void create_dynamic_mat_custom();
