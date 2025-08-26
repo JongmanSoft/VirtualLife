@@ -39,6 +39,7 @@ public:
 public:
 	USkeletalMeshComponent* find_tag_skeltal_mesh(const FName& tag_name);
 	void find_hair_groom();
+	void find_hair_mesh();
 
 	UFUNCTION(BlueprintCallable)
 	void set_groom(); // 머리변경
@@ -49,6 +50,7 @@ public:
 public:
 	//커스텀용
 	UGroomComponent* m_hair_groom = nullptr;
+	UStaticMeshComponent* m_hair_mesh = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Materials")
 	UMaterialInstanceDynamic* MI_hair = nullptr;

@@ -21,8 +21,8 @@ void Akid_npc_actor::BeginPlay()
         m_custom = NewObject<UCustom_data>(this, TEXT("Custom_data"));
    
     }
-    find_hair_groom();
-
+    find_hair_mesh();
+    apply_custom();
 
 }
 
@@ -108,6 +108,22 @@ void Akid_npc_actor::find_hair_groom()
     }
 }
 
+void Akid_npc_actor::find_hair_mesh()
+{
+    TArray<UActorComponent*> Components;
+    GetComponents(Components);
+    for (UActorComponent* Component : Components)
+    {
+        if (UStaticMeshComponent* hair_meshComp = Cast<UStaticMeshComponent>(Component))
+        {
+            if (hair_meshComp->ComponentHasTag(FName("Hair")))
+            {
+                m_hair_mesh = hair_meshComp;
+            }
+        }
+    }
+}
+
 void Akid_npc_actor::set_groom()
 {
     //머리 
@@ -134,6 +150,18 @@ void Akid_npc_actor::set_groom()
         m_hair_groom->SetBindingAsset(LoadObject<UGroomBindingAsset>(nullptr, groom_binding_asset_file[m_custom->hair]));
         m_hair_groom->SetForcedLOD(-1);
         m_hair_groom->SetCullDistance(0.0f); // 컬링 비활성화
+    }
+
+    if (m_hair_mesh) {
+        TCHAR mesh_asset_file[5][150] = {
+          TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_BobSlick_CardsMesh_Group0_LOD0.Hair_M_BobSlick_CardsMesh_Group0_LOD0"),
+          TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0.Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0"),
+          TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0.Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0"),
+          TEXT("/Game/MetaHumans/real_kid/FemaleHair/Hair/Hair_M_BobSlick_CardsMesh_Group0_LOD0.Hair_M_BobSlick_CardsMesh_Group0_LOD0"),
+          TEXT("/Game/MetaHumans/real_kid/MaleHair_fro/Hair/Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0.Hair_S_SideSweptFringe_CardsMesh_Group0_LOD0")
+        };
+
+        m_hair_mesh->SetStaticMesh(LoadObject<UStaticMesh>(nullptr, mesh_asset_file[m_custom->hair]));
     }
 
    //눈썹
@@ -280,6 +308,17 @@ void Akid_npc_actor::create_dynamic_mat_custom()
             m_hair_groom->SetMaterial(0, Hair_instance);
             m_hair_groom->SetMaterial(1, Hair_instance);
             m_hair_groom->SetMaterial(2, Hair_instance);
+            Hair_instance->SetScalarParameterValue(FName("hair_R"), m_custom->hair_color_R);
+            Hair_instance->SetScalarParameterValue(FName("hair_G"), m_custom->hair_color_G);
+            Hair_instance->SetScalarParameterValue(FName("hair_B"), m_custom->hair_color_B);
+        }
+    }
+
+    if (m_hair_mesh) {
+        UMaterialInterface* Hair_material = LoadObject<UMaterialInterface>(nullptr, TEXT("/Game/MetaHumans/hair_mesh_mt_Inst.hair_mesh_mt_Inst"));
+        if (Hair_material) {
+            UMaterialInstanceDynamic* Hair_instance = UMaterialInstanceDynamic::Create(Hair_material, this);
+            m_hair_mesh->SetMaterial(0, Hair_instance);
             Hair_instance->SetScalarParameterValue(FName("hair_R"), m_custom->hair_color_R);
             Hair_instance->SetScalarParameterValue(FName("hair_G"), m_custom->hair_color_G);
             Hair_instance->SetScalarParameterValue(FName("hair_B"), m_custom->hair_color_B);
